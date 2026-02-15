@@ -1,0 +1,540 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// AUTH & USER MANAGEMENT
+// ============================================
+
+model User {
+  id               String    @id @default(cuid())
+  name             String?
+  email            String    @unique
+  emailVerified    DateTime?
+  hashedPassword   String?
+  image            String?
+  role             UserRole  @default(USER)
+  stripeCustomerId String?   @unique
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  accounts     Account[]
+  sessions     Session[]
+  purchases    Purchase[]
+  subscription Subscription?
+  savedResults SavedComplianceResult[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+// ============================================
+// STRIPE / PAYMENTS
+// ============================================
+
+model Subscription {
+  id                       String             @id @default(cuid())
+  userId                   String             @unique
+  stripeSubscriptionId     String             @unique
+  stripePriceId            String
+  stripeCurrentPeriodStart DateTime
+  stripeCurrentPeriodEnd   DateTime
+  status                   SubscriptionStatus
+  cancelAtPeriodEnd        Boolean            @default(false)
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  UNPAID
+  TRIALING
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  PAUSED
+}
+
+model Purchase {
+  id                      String         @id @default(cuid())
+  userId                  String
+  productId               String
+  stripePaymentIntentId   String?        @unique
+  stripeCheckoutSessionId String?        @unique
+  amount                  Int
+  currency                String         @default("usd")
+  status                  PurchaseStatus
+  createdAt               DateTime       @default(now())
+
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product DigitalProduct @relation(fields: [productId], references: [id])
+
+  @@map("purchases")
+}
+
+enum PurchaseStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+  FAILED
+}
+
+// ============================================
+// DIGITAL PRODUCTS
+// ============================================
+
+model DigitalProduct {
+  id               String          @id @default(cuid())
+  name             String
+  slug             String          @unique
+  description      String          @db.Text
+  shortDescription String?
+  price            Int
+  compareAtPrice   Int?
+  currency         String          @default("usd")
+  type             ProductType
+  stripePriceId    String?         @unique
+  stripeProductId  String?         @unique
+  category         ProductCategory
+  features         String[]
+  fileUrl          String?
+  thumbnailUrl     String?
+  isActive         Boolean         @default(true)
+  isFeatured       Boolean         @default(false)
+  sortOrder        Int             @default(0)
+  metadata         Json?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  purchases Purchase[]
+
+  @@map("digital_products")
+}
+
+enum ProductType {
+  ONE_TIME
+  SUBSCRIPTION
+  FREE
+}
+
+enum ProductCategory {
+  AI_ACT_TOOLKIT
+  SECURITY_QUESTIONNAIRE
+  POLICY_PACK
+  TEMPLATE_BUNDLE
+  SUBSCRIPTION_PLAN
+}
+
+// ============================================
+// VENDOR TRACKER DATABASE
+// ============================================
+
+model Vendor {
+  id                    String         @id @default(cuid())
+  name                  String
+  slug                  String         @unique
+  description           String         @db.Text
+  shortDescription      String?
+  websiteUrl            String
+  logoUrl               String?
+  category              VendorCategory
+  subcategories         String[]
+  pricingModel          PricingModel
+  pricingStartsAt       String?
+  pricingDetails        String?        @db.Text
+  hasFreeTrialOrTier    Boolean        @default(false)
+  frameworksSupported   String[]
+  deploymentsSupported  String[]
+  integrationsSupported String[]
+  hasDPA                Boolean        @default(false)
+  gdprCompliant         Boolean        @default(false)
+  soc2Certified         Boolean        @default(false)
+  iso27001Certified     Boolean        @default(false)
+  overallScore          Float?
+  easeOfUse             Float?
+  featureRichness       Float?
+  valueForMoney         Float?
+  customerSupport       Float?
+  prosConsList          Json?
+  keyFeatures           Json?
+  companySize           String?
+  foundedYear           Int?
+  headquarters          String?
+  employeeCount         String?
+  affiliateUrl          String?
+  affiliateProgramId    String?
+  metaTitle             String?
+  metaDescription       String?
+  isPublished           Boolean        @default(false)
+  isFeatured            Boolean        @default(false)
+  sortOrder             Int            @default(0)
+  lastVerifiedAt        DateTime?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  affiliateLinks  AffiliateLink[]
+  contentMentions ContentVendorMention[]
+
+  @@map("vendors")
+}
+
+enum VendorCategory {
+  AI_GOVERNANCE_PLATFORM
+  MODEL_RISK_MANAGEMENT
+  BIAS_FAIRNESS_TESTING
+  EXPLAINABILITY_TOOLS
+  DATA_GOVERNANCE
+  PRIVACY_COMPLIANCE
+  SECURITY_POSTURE
+  AUDIT_ASSURANCE
+  CONSULTING_ADVISORY
+  GRC_PLATFORM
+  MLOPS_WITH_GOVERNANCE
+}
+
+enum PricingModel {
+  FREE
+  FREEMIUM
+  SUBSCRIPTION
+  PER_SEAT
+  PER_MODEL
+  USAGE_BASED
+  ENTERPRISE_ONLY
+  CONTACT_SALES
+}
+
+// ============================================
+// CONTENT MANAGEMENT
+// ============================================
+
+model ContentPage {
+  id               String        @id @default(cuid())
+  title            String
+  slug             String        @unique
+  type             ContentType
+  body             String        @db.Text
+  excerpt          String?       @db.Text
+  featuredImageUrl String?
+  author           String?
+  metaTitle        String?
+  metaDescription  String?
+  canonicalUrl     String?
+  ogImageUrl       String?
+  tags             String[]
+  category         String?
+  comparisonData   Json?
+  productListData  Json?
+  alternativesData Json?
+  status           ContentStatus @default(DRAFT)
+  publishedAt      DateTime?
+  scheduledAt      DateTime?
+  viewCount        Int           @default(0)
+  shareCount       Int           @default(0)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  vendorMentions ContentVendorMention[]
+  affiliateLinks ContentAffiliateLink[]
+
+  @@index([type, status])
+  @@index([slug])
+  @@map("content_pages")
+}
+
+enum ContentType {
+  BLOG_POST
+  BEST_OF
+  COMPARISON
+  ALTERNATIVES
+  GUIDE
+  LANDING_PAGE
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+  ARCHIVED
+}
+
+model ContentVendorMention {
+  id            String  @id @default(cuid())
+  contentPageId String
+  vendorId      String
+  position      Int     @default(0)
+  isEditorPick  Boolean @default(false)
+  customNote    String?
+
+  contentPage ContentPage @relation(fields: [contentPageId], references: [id], onDelete: Cascade)
+  vendor      Vendor      @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@unique([contentPageId, vendorId])
+  @@map("content_vendor_mentions")
+}
+
+// ============================================
+// AFFILIATE LINK MANAGEMENT
+// ============================================
+
+model AffiliateLink {
+  id              String    @id @default(cuid())
+  vendorId        String?
+  partnerName     String
+  destinationUrl  String
+  trackingCode    String    @unique
+  utmSource       String?
+  utmMedium       String?
+  utmCampaign     String?
+  commissionType  String?
+  commissionValue String?
+  isActive        Boolean   @default(true)
+  expiresAt       DateTime?
+  notes           String?   @db.Text
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  vendor       Vendor?              @relation(fields: [vendorId], references: [id])
+  clicks       AffiliateClick[]
+  contentLinks ContentAffiliateLink[]
+
+  @@map("affiliate_links")
+}
+
+model AffiliateClick {
+  id              String   @id @default(cuid())
+  affiliateLinkId String
+  referrerUrl     String?
+  userAgent       String?
+  ipHash          String?
+  country         String?
+  createdAt       DateTime @default(now())
+
+  affiliateLink AffiliateLink @relation(fields: [affiliateLinkId], references: [id], onDelete: Cascade)
+
+  @@index([affiliateLinkId, createdAt])
+  @@map("affiliate_clicks")
+}
+
+model ContentAffiliateLink {
+  id              String @id @default(cuid())
+  contentPageId   String
+  affiliateLinkId String
+  anchorText      String?
+  position        String?
+
+  contentPage   ContentPage   @relation(fields: [contentPageId], references: [id], onDelete: Cascade)
+  affiliateLink AffiliateLink @relation(fields: [affiliateLinkId], references: [id], onDelete: Cascade)
+
+  @@unique([contentPageId, affiliateLinkId])
+  @@map("content_affiliate_links")
+}
+
+// ============================================
+// EMAIL SUBSCRIBERS & SEQUENCES
+// ============================================
+
+model Subscriber {
+  id              String           @id @default(cuid())
+  email           String           @unique
+  name            String?
+  source          String?
+  leadMagnet      String?
+  tags            String[]
+  status          SubscriberStatus @default(ACTIVE)
+  resendContactId String?
+  subscribedAt    DateTime         @default(now())
+  unsubscribedAt  DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  emailEvents      EmailEvent[]
+  sequenceProgress SequenceProgress[]
+
+  @@map("subscribers")
+}
+
+enum SubscriberStatus {
+  ACTIVE
+  UNSUBSCRIBED
+  BOUNCED
+  COMPLAINED
+}
+
+model EmailSequence {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  steps    EmailSequenceStep[]
+  progress SequenceProgress[]
+
+  @@map("email_sequences")
+}
+
+model EmailSequenceStep {
+  id         String  @id @default(cuid())
+  sequenceId String
+  stepNumber Int
+  subject    String
+  templateId String
+  delayHours Int
+  isActive   Boolean @default(true)
+
+  sequence EmailSequence @relation(fields: [sequenceId], references: [id], onDelete: Cascade)
+
+  @@unique([sequenceId, stepNumber])
+  @@map("email_sequence_steps")
+}
+
+model SequenceProgress {
+  id           String                 @id @default(cuid())
+  subscriberId String
+  sequenceId   String
+  currentStep  Int                    @default(0)
+  status       SequenceProgressStatus @default(ACTIVE)
+  nextSendAt   DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+
+  subscriber Subscriber    @relation(fields: [subscriberId], references: [id], onDelete: Cascade)
+  sequence   EmailSequence @relation(fields: [sequenceId], references: [id], onDelete: Cascade)
+
+  @@unique([subscriberId, sequenceId])
+  @@map("sequence_progress")
+}
+
+enum SequenceProgressStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+model EmailEvent {
+  id           String         @id @default(cuid())
+  subscriberId String
+  type         EmailEventType
+  subject      String?
+  templateId   String?
+  metadata     Json?
+  createdAt    DateTime       @default(now())
+
+  subscriber Subscriber @relation(fields: [subscriberId], references: [id], onDelete: Cascade)
+
+  @@index([subscriberId, type])
+  @@map("email_events")
+}
+
+enum EmailEventType {
+  SENT
+  DELIVERED
+  OPENED
+  CLICKED
+  BOUNCED
+  COMPLAINED
+}
+
+// ============================================
+// AI COMPLIANCE CHECKER - SAVED RESULTS
+// ============================================
+
+model SavedComplianceResult {
+  id          String   @id @default(cuid())
+  userId      String?
+  email       String?
+  role        String
+  systemType  String
+  riskLevel   String
+  geography   String[]
+  useCase     String
+  obligations Json
+  timeline    Json
+  controls    Json
+  aiResponse  String?  @db.Text
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([email])
+  @@map("saved_compliance_results")
+}
+
+// ============================================
+// ANALYTICS / EVENTS
+// ============================================
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  eventType String
+  eventData Json?
+  page      String?
+  referrer  String?
+  userAgent String?
+  ipHash    String?
+  sessionId String?
+  userId    String?
+  createdAt DateTime @default(now())
+
+  @@index([eventType, createdAt])
+  @@index([page, createdAt])
+  @@map("analytics_events")
+}
