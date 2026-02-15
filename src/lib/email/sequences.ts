@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
-import { resend } from "@/lib/resend";
+import { sendEmail } from "@/lib/email/send-email";
+import { getTemplateComponent } from "@/lib/email/templates";
 
 export async function startSequence(subscriberId: string, sequenceId: string) {
   const existing = await db.sequenceProgress.findFirst({
@@ -41,15 +42,32 @@ export async function processNextStep(progressId: string) {
     return;
   }
 
-  const fromEmail = process.env.RESEND_FROM_EMAIL || "hello@aigovhub.com";
+  const templateData = {
+    name: progress.subscriber.name ?? undefined,
+    email: progress.subscriber.email,
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://aigovhub.com",
+  };
+
+  const react = getTemplateComponent(nextStep.templateId, templateData);
+
+  if (!react) {
+    console.error(
+      `No template found for templateId: ${nextStep.templateId}`,
+    );
+    return;
+  }
 
   try {
-    await resend.emails.send({
-      from: fromEmail,
+    const result = await sendEmail({
       to: progress.subscriber.email,
       subject: nextStep.subject,
-      html: `<p>Template: ${nextStep.templateId}</p>`,
+      react,
     });
+
+    if (!result.success) {
+      console.error("Failed to send sequence email:", result.error);
+      return;
+    }
 
     await db.emailEvent.create({
       data: {

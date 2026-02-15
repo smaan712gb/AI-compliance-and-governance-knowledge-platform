@@ -287,8 +287,11 @@ model ContentPage {
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
+  agentGenerated Boolean       @default(false)
+
   vendorMentions ContentVendorMention[]
   affiliateLinks ContentAffiliateLink[]
+  agentTask      AgentTask?
 
   @@index([type, status])
   @@index([slug])
@@ -537,4 +540,190 @@ model AnalyticsEvent {
   @@index([eventType, createdAt])
   @@index([page, createdAt])
   @@map("analytics_events")
+}
+
+// ============================================
+// AUTONOMOUS AI AGENT PIPELINE
+// ============================================
+
+enum AgentSourceType {
+  RSS_FEED
+  WEBSITE
+  REGULATORY_BODY
+  RESEARCH_PAPER
+  INDUSTRY_REPORT
+}
+
+enum AgentTaskType {
+  BLOG_POST
+  BEST_OF
+  COMPARISON
+  ALTERNATIVES
+  GUIDE
+  NEWS_BRIEF
+  VENDOR_UPDATE
+}
+
+enum AgentTaskStatus {
+  PLANNED
+  WRITING
+  IN_REVIEW
+  APPROVED
+  PUBLISHED
+  REJECTED
+}
+
+enum AgentRunStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+  PARTIAL
+}
+
+enum SocialPlatform {
+  TWITTER
+  LINKEDIN
+  NEWSLETTER
+}
+
+enum SocialPostStatus {
+  DRAFT
+  APPROVED
+  POSTED
+  FAILED
+}
+
+model AgentSource {
+  id                 String          @id @default(cuid())
+  name               String
+  url                String
+  type               AgentSourceType
+  category           String
+  isActive           Boolean         @default(true)
+  lastFetchedAt      DateTime?
+  fetchIntervalHours Int             @default(24)
+  reliability        Float           @default(0.8)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  evidenceCards EvidenceCard[]
+
+  @@map("agent_sources")
+}
+
+model EvidenceCard {
+  id             String   @id @default(cuid())
+  sourceId       String
+  title          String
+  url            String
+  summary        String   @db.Text
+  keyFindings    Json
+  relevanceScore Float
+  category       String
+  tags           String[]
+  rawContent     String?  @db.Text
+  isUsed         Boolean  @default(false)
+  expiresAt      DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  source       AgentSource         @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  taskEvidence AgentTaskEvidence[]
+
+  @@index([isUsed, relevanceScore])
+  @@index([url])
+  @@map("evidence_cards")
+}
+
+model AgentTask {
+  id              String          @id @default(cuid())
+  type            AgentTaskType
+  title           String
+  slug            String
+  brief           String          @db.Text
+  targetKeywords  String[]
+  targetWordCount Int             @default(1500)
+  priority        Int             @default(5)
+  status          AgentTaskStatus @default(PLANNED)
+  contentPageId   String?         @unique
+  generatedBody   String?         @db.Text
+  generatedMeta   Json?
+  qaScore         Float?
+  qaFeedback      String?         @db.Text
+  rewriteCount    Int             @default(0)
+  runId           String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  contentPage ContentPage?        @relation(fields: [contentPageId], references: [id])
+  evidence    AgentTaskEvidence[]
+  socialPosts SocialPostDraft[]
+  run         AgentRun?           @relation(fields: [runId], references: [id])
+
+  @@index([status])
+  @@index([runId])
+  @@map("agent_tasks")
+}
+
+model AgentTaskEvidence {
+  id             String @id @default(cuid())
+  taskId         String
+  evidenceCardId String
+
+  task         AgentTask    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  evidenceCard EvidenceCard @relation(fields: [evidenceCardId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, evidenceCardId])
+  @@map("agent_task_evidence")
+}
+
+model AgentRun {
+  id                String         @id @default(cuid())
+  status            AgentRunStatus @default(RUNNING)
+  triggeredBy       String         @default("cron")
+  researchCount     Int            @default(0)
+  tasksPlanned      Int            @default(0)
+  articlesWritten   Int            @default(0)
+  articlesApproved  Int            @default(0)
+  articlesPublished Int            @default(0)
+  totalTokensUsed   Int            @default(0)
+  totalCostUsd      Float          @default(0)
+  errorLog          Json?
+  startedAt         DateTime       @default(now())
+  completedAt       DateTime?
+
+  tasks AgentTask[]
+
+  @@index([status])
+  @@index([startedAt])
+  @@map("agent_runs")
+}
+
+model AgentSettings {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("agent_settings")
+}
+
+model SocialPostDraft {
+  id           String           @id @default(cuid())
+  taskId       String
+  platform     SocialPlatform
+  content      String           @db.Text
+  hashtags     String[]
+  status       SocialPostStatus @default(DRAFT)
+  scheduledFor DateTime?
+  postedAt     DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  task AgentTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@map("social_post_drafts")
 }

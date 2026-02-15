@@ -9,13 +9,25 @@ interface Props {
 export async function GET(request: NextRequest, { params }: Props) {
   const { id } = await params;
   try {
+    const session = await auth();
+    const isAdmin =
+      session?.user?.role &&
+      ["ADMIN", "SUPER_ADMIN"].includes(session.user.role);
+
     const page = await db.contentPage.findUnique({
       where: { id },
       include: { vendorMentions: { include: { vendor: true } } },
     });
+
     if (!page) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
+
+    // Non-admin users can only see published content
+    if (!isAdmin && page.status !== "PUBLISHED") {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
     return NextResponse.json(page);
   } catch {
     return NextResponse.json({ error: "Failed to fetch content" }, { status: 500 });

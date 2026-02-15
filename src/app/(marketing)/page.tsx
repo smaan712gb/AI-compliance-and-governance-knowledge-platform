@@ -17,6 +17,7 @@ import {
   Clock,
   Zap,
 } from "lucide-react";
+import { InlineCaptureForm } from "@/components/email-capture/inline-capture-form";
 
 export default function HomePage() {
   return (
@@ -353,30 +354,14 @@ export default function HomePage() {
 
       {/* Email Capture */}
       <section className="py-20">
-        <div className="container mx-auto px-4">
-          <Card className="max-w-2xl mx-auto text-center p-8">
-            <h2 className="text-2xl font-bold">
-              Stay Ahead of AI Regulations
-            </h2>
-            <p className="mt-3 text-muted-foreground">
-              Get weekly updates on AI governance, new compliance requirements,
-              and vendor reviews. Plus a free AI Due Diligence Checklist.
-            </p>
-            <form className="mt-6 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your work email"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                required
-              />
-              <Button type="submit" className="shrink-0">
-                Subscribe
-              </Button>
-            </form>
-            <p className="mt-3 text-xs text-muted-foreground">
-              Free. Unsubscribe anytime. No spam.
-            </p>
-          </Card>
+        <div className="container mx-auto px-4 max-w-2xl">
+          <InlineCaptureForm
+            source="homepage"
+            title="Stay Ahead of AI Regulations"
+            description="Get weekly updates on AI governance, new compliance requirements, and vendor reviews. Plus a free AI Due Diligence Checklist."
+            buttonText="Get Free Checklist"
+            placeholder="Enter your work email"
+          />
         </div>
       </section>
     </>

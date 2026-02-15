@@ -10,6 +10,7 @@ interface InlineCaptureFormProps {
   title?: string;
   description?: string;
   buttonText?: string;
+  placeholder?: string;
   className?: string;
 }
 
@@ -19,6 +20,7 @@ export function InlineCaptureForm({
   title = "Stay Updated on AI Governance",
   description = "Get the latest compliance insights, tool updates, and regulatory changes delivered to your inbox.",
   buttonText = "Subscribe",
+  placeholder = "Enter your email",
   className = "",
 }: InlineCaptureFormProps) {
   const [email, setEmail] = useState("");
@@ -67,7 +69,7 @@ export function InlineCaptureForm({
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Input
           type="email"
-          placeholder="Enter your email"
+          placeholder={placeholder}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required

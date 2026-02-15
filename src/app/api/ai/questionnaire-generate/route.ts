@@ -5,9 +5,28 @@ import {
   QUESTIONNAIRE_SYSTEM_PROMPT,
 } from "@/lib/ai/questionnaire-engine";
 import { deepseek } from "@/lib/deepseek";
+import { auth } from "@/lib/auth";
+import { checkAIRateLimit } from "@/lib/utils/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await auth();
+
+    const identifier = session?.user?.email || req.headers.get("x-forwarded-for") || "anonymous";
+    const rateLimit = await checkAIRateLimit(identifier, !!session?.user);
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "RATE_LIMIT_EXCEEDED",
+            message: `Too many requests. Try again in ${Math.ceil((rateLimit.reset - Date.now()) / 60000)} minutes.`,
+          },
+        },
+        { status: 429, headers: { "Retry-After": String(Math.ceil((rateLimit.reset - Date.now()) / 1000)) } }
+      );
+    }
+
     const body = await req.json();
     const parsed = questionnaireSchema.safeParse(body);
 

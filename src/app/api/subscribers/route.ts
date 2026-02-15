@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     // Start welcome drip sequence
     const welcomeSequence = await db.emailSequence.findFirst({
-      where: { name: "Welcome Sequence", isActive: true },
+      where: { name: "Welcome Funnel", isActive: true },
     });
     if (welcomeSequence) {
       await startSequence(subscriber.id, welcomeSequence.id);

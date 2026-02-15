@@ -48,6 +48,17 @@ export const mainNavItems = [
   },
 ] as const;
 
+export const adminNavItems = [
+  { title: "Dashboard", href: "/admin" },
+  { title: "Content", href: "/admin/content" },
+  { title: "Vendors", href: "/admin/vendors" },
+  { title: "Products", href: "/admin/products" },
+  { title: "Subscribers", href: "/admin/subscribers" },
+  { title: "Affiliates", href: "/admin/affiliates" },
+  { title: "Agent Pipeline", href: "/admin/agents" },
+  { title: "Analytics", href: "/admin/analytics" },
+] as const;
+
 export const footerNavItems = {
   tools: [
     { title: "AI Act Checker", href: "/ai-act-checker" },

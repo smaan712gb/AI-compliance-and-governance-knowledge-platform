@@ -6,11 +6,26 @@ import {
 } from "@/lib/ai/compliance-engine";
 import { deepseek } from "@/lib/deepseek";
 import { auth } from "@/lib/auth";
+import { checkAIRateLimit } from "@/lib/utils/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
-    // Rate limiting check via simple in-memory approach (Upstash when configured)
     const session = await auth();
+
+    const identifier = session?.user?.email || req.headers.get("x-forwarded-for") || "anonymous";
+    const rateLimit = await checkAIRateLimit(identifier, !!session?.user);
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "RATE_LIMIT_EXCEEDED",
+            message: `Too many requests. Try again in ${Math.ceil((rateLimit.reset - Date.now()) / 60000)} minutes.`,
+          },
+        },
+        { status: 429, headers: { "Retry-After": String(Math.ceil((rateLimit.reset - Date.now()) / 1000)) } }
+      );
+    }
 
     const body = await req.json();
     const parsed = complianceCheckSchema.safeParse(body);
