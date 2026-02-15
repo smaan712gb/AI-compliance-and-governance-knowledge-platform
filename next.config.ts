@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "avatars.githubusercontent.com" },
     ],
   },
+  serverExternalPackages: ["bcryptjs", "@prisma/client"],
   experimental: {
     serverActions: {
       bodySizeLimit: "2mb",
