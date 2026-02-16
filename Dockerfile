@@ -21,4 +21,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["npm", "start"]
+# Push schema + run the app
+CMD npx prisma db push --skip-generate && npm start
