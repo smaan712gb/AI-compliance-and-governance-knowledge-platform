@@ -9,6 +9,8 @@ const DEFAULT_CONFIG: PipelineConfig = {
   researchSourceLimit: 50,
   evidenceExpiryDays: 30,
   model: "deepseek-chat",
+  plannerModel: "deepseek-reasoner",
+  qaModel: "deepseek-reasoner",
   writerTemperature: 0.7,
   maxTokensPerArticle: 4000,
   budgetLimitUsd: 5.0,

@@ -87,10 +87,24 @@ export default async function AgentSettingsPage() {
     },
     {
       key: "model",
-      label: "DeepSeek Model",
-      description: "Which model to use for all agent calls",
+      label: "Default Model",
+      description: "Default model for Research, Writer, and Publisher agents",
       type: "string" as const,
       default: DEFAULT_CONFIG.model,
+    },
+    {
+      key: "plannerModel",
+      label: "Planner Model",
+      description: "Model for the Planner agent — deepseek-reasoner enables chain-of-thought reasoning",
+      type: "string" as const,
+      default: DEFAULT_CONFIG.plannerModel,
+    },
+    {
+      key: "qaModel",
+      label: "QA Model",
+      description: "Model for the QA agent — deepseek-reasoner enables deep fact-checking and reasoning",
+      type: "string" as const,
+      default: DEFAULT_CONFIG.qaModel,
     },
     {
       key: "writerTemperature",

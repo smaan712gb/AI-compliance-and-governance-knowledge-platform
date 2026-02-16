@@ -71,6 +71,43 @@ function stripHtml(html: string): string {
     .trim();
 }
 
+/**
+ * Fetch the full article content from a URL when RSS content is thin.
+ * Falls back to empty string on failure (caller uses RSS content instead).
+ */
+async function fetchFullArticleContent(url: string): Promise<string> {
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "AIGovHub Research Agent/1.0",
+        Accept: "text/html, application/xhtml+xml",
+      },
+      signal: AbortSignal.timeout(10000),
+    });
+
+    if (!response.ok) return "";
+
+    const html = await response.text();
+
+    // Extract main content area — look for <article>, <main>, or fall back to full body
+    const articleMatch = html.match(/<article[^>]*>([\s\S]*?)<\/article>/i);
+    const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
+
+    let content: string;
+    if (articleMatch) {
+      content = articleMatch[1];
+    } else if (mainMatch) {
+      content = mainMatch[1];
+    } else {
+      content = html;
+    }
+
+    return stripHtml(content).slice(0, 12000);
+  } catch {
+    return "";
+  }
+}
+
 // ============================================
 // RESEARCH AGENT
 // ============================================
@@ -176,9 +213,19 @@ export async function runResearchAgent(
 
             if (existing) continue;
 
-            // Extract and truncate content to avoid excessive token usage
-            const rawContent = stripHtml(extractContent(item));
-            const truncatedContent = rawContent.slice(0, 6000);
+            // Extract content from RSS, attempt to fetch full article if thin
+            const rssContent = stripHtml(extractContent(item));
+            let articleContent = rssContent;
+
+            // If RSS content is thin (< 1000 chars), try fetching the full article
+            if (rssContent.length < 1000 && link) {
+              const fullContent = await fetchFullArticleContent(link);
+              if (fullContent.length > rssContent.length) {
+                articleContent = fullContent;
+              }
+            }
+
+            const truncatedContent = articleContent.slice(0, 12000);
 
             if (!truncatedContent || truncatedContent.length < 50) continue;
 
@@ -246,6 +293,60 @@ export async function runResearchAgent(
             : String(sourceError);
         errors.push(`Source "${source.name}" failed: ${message}`);
         // Continue to next source
+      }
+    }
+
+    // 6. Cross-reference newly created evidence cards
+    // Boost relevance when multiple sources corroborate the same topic
+    if (newEvidenceCards >= 2) {
+      try {
+        const recentCards = await db.evidenceCard.findMany({
+          where: {
+            createdAt: { gte: new Date(Date.now() - 60 * 60 * 1000) },
+            isUsed: false,
+          },
+          select: { id: true, title: true, category: true, tags: true, relevanceScore: true },
+        });
+
+        const categoryGroups = new Map<string, typeof recentCards>();
+        for (const card of recentCards) {
+          const group = categoryGroups.get(card.category) || [];
+          group.push(card);
+          categoryGroups.set(card.category, group);
+        }
+
+        for (const [, cards] of categoryGroups) {
+          if (cards.length < 2) continue;
+
+          for (let i = 0; i < cards.length; i++) {
+            for (let j = i + 1; j < cards.length; j++) {
+              const tagsA = new Set(cards[i].tags);
+              const commonTags = cards[j].tags.filter((t) => tagsA.has(t));
+
+              if (commonTags.length >= 2) {
+                const boost = Math.min(0.15, commonTags.length * 0.05);
+                for (const card of [cards[i], cards[j]]) {
+                  const newScore = Math.min(1.0, card.relevanceScore + boost);
+                  if (newScore > card.relevanceScore) {
+                    await db.evidenceCard.update({
+                      where: { id: card.id },
+                      data: { relevanceScore: newScore },
+                    });
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        console.log(
+          `[ResearchAgent] Cross-reference complete for ${recentCards.length} evidence cards`,
+        );
+      } catch (crossRefError) {
+        console.warn(
+          "[ResearchAgent] Cross-reference step failed:",
+          crossRefError instanceof Error ? crossRefError.message : String(crossRefError),
+        );
       }
     }
 

@@ -144,6 +144,8 @@ export interface PipelineConfig {
   researchSourceLimit: number;
   evidenceExpiryDays: number;
   model: string;
+  plannerModel: string;
+  qaModel: string;
   writerTemperature: number;
   maxTokensPerArticle: number;
   budgetLimitUsd: number;
@@ -167,16 +169,33 @@ export const TASK_TYPE_TO_CONTENT_TYPE: Record<AgentTaskType, ContentType> = {
 // TOKEN COST TRACKING
 // ============================================
 
-// DeepSeek pricing (approximate)
-export const DEEPSEEK_COST_PER_1K_INPUT = 0.00014;
-export const DEEPSEEK_COST_PER_1K_OUTPUT = 0.00028;
+// DeepSeek Chat pricing
+export const DEEPSEEK_CHAT_COST_PER_1K_INPUT = 0.00014;
+export const DEEPSEEK_CHAT_COST_PER_1K_OUTPUT = 0.00028;
+
+// DeepSeek Reasoner pricing (chain-of-thought model)
+export const DEEPSEEK_REASONER_COST_PER_1K_INPUT = 0.00055;
+export const DEEPSEEK_REASONER_COST_PER_1K_OUTPUT = 0.00219;
+
+// Backward-compatible aliases
+export const DEEPSEEK_COST_PER_1K_INPUT = DEEPSEEK_CHAT_COST_PER_1K_INPUT;
+export const DEEPSEEK_COST_PER_1K_OUTPUT = DEEPSEEK_CHAT_COST_PER_1K_OUTPUT;
 
 export function estimateCost(
   inputTokens: number,
   outputTokens: number,
+  model: string = "deepseek-chat",
 ): number {
+  const isReasoner = model === "deepseek-reasoner";
+  const inputPrice = isReasoner
+    ? DEEPSEEK_REASONER_COST_PER_1K_INPUT
+    : DEEPSEEK_CHAT_COST_PER_1K_INPUT;
+  const outputPrice = isReasoner
+    ? DEEPSEEK_REASONER_COST_PER_1K_OUTPUT
+    : DEEPSEEK_CHAT_COST_PER_1K_OUTPUT;
+
   return (
-    (inputTokens / 1000) * DEEPSEEK_COST_PER_1K_INPUT +
-    (outputTokens / 1000) * DEEPSEEK_COST_PER_1K_OUTPUT
+    (inputTokens / 1000) * inputPrice +
+    (outputTokens / 1000) * outputPrice
   );
 }

@@ -115,7 +115,7 @@ export async function runQAAgent(
           metaDescription: (meta.metaDescription as string) || "",
         };
 
-        // 2b. Call DeepSeek for QA review
+        // 2b. Call DeepSeek for QA review (uses reasoner model for deep thinking)
         const result = await callDeepSeek({
           systemPrompt: QA_SYSTEM_PROMPT,
           userPrompt: buildQAUserPrompt(
@@ -123,11 +123,20 @@ export async function runQAAgent(
             task.brief,
             task.targetKeywords,
           ),
+          model: config.qaModel,
           jsonMode: true,
+          maxTokens: 4000,
         });
 
         totalTokens += result.totalTokens;
         totalCost += result.costUsd;
+
+        // Log reasoning chain if available (deep thinking mode)
+        if (result.reasoningContent) {
+          console.log(
+            `[QAAgent] Task ${task.id} reasoning (${result.reasoningTokens} tokens, model: ${result.modelUsed}):\n${result.reasoningContent.slice(0, 500)}...`,
+          );
+        }
 
         // 2c. Parse and validate the QA report
         const rawReport = parseJsonResponse<{
@@ -205,6 +214,11 @@ export async function runQAAgent(
         reports.push(report);
 
         // 2h. Decision logic
+        // Append reasoning chain to feedback for transparency
+        const reasoningNote = result.reasoningContent
+          ? `\n\n--- QA Reasoning Chain ---\n${result.reasoningContent.slice(0, 2000)}`
+          : "";
+
         if (averageScore >= config.minQAScore) {
           // APPROVED
           await db.agentTask.update({
@@ -212,7 +226,7 @@ export async function runQAAgent(
             data: {
               status: "APPROVED",
               qaScore: averageScore,
-              qaFeedback: rawReport.feedback,
+              qaFeedback: rawReport.feedback + reasoningNote,
             },
           });
           approvedCount++;

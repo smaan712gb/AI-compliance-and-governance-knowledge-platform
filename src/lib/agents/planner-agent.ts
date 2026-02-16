@@ -91,13 +91,20 @@ export async function runPlannerAgent(
         vendorNames,
         config.dailyArticleTarget,
       ),
-      model: config.model,
+      model: config.plannerModel,
       jsonMode: true,
       maxTokens: 3000,
     });
 
     totalTokens += result.totalTokens;
     totalCost += result.costUsd;
+
+    // Log reasoning chain if available (deep thinking mode)
+    if (result.reasoningContent) {
+      console.log(
+        `[PlannerAgent] Reasoning (${result.reasoningTokens} tokens, model: ${result.modelUsed}):\n${result.reasoningContent.slice(0, 500)}...`,
+      );
+    }
 
     // 6. Parse response
     const parsed = parseJsonResponse<{ briefs: ContentBrief[] }>(
