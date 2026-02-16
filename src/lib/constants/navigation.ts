@@ -73,6 +73,7 @@ export const footerNavItems = {
   company: [
     { title: "About", href: "/about" },
     { title: "Pricing", href: "/pricing" },
+    { title: "How We Evaluate", href: "/how-we-evaluate" },
     { title: "Contact", href: "/contact" },
   ],
   legal: [

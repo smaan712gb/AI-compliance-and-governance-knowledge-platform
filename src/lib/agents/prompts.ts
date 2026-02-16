@@ -185,6 +185,10 @@ Writing guidelines:
 7. LENGTH: Match the target word count closely.
 8. FORMAT: Output clean HTML with semantic tags (h2, h3, p, ul, ol, li, strong, em, blockquote).
 9. FACTUAL ACCURACY: Use ONLY the dates and facts from the REGULATORY FACT SHEET below. NEVER invent or guess regulatory dates. If unsure, hedge with "organizations should verify current timelines" rather than stating a wrong date.
+10. NO LEGAL CLAIMS: NEVER write "legally reviewed", "attorney-approved", "constitutes legal advice" or similar. Always include: "This content is for informational purposes only and does not constitute legal advice."
+11. PRICING: When mentioning vendor pricing, always use ranges or qualifiers like "starting from", "approximately", "as of [year]". If pricing is unknown, write "Contact vendor for pricing" — NEVER invent specific prices. For comparison tables, use "Contact sales" or "Not disclosed" when pricing is unavailable.
+12. COMPARISON TABLES: Every cell in a comparison table MUST contain verifiable information. If data is unknown for a vendor/feature, use "Not disclosed" or "Unknown" — NEVER guess or fill in plausible-sounding data.
+13. AFFILIATE DISCLOSURE: For BEST_OF and COMPARISON articles, include a brief note near the top: "Some links in this article are affiliate links. See our <a href='/disclosure'>disclosure policy</a>."
 
 Do NOT include the title in the body (it's rendered separately).
 Do NOT use H1 tags in the body.
@@ -285,6 +289,13 @@ Common errors to catch:
 - Wrong ISO 42001 date (December 2023)
 - Invented penalty amounts or thresholds
 - Attributing legal requirements to the wrong article/section
+
+ADDITIONAL GUARDRAILS TO VERIFY:
+- No "legally reviewed" or "attorney-approved" claims (we are NOT a law firm)
+- No invented vendor pricing — must use ranges, "Contact sales", or "Not disclosed"
+- Comparison tables must NOT have guessed data — empty cells must say "Unknown" or "Not disclosed"
+- BEST_OF and COMPARISON articles must include affiliate disclosure near the top
+- Article must include informational-purposes disclaimer if giving compliance guidance
 
 ${REGULATORY_FACT_SHEET}
 

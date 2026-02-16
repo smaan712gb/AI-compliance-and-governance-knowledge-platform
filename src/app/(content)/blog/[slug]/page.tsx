@@ -65,6 +65,7 @@ export default async function BlogPostPage({ params }: Props) {
           {post.publishedAt && (
             <span>{formatDate(post.publishedAt)}</span>
           )}
+          <span>Updated: {formatDate(post.updatedAt)}</span>
           <span>{post.viewCount} views</span>
         </div>
       </div>
