@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useActionState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
@@ -16,51 +16,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Shield } from "lucide-react";
+import { loginWithCredentials } from "./actions";
 
 function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      console.log("[LOGIN] Attempting signIn with email:", email);
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-        callbackUrl,
-      });
-
-      console.log("[LOGIN] signIn result:", JSON.stringify(result));
-
-      if (result?.error) {
-        setError(
-          result.error === "CredentialsSignin"
-            ? "Invalid email or password"
-            : `Login failed: ${result.error}`
-        );
-        setLoading(false);
-      } else if (result?.ok) {
-        // Success - redirect
-        window.location.href = result.url || callbackUrl;
-      } else {
-        setError("Unexpected response from server");
-        setLoading(false);
-      }
-    } catch (err) {
-      console.error("[LOGIN] signIn exception:", err);
-      setError("Network error. Please try again.");
-      setLoading(false);
-    }
-  }
+  const [state, formAction, isPending] = useActionState(loginWithCredentials, undefined);
 
   return (
     <Card className="w-full max-w-md">
@@ -102,21 +63,22 @@ function LoginForm() {
           </div>
         </div>
 
-        {/* Email/Password Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
+        {/* Email/Password Form — uses server action */}
+        <form action={formAction} className="space-y-4">
+          <input type="hidden" name="callbackUrl" value={callbackUrl} />
+          {state?.error && (
             <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-              {error}
+              {state.error}
             </div>
           )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
+              name="email"
               type="email"
+              autoComplete="email"
               placeholder="name@company.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -132,14 +94,14 @@ function LoginForm() {
             </div>
             <Input
               id="password"
+              name="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
               required
             />
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Signing in..." : "Sign In"}
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? "Signing in..." : "Sign In"}
           </Button>
         </form>
       </CardContent>
