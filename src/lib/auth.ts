@@ -79,6 +79,7 @@ if (process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET) {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  debug: true, // Enable verbose logging for debugging
   trustHost: true,
   // adapter: PrismaAdapter(db), // Disabled - causes issues with credentials provider
   session: { strategy: "jwt" },

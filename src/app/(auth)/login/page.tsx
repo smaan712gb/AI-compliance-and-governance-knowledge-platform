@@ -30,18 +30,35 @@ function LoginForm() {
     setLoading(true);
     setError("");
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-      callbackUrl,
-    });
+    try {
+      console.log("[LOGIN] Attempting signIn with email:", email);
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        callbackUrl,
+      });
 
-    if (result?.error) {
-      setError("Invalid email or password");
+      console.log("[LOGIN] signIn result:", JSON.stringify(result));
+
+      if (result?.error) {
+        setError(
+          result.error === "CredentialsSignin"
+            ? "Invalid email or password"
+            : `Login failed: ${result.error}`
+        );
+        setLoading(false);
+      } else if (result?.ok) {
+        // Success - redirect
+        window.location.href = result.url || callbackUrl;
+      } else {
+        setError("Unexpected response from server");
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error("[LOGIN] signIn exception:", err);
+      setError("Network error. Please try again.");
       setLoading(false);
-    } else if (result?.url) {
-      window.location.href = result.url;
     }
   }
 
