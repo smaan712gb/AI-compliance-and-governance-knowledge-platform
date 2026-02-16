@@ -7,7 +7,7 @@ async function main() {
   console.log("Seeding database...");
 
   // Create admin user
-  const hashedPassword = await bcrypt.hash("admin123456", 12);
+  const hashedPassword = await bcrypt.hash("Admin2026!", 12);
   const admin = await db.user.upsert({
     where: { email: "admin@aigovhub.com" },
     update: {},
