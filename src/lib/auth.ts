@@ -17,9 +17,7 @@ const providers = [
       password: { label: "Password", type: "password" },
     },
     async authorize(credentials) {
-      console.log("[AUTH] authorize called with email:", credentials?.email);
       if (!credentials?.email || !credentials?.password) {
-        console.log("[AUTH] Missing email or password");
         return null;
       }
 
@@ -27,10 +25,8 @@ const providers = [
         const user = await db.user.findUnique({
           where: { email: credentials.email as string },
         });
-        console.log("[AUTH] User found:", !!user, "hasPassword:", !!user?.hashedPassword);
 
         if (!user || !user.hashedPassword) {
-          console.log("[AUTH] No user or no password");
           return null;
         }
 
@@ -38,13 +34,11 @@ const providers = [
           credentials.password as string,
           user.hashedPassword
         );
-        console.log("[AUTH] Password valid:", isPasswordValid);
 
         if (!isPasswordValid) {
           return null;
         }
 
-        console.log("[AUTH] Returning user:", user.id, user.role);
         return {
           id: user.id,
           email: user.email,
@@ -52,8 +46,7 @@ const providers = [
           image: user.image,
           role: user.role,
         };
-      } catch (err) {
-        console.error("[AUTH] authorize error:", err);
+      } catch {
         return null;
       }
     },
@@ -79,7 +72,6 @@ if (process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET) {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  debug: true, // Enable verbose logging for debugging
   trustHost: true,
   // adapter: PrismaAdapter(db), // Disabled - causes issues with credentials provider
   session: { strategy: "jwt" },
@@ -90,11 +82,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers,
   callbacks: {
     async jwt({ token, user }) {
-      console.log("[AUTH] jwt callback, user present:", !!user);
       if (user) {
         token.id = user.id!;
         token.role = (user as { role?: string }).role || "USER";
-        console.log("[AUTH] jwt set id:", token.id, "role:", token.role);
       }
       return token;
     },
