@@ -106,6 +106,62 @@ Plan exactly ${articleTarget} content pieces. Respond with JSON:
 }
 
 // ============================================
+// REGULATORY FACT SHEET — SINGLE SOURCE OF TRUTH
+// Injected into Writer + QA prompts to prevent hallucinated dates/facts.
+// Update this whenever regulations change.
+// ============================================
+
+export const REGULATORY_FACT_SHEET = `
+=== VERIFIED REGULATORY FACTS (use ONLY these dates/facts when writing) ===
+
+EU AI ACT TIMELINE:
+- Regulation (EU) 2024/1689 published in Official Journal: 12 July 2024.
+- Entered into force: 1 August 2024.
+- Prohibited AI practices (Article 5) + AI literacy obligations (Article 4): apply from 2 February 2025.
+- Codes of practice for GPAI models: expected by 2 May 2025.
+- Governance rules + obligations for general-purpose AI (GPAI) models: apply from 2 August 2025.
+- Obligations for high-risk AI systems (Annex III) + transparency obligations: apply from 2 August 2026.
+- Full applicability of the AI Act: 2 August 2026 (with exceptions below).
+- High-risk AI systems embedded in regulated products (Annex I, e.g. medical devices, machinery): extended transition until 2 August 2027.
+- Risk levels defined: Unacceptable (banned), High-risk, Limited risk (transparency), Minimal risk.
+- Penalties: up to EUR 35 million or 7% of global annual turnover for prohibited practices; EUR 15 million or 3% for other violations.
+- EU AI Office established within the European Commission to oversee GPAI and coordinate enforcement.
+- Each EU Member State must designate a national competent authority.
+
+NIST AI RISK MANAGEMENT FRAMEWORK (AI RMF 1.0):
+- Published: January 2023 by NIST.
+- Voluntary framework (not legally binding in the US).
+- Four core functions: Govern, Map, Measure, Manage.
+- Companion: NIST AI RMF Playbook provides suggested actions and references.
+- Generative AI Profile (NIST AI 600-1): published July 2024.
+
+ISO/IEC 42001:
+- Published: December 2023.
+- International standard for AI Management Systems (AIMS).
+- Certifiable standard (organizations can get audited and certified).
+- Aligned with other ISO management system standards (ISO 27001, ISO 9001).
+
+US EXECUTIVE ORDER ON AI (EO 14110):
+- Signed: 30 October 2023 by President Biden.
+- Revoked: 20 January 2025 by President Trump (EO 14148).
+- Current US approach: no comprehensive federal AI legislation as of early 2025.
+- State-level: Colorado AI Act (SB 24-205) signed May 2024, effective 1 February 2026.
+
+GDPR + AI:
+- GDPR has been in effect since 25 May 2018.
+- Article 22: rights related to automated decision-making including profiling.
+- DPIAs (Data Protection Impact Assessments) are required for high-risk AI processing.
+
+IMPORTANT WRITING RULES:
+- NEVER guess or invent regulatory dates. Use ONLY the dates above.
+- If you are unsure about a specific date or fact not listed here, write "as of [year]" or "organizations should verify the latest timeline" rather than stating a specific wrong date.
+- When citing the EU AI Act, always use the official short name "EU AI Act" or "AI Act" and reference Regulation (EU) 2024/1689.
+- Do NOT confuse "entered into force" (1 Aug 2024) with "fully applicable" (2 Aug 2026).
+- Do NOT confuse prohibited practices deadline (2 Feb 2025) with GPAI obligations (2 Aug 2025).
+===
+`;
+
+// ============================================
 // WRITER AGENT PROMPTS
 // ============================================
 
@@ -120,10 +176,13 @@ Writing guidelines:
 6. VALUE: Every section should teach the reader something actionable.
 7. LENGTH: Match the target word count closely.
 8. FORMAT: Output clean HTML with semantic tags (h2, h3, p, ul, ol, li, strong, em, blockquote).
+9. FACTUAL ACCURACY: Use ONLY the dates and facts from the REGULATORY FACT SHEET below. NEVER invent or guess regulatory dates. If unsure, hedge with "organizations should verify current timelines" rather than stating a wrong date.
 
 Do NOT include the title in the body (it's rendered separately).
 Do NOT use H1 tags in the body.
-Always respond with valid JSON.`;
+Always respond with valid JSON.
+
+${REGULATORY_FACT_SHEET}`;
 
 export function buildWriterUserPrompt(
   brief: string,
@@ -199,12 +258,26 @@ export const QA_SYSTEM_PROMPT = `You are a senior content quality reviewer for A
 
 You are tough but fair. A score of 7+ means publish-ready. Below 7 needs revision.
 
+CRITICAL — FACTUAL ACCURACY IS YOUR #1 PRIORITY:
+Before scoring anything else, cross-check EVERY regulatory date, deadline, and legal reference in the article against the REGULATORY FACT SHEET below. A single wrong date (e.g., saying EU AI Act prohibitions apply from August 2025 instead of February 2025) should IMMEDIATELY drop the accuracy score to 3 or below and trigger a rewrite. Wrong dates destroy our credibility as an AI governance authority.
+
+Common errors to catch:
+- Wrong EU AI Act dates (prohibited practices: 2 Feb 2025, GPAI: 2 Aug 2025, full: 2 Aug 2026)
+- Confusing "entered into force" (1 Aug 2024) with "fully applicable" (2 Aug 2026)
+- Citing revoked US Executive Order 14110 as if still active
+- Wrong NIST AI RMF publication date (January 2023, not 2022)
+- Wrong ISO 42001 date (December 2023)
+- Invented penalty amounts or thresholds
+- Attributing legal requirements to the wrong article/section
+
+${REGULATORY_FACT_SHEET}
+
 Scoring guide:
-- 9-10: Exceptional. Best-in-class content.
-- 7-8: Good. Publish-ready with minor notes.
-- 5-6: Needs work. Specific revisions required.
-- 3-4: Major issues. Significant rewrite needed.
-- 1-2: Unacceptable. Fundamental problems.
+- 9-10: Exceptional. Best-in-class content. All facts verified correct.
+- 7-8: Good. Publish-ready with minor notes. All regulatory facts correct.
+- 5-6: Needs work. Specific revisions required. Minor factual concerns.
+- 3-4: Major issues. Contains factual errors on dates or legal references. MUST rewrite.
+- 1-2: Unacceptable. Multiple factual errors. Fundamental problems.
 
 Always respond with valid JSON.`;
 
@@ -227,11 +300,17 @@ META DESCRIPTION: ${article.metaDescription}
 ARTICLE BODY:
 ${article.body}
 
-Score on these 8 dimensions (1-10 each) and provide specific feedback:
+STEP 1: FACT CHECK — Cross-check every date, deadline, penalty amount, and legal reference in the article against the REGULATORY FACT SHEET in your system prompt. List any errors found.
+
+STEP 2: Score on these 8 dimensions (1-10 each) and provide specific feedback. If any factual errors were found in Step 1, accuracy MUST be scored 3 or below.
 
 {
+  "factCheckErrors": [
+    "Description of factual error 1 (what article says vs what is correct)",
+    "Description of factual error 2"
+  ],
   "scores": {
-    "accuracy": <1-10>,
+    "accuracy": <1-10, MUST be <=3 if factCheckErrors is non-empty>,
     "seoOptimization": <1-10>,
     "readability": <1-10>,
     "completeness": <1-10>,
@@ -241,7 +320,7 @@ Score on these 8 dimensions (1-10 each) and provide specific feedback:
     "professionalTone": <1-10>
   },
   "averageScore": <calculated average>,
-  "feedback": "Overall assessment in 2-3 sentences",
+  "feedback": "Overall assessment in 2-3 sentences. MUST mention any factual errors found.",
   "suggestions": [
     "Specific actionable suggestion 1",
     "Specific actionable suggestion 2"

@@ -131,13 +131,37 @@ export async function runQAAgent(
 
         // 2c. Parse and validate the QA report
         const rawReport = parseJsonResponse<{
+          factCheckErrors?: string[];
           scores: Partial<QAScores>;
           averageScore?: number;
           feedback: string;
           suggestions: string[];
         }>(result.content);
 
-        // 2d. Validate all 8 score dimensions are present
+        // 2d. Enforce accuracy penalty if fact-check errors were found
+        const factErrors = rawReport.factCheckErrors || [];
+        if (factErrors.length > 0) {
+          console.warn(
+            `[QAAgent] Task ${task.id}: ${factErrors.length} fact-check error(s) found:`,
+            factErrors,
+          );
+          // Force accuracy score to 3 or below regardless of what DeepSeek scored
+          if (
+            rawReport.scores.accuracy &&
+            rawReport.scores.accuracy > 3
+          ) {
+            rawReport.scores.accuracy = 2;
+          }
+          // Prepend fact-check errors to suggestions for rewrite feedback
+          rawReport.suggestions = [
+            ...factErrors.map(
+              (e) => `FACTUAL ERROR — MUST FIX: ${e}`,
+            ),
+            ...(rawReport.suggestions || []),
+          ];
+        }
+
+        // 2f. Validate all 8 score dimensions are present
         const validatedScores = validateScores(rawReport.scores);
         if (!validatedScores) {
           console.error(
@@ -166,7 +190,7 @@ export async function runQAAgent(
           continue;
         }
 
-        // 2e. Calculate average score ourselves (don't trust DeepSeek's calculation)
+        // 2g. Calculate average score ourselves (don't trust DeepSeek's calculation)
         const averageScore = calculateAverageScore(validatedScores);
 
         const report: QAReport = {
@@ -180,7 +204,7 @@ export async function runQAAgent(
 
         reports.push(report);
 
-        // 2f. Decision logic
+        // 2h. Decision logic
         if (averageScore >= config.minQAScore) {
           // APPROVED
           await db.agentTask.update({
