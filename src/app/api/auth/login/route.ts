@@ -100,7 +100,11 @@ export async function POST(req: NextRequest) {
     response.cookies.set(cookieName, result.token, cookieOptions);
     return response;
   } catch (error) {
-    console.error("[LOGIN-API] Error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("[LOGIN-API] Error:", msg, error);
+    return NextResponse.json(
+      { error: "Internal server error", debug: msg },
+      { status: 500 },
+    );
   }
 }
