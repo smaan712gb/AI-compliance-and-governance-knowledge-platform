@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { loadConfig } from "@/lib/agents/config";
@@ -10,14 +10,19 @@ export const dynamic = "force-dynamic";
  * Health check for the agent pipeline.
  * Verifies: DB tables, config, DeepSeek connectivity, source availability.
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const session = await auth();
-    if (
-      !session?.user?.role ||
-      !["ADMIN", "SUPER_ADMIN"].includes(session.user.role)
-    ) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const cronSecret = req.headers.get("authorization")?.replace("Bearer ", "");
+    const hasValidSecret = process.env.CRON_SECRET && cronSecret === process.env.CRON_SECRET;
+
+    if (!hasValidSecret) {
+      const session = await auth();
+      if (
+        !session?.user?.role ||
+        !["ADMIN", "SUPER_ADMIN"].includes(session.user.role)
+      ) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
     }
 
     const checks: Record<string, { ok: boolean; detail: string }> = {};

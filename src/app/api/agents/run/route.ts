@@ -8,9 +8,15 @@ export const maxDuration = 300; // 5 minutes for full pipeline
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.role || !["ADMIN", "SUPER_ADMIN"].includes(session.user.role)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Accept either session auth (admin UI) or CRON_SECRET (API/testing)
+    const cronSecret = req.headers.get("authorization")?.replace("Bearer ", "");
+    const hasValidSecret = process.env.CRON_SECRET && cronSecret === process.env.CRON_SECRET;
+
+    if (!hasValidSecret) {
+      const session = await auth();
+      if (!session?.user?.role || !["ADMIN", "SUPER_ADMIN"].includes(session.user.role)) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
     }
 
     const body = await req.json().catch(() => ({}));
@@ -40,11 +46,16 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.role || !["ADMIN", "SUPER_ADMIN"].includes(session.user.role)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const cronSecret = req.headers.get("authorization")?.replace("Bearer ", "");
+    const hasValidSecret = process.env.CRON_SECRET && cronSecret === process.env.CRON_SECRET;
+
+    if (!hasValidSecret) {
+      const session = await auth();
+      if (!session?.user?.role || !["ADMIN", "SUPER_ADMIN"].includes(session.user.role)) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
     }
 
     const latestRun = await db.agentRun.findFirst({
