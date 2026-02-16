@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useActionState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
@@ -16,12 +16,42 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Shield } from "lucide-react";
-import { loginWithCredentials } from "./actions";
 
 function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
-  const [state, formAction, isPending] = useActionState(loginWithCredentials, undefined);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Invalid email or password");
+        setLoading(false);
+        return;
+      }
+
+      // Cookie is set by the API — redirect to dashboard
+      window.location.href = callbackUrl;
+    } catch {
+      setError("Network error. Please try again.");
+      setLoading(false);
+    }
+  }
 
   return (
     <Card className="w-full max-w-md">
@@ -63,12 +93,11 @@ function LoginForm() {
           </div>
         </div>
 
-        {/* Email/Password Form — uses server action */}
-        <form action={formAction} className="space-y-4">
-          <input type="hidden" name="callbackUrl" value={callbackUrl} />
-          {state?.error && (
+        {/* Email/Password Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
             <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-              {state.error}
+              {error}
             </div>
           )}
           <div className="space-y-2">
@@ -79,6 +108,8 @@ function LoginForm() {
               type="email"
               autoComplete="email"
               placeholder="name@company.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -97,11 +128,13 @@ function LoginForm() {
               name="password"
               type="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-          <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? "Signing in..." : "Sign In"}
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Signing in..." : "Sign In"}
           </Button>
         </form>
       </CardContent>
