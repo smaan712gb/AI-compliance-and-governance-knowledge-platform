@@ -1,9 +1,7 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,9 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Shield } from "lucide-react";
 
-function LoginForm() {
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -46,7 +42,7 @@ function LoginForm() {
       }
 
       // Cookie is set by the API — redirect to dashboard
-      window.location.href = callbackUrl;
+      window.location.href = "/dashboard";
     } catch {
       setError("Network error. Please try again.");
       setLoading(false);
@@ -64,35 +60,6 @@ function LoginForm() {
         <CardDescription>Sign in to your account</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* OAuth Buttons */}
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            variant="outline"
-            onClick={() => signIn("google", { callbackUrl })}
-            type="button"
-          >
-            Google
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => signIn("github", { callbackUrl })}
-            type="button"
-          >
-            GitHub
-          </Button>
-        </div>
-
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
-
         {/* Email/Password Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
@@ -114,15 +81,7 @@ function LoginForm() {
             />
           </div>
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
-              <Link
-                href="/forgot-password"
-                className="text-xs text-primary hover:underline"
-              >
-                Forgot password?
-              </Link>
-            </div>
+            <Label htmlFor="password">Password</Label>
             <Input
               id="password"
               name="password"
@@ -147,13 +106,5 @@ function LoginForm() {
         </p>
       </CardFooter>
     </Card>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense fallback={<div className="w-full max-w-md h-96 animate-pulse bg-muted rounded-lg" />}>
-      <LoginForm />
-    </Suspense>
   );
 }
