@@ -235,6 +235,83 @@ Expand AIGovHub from an AI governance-only platform into a comprehensive complia
 
 ---
 
+## Phase 5: HR & Employment Law Compliance (Month 6-7)
+
+### Why This Matters
+- Every company with employees is a potential customer — massive TAM
+- Employment law is changing faster than ever: pay transparency, AI hiring bans, remote work regulations
+- Laws vary by state/country — compliance officers are overwhelmed
+- Strong overlap with AI governance (AI in hiring is heavily regulated under EU AI Act)
+
+### Agent Sources to Add
+- SHRM (Society for Human Resource Management) news
+- EEOC (Equal Employment Opportunity Commission) enforcement actions
+- DOL (Department of Labor) regulatory updates
+- EU Pay Transparency Directive updates
+- State legislature trackers (pay transparency, AI hiring laws)
+- HR Dive, TLNT, People Management news feeds
+- Littler Mendelson, Fisher Phillips (employment law firm blogs)
+
+### New Content Topics
+- Pay transparency laws by state and country
+- AI in hiring compliance (NYC Local Law 144, EU AI Act Article 6)
+- Remote/hybrid work compliance across jurisdictions
+- DEI compliance requirements and reporting
+- Employee data privacy (workplace monitoring, BYOD policies)
+- Wage and hour compliance updates
+- Anti-discrimination and harassment policy requirements
+- Whistleblower protection regulations (EU Directive 2019/1937)
+- Immigration and work authorization compliance
+- Independent contractor vs employee classification (ABC test, IRS rules)
+
+### New Tool: HR Compliance Checker
+- Assessment wizard covering key employment law areas
+- Input: company size, locations (states/countries), workforce type
+- Evaluates: pay transparency, AI hiring, remote work, data privacy obligations
+- Maps to specific laws and jurisdictions
+- Outputs compliance score and state-by-state gap analysis
+
+### New Tool: AI Hiring Bias Audit Generator
+- Input: AI tools used in recruitment, job categories, demographics
+- AI generates audit framework per NYC Local Law 144 and EU AI Act
+- Covers bias testing requirements, notification obligations, record keeping
+- Maps to EEOC guidance and EU high-risk AI requirements
+
+### New Tool: Pay Transparency Compliance Checker
+- Input: company locations, job posting practices, pay structures
+- Evaluates compliance with state laws (CO, CA, NY, WA, etc.) and EU directive
+- Outputs which locations require salary ranges, pay gap reporting, etc.
+- Generates compliant job posting template language
+
+### Vendors to Add (HR Compliance)
+- Deel, Remote, Oyster, Papaya Global (global employment/EOR)
+- Rippling, BambooHR, Gusto (HR platforms)
+- Syndio, PayScale, Salary.com (pay equity/transparency)
+- HireVue, Eightfold, Pymetrics (AI hiring — with bias audit context)
+- Ethena, Traliant (compliance training)
+- OnBlick, Envoy Global (immigration compliance)
+- ~35-45 vendors
+
+### Affiliate Program Targets
+| Vendor | Commission | Type |
+|--------|-----------|------|
+| Deel | 15-20% recurring | PartnerStack |
+| Remote | $500/referral | Direct |
+| Rippling | $500-1000/referral | Direct |
+| Gusto | $200/referral | Direct |
+| BambooHR | 15% recurring | Direct |
+
+### Why HR + AI Governance Is a Unique Combination
+- AI in hiring is classified as HIGH-RISK under EU AI Act (Article 6, Annex III)
+- NYC already requires bias audits for AI hiring tools (Local Law 144)
+- Illinois, Maryland, Colorado have AI hiring disclosure laws
+- AIGovHub already covers AI governance — adding HR compliance creates a natural cross-sell
+- Compliance officers managing AI governance often also handle employment law
+
+### Estimated Work: 3-4 days
+
+---
+
 ## Technical Implementation (Shared Across All Phases)
 
 ### Database Changes
@@ -341,7 +418,8 @@ src/app/api/ai/{tool-name}/route.ts      — API endpoint
 | 2 | Cybersecurity (SOC 2/ISO) | Week 10-12 | 3-4 days |
 | 3 | ESG/Sustainability (CSRD) | Week 14-16 | 3-4 days |
 | 4 | Fintech (AML/KYC/MiCA) | Week 18-22 | 4-5 days |
-| Rebrand | ComplianceHub.io | Week 20+ | 1 day |
+| 5 | HR & Employment Law | Week 24-28 | 3-4 days |
+| Rebrand | ComplianceHub.io | Week 24+ | 1 day |
 
 ---
 
