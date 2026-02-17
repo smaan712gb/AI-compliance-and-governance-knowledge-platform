@@ -18,7 +18,7 @@ export const revalidate = 3600;
 
 export default async function BlogPage() {
   const posts = await db.contentPage.findMany({
-    where: { type: "BLOG_POST", status: "PUBLISHED" },
+    where: { status: "PUBLISHED" },
     orderBy: { publishedAt: "desc" },
   });
 
@@ -33,37 +33,54 @@ export default async function BlogPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
-        {posts.map((post) => (
-          <Link key={post.id} href={`/blog/${post.slug}`}>
-            <Card className="h-full hover:border-primary transition-colors cursor-pointer">
-              {post.featuredImageUrl && (
-                <img
-                  src={post.featuredImageUrl}
-                  alt={post.title}
-                  className="w-full h-48 object-cover rounded-t-lg"
-                />
-              )}
-              <CardContent className={post.featuredImageUrl ? "pt-4" : "pt-6"}>
-                <div className="flex gap-2 mb-2">
-                  {post.tags.slice(0, 2).map((tag) => (
-                    <Badge key={tag} variant="secondary" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-                <h2 className="font-semibold line-clamp-2">{post.title}</h2>
-                {post.excerpt && (
-                  <p className="text-sm text-muted-foreground mt-2 line-clamp-3">
-                    {post.excerpt}
-                  </p>
+        {posts.map((post) => {
+          const typePathMap: Record<string, string> = {
+            BLOG_POST: "blog",
+            GUIDE: "guides",
+            BEST_OF: "best",
+            COMPARISON: "compare",
+            ALTERNATIVES: "alternatives",
+          };
+          const basePath = typePathMap[post.type] || "blog";
+          const typeLabel = post.type === "BLOG_POST" ? null : post.type.replace(/_/g, " ");
+
+          return (
+            <Link key={post.id} href={`/${basePath}/${post.slug}`}>
+              <Card className="h-full hover:border-primary transition-colors cursor-pointer">
+                {post.featuredImageUrl && (
+                  <img
+                    src={post.featuredImageUrl}
+                    alt={post.title}
+                    className="w-full h-48 object-cover rounded-t-lg"
+                  />
                 )}
-                <p className="text-xs text-muted-foreground mt-3">
-                  {post.publishedAt ? formatDate(post.publishedAt) : ""}
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+                <CardContent className={post.featuredImageUrl ? "pt-4" : "pt-6"}>
+                  <div className="flex gap-2 mb-2">
+                    {typeLabel && (
+                      <Badge variant="outline" className="text-xs capitalize">
+                        {typeLabel.toLowerCase()}
+                      </Badge>
+                    )}
+                    {post.tags.slice(0, 2).map((tag) => (
+                      <Badge key={tag} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                  <h2 className="font-semibold line-clamp-2">{post.title}</h2>
+                  {post.excerpt && (
+                    <p className="text-sm text-muted-foreground mt-2 line-clamp-3">
+                      {post.excerpt}
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-3">
+                    {post.publishedAt ? formatDate(post.publishedAt) : ""}
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
         {posts.length === 0 && (
           <div className="col-span-full text-center py-12 text-muted-foreground">
             Blog posts coming soon. Subscribe to be notified!
