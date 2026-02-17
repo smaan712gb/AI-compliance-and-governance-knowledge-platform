@@ -60,9 +60,11 @@ const tiers = [
 export default function SubscriptionPage() {
   const { data: session } = useSession();
   const [loading, setLoading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubscribe(priceId: string) {
     setLoading(priceId);
+    setError(null);
     try {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
@@ -75,9 +77,11 @@ export default function SubscriptionPage() {
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
+      } else {
+        setError(data.error || "Failed to start checkout");
       }
     } catch {
-      // Error handling
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(null);
     }
@@ -85,6 +89,7 @@ export default function SubscriptionPage() {
 
   async function handleManage() {
     setLoading("manage");
+    setError(null);
     try {
       const res = await fetch("/api/stripe/portal", {
         method: "POST",
@@ -92,9 +97,11 @@ export default function SubscriptionPage() {
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
+      } else {
+        setError(data.error || "No active subscription found. Subscribe to a plan first.");
       }
     } catch {
-      // Error handling
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(null);
     }
@@ -149,6 +156,12 @@ export default function SubscriptionPage() {
           </Card>
         ))}
       </div>
+
+      {error && (
+        <div className="mt-4 p-3 bg-destructive/10 text-destructive text-sm rounded-md">
+          {error}
+        </div>
+      )}
 
       {/* Manage Existing */}
       <Card className="mt-8">

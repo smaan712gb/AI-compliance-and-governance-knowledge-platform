@@ -17,7 +17,11 @@ export async function POST() {
 
     return NextResponse.json({ url: portalSession.url });
   } catch (error) {
-    console.error("Portal error:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Portal error:", message);
+    if (message.includes("No Stripe customer")) {
+      return NextResponse.json({ error: "No active subscription found. Subscribe to a plan first." }, { status: 400 });
+    }
     return NextResponse.json({ error: "Failed to create portal session" }, { status: 500 });
   }
 }
