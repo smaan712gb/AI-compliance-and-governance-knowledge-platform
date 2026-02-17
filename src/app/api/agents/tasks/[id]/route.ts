@@ -5,13 +5,18 @@ import { db } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.role || !["ADMIN", "SUPER_ADMIN"].includes(session.user.role)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const cronSecret = req.headers.get("authorization")?.replace("Bearer ", "");
+    const hasValidSecret = process.env.CRON_SECRET && cronSecret === process.env.CRON_SECRET;
+
+    if (!hasValidSecret) {
+      const session = await auth();
+      if (!session?.user?.role || !["ADMIN", "SUPER_ADMIN"].includes(session.user.role)) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
     }
 
     const { id } = await params;
