@@ -85,7 +85,7 @@ export async function runWriterAgent(
         // 3c. Call DeepSeek
         let article: WrittenArticle | null = null;
         let parseAttempts = 0;
-        const maxParseAttempts = 2; // 1 initial + 1 retry
+        const maxParseAttempts = 3; // Up to 3 attempts for robustness
 
         while (parseAttempts < maxParseAttempts && !article) {
           parseAttempts++;
@@ -93,6 +93,7 @@ export async function runWriterAgent(
           const result = await callDeepSeek({
             systemPrompt: WRITER_SYSTEM_PROMPT,
             userPrompt,
+            model: config.model,
             jsonMode: true,
             temperature: config.writerTemperature,
             maxTokens: config.maxTokensPerArticle,

@@ -10,21 +10,35 @@ import { checkAIRateLimit } from "@/lib/utils/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth();
+    // Auth is optional — used only for rate limit identification
+    let userEmail: string | null = null;
+    let isAuthenticated = false;
+    try {
+      const session = await auth();
+      userEmail = session?.user?.email || null;
+      isAuthenticated = !!session?.user;
+    } catch {
+      // Auth failure should not block the tool
+    }
 
-    const identifier = session?.user?.email || req.headers.get("x-forwarded-for") || "anonymous";
-    const rateLimit = await checkAIRateLimit(identifier, !!session?.user);
-    if (!rateLimit.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "RATE_LIMIT_EXCEEDED",
-            message: `Too many requests. Try again in ${Math.ceil((rateLimit.reset - Date.now()) / 60000)} minutes.`,
+    const identifier = userEmail || req.headers.get("x-forwarded-for") || "anonymous";
+
+    try {
+      const rateLimit = await checkAIRateLimit(identifier, isAuthenticated);
+      if (!rateLimit.success) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: "RATE_LIMIT_EXCEEDED",
+              message: `Too many requests. Try again in ${Math.ceil((rateLimit.reset - Date.now()) / 60000)} minutes.`,
+            },
           },
-        },
-        { status: 429, headers: { "Retry-After": String(Math.ceil((rateLimit.reset - Date.now()) / 1000)) } }
-      );
+          { status: 429, headers: { "Retry-After": String(Math.ceil((rateLimit.reset - Date.now()) / 1000)) } }
+        );
+      }
+    } catch (rateLimitError) {
+      console.warn("Rate limit check failed, allowing through:", rateLimitError instanceof Error ? rateLimitError.message : String(rateLimitError));
     }
 
     const body = await req.json();
@@ -71,7 +85,8 @@ export async function POST(req: NextRequest) {
           }
           controller.enqueue(encoder.encode("data: [DONE]\n\n"));
           controller.close();
-        } catch {
+        } catch (streamError) {
+          console.error("Questionnaire stream error:", streamError instanceof Error ? streamError.message : String(streamError));
           controller.enqueue(
             encoder.encode(
               `data: ${JSON.stringify({ error: "Stream error" })}\n\n`
@@ -90,13 +105,14 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Questionnaire generation error:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Questionnaire generation error:", message, error instanceof Error ? error.stack : "");
     return NextResponse.json(
       {
         success: false,
         error: {
           code: "INTERNAL_ERROR",
-          message: "Failed to generate questionnaire",
+          message: `Failed to generate questionnaire: ${message}`,
         },
       },
       { status: 500 }

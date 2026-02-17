@@ -127,10 +127,11 @@ export async function callDeepSeek(
 }
 
 /**
- * Parse JSON from DeepSeek response, handling markdown code blocks.
+ * Parse JSON from DeepSeek response, handling markdown code blocks,
+ * embedded prose, and truncated output.
  */
 export function parseJsonResponse<T>(content: string): T {
-  // Strip markdown code blocks if present
+  // Strategy 1: Strip markdown code blocks if present
   let cleaned = content.trim();
   if (cleaned.startsWith("```json")) {
     cleaned = cleaned.slice(7);
@@ -142,5 +143,78 @@ export function parseJsonResponse<T>(content: string): T {
   }
   cleaned = cleaned.trim();
 
-  return JSON.parse(cleaned) as T;
+  // Try direct parse first
+  try {
+    return JSON.parse(cleaned) as T;
+  } catch {
+    // Continue to fallback strategies
+  }
+
+  // Strategy 2: Extract JSON object from surrounding prose
+  // Find the first { and last } to extract the JSON object
+  const firstBrace = cleaned.indexOf("{");
+  const lastBrace = cleaned.lastIndexOf("}");
+  if (firstBrace !== -1 && lastBrace > firstBrace) {
+    const extracted = cleaned.slice(firstBrace, lastBrace + 1);
+    try {
+      return JSON.parse(extracted) as T;
+    } catch {
+      // Continue to next strategy
+    }
+  }
+
+  // Strategy 3: Fix truncated JSON — if it ends abruptly, try to close it
+  if (firstBrace !== -1 && lastBrace > firstBrace) {
+    let partial = cleaned.slice(firstBrace, lastBrace + 1);
+
+    // Try to fix common truncation: unclosed strings and brackets
+    // Count open/close braces and brackets
+    let openBraces = 0;
+    let openBrackets = 0;
+    let inString = false;
+    let escaped = false;
+
+    for (const ch of partial) {
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      if (ch === "\\") {
+        escaped = true;
+        continue;
+      }
+      if (ch === '"') {
+        inString = !inString;
+        continue;
+      }
+      if (!inString) {
+        if (ch === "{") openBraces++;
+        if (ch === "}") openBraces--;
+        if (ch === "[") openBrackets++;
+        if (ch === "]") openBrackets--;
+      }
+    }
+
+    // Close any unclosed structures
+    if (inString) partial += '"';
+    while (openBrackets > 0) {
+      partial += "]";
+      openBrackets--;
+    }
+    while (openBraces > 0) {
+      partial += "}";
+      openBraces--;
+    }
+
+    try {
+      return JSON.parse(partial) as T;
+    } catch {
+      // All strategies failed
+    }
+  }
+
+  // All strategies exhausted
+  throw new Error(
+    `Failed to parse JSON from DeepSeek response (length: ${content.length}). First 200 chars: ${content.slice(0, 200)}`,
+  );
 }
