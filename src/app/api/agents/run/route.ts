@@ -34,9 +34,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = await runPipeline(triggeredBy);
+    // Fire-and-forget: start pipeline in background so we respond within
+    // cron-job.org's 30-second timeout. The pipeline writes its own status
+    // to the agentRun table, so we can check results via GET.
+    runPipeline(triggeredBy).catch((err) => {
+      console.error("Background pipeline error:", err);
+    });
 
-    return NextResponse.json({ success: true, ...result });
+    return NextResponse.json({ success: true, message: "Pipeline started" }, { status: 202 });
   } catch (error) {
     console.error("Pipeline trigger error:", error);
     return NextResponse.json(
