@@ -1,6 +1,6 @@
 import { buildMetadata } from "@/lib/seo/metadata";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mail, Phone, Globe } from "lucide-react";
+import { Mail, Clock, Globe } from "lucide-react";
 
 export const metadata = buildMetadata({
   title: "Contact AIGovHub - Get in Touch",
@@ -35,14 +35,11 @@ export default function ContactPage() {
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
-            <Phone className="h-8 w-8 text-primary mx-auto mb-3" />
-            <h3 className="font-semibold mb-1">Phone</h3>
-            <a
-              href="tel:+15166754832"
-              className="text-sm text-primary hover:underline"
-            >
-              (516) 675-4832
-            </a>
+            <Clock className="h-8 w-8 text-primary mx-auto mb-3" />
+            <h3 className="font-semibold mb-1">Response Time</h3>
+            <p className="text-sm text-muted-foreground">
+              Within 24 hours
+            </p>
           </CardContent>
         </Card>
         <Card>

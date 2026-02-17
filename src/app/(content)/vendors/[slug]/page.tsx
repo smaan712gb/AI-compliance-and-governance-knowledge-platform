@@ -290,9 +290,7 @@ export default async function VendorDetailPage({ params }: Props) {
             affiliate disclosure
           </a>
           . Last verified:{" "}
-          {vendor.lastVerifiedAt
-            ? new Date(vendor.lastVerifiedAt).toLocaleDateString()
-            : "Pending"}
+          {new Date(vendor.lastVerifiedAt || vendor.updatedAt || vendor.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
         </p>
       </div>
     </div>
