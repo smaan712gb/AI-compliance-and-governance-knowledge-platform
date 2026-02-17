@@ -33,7 +33,7 @@ export const mainNavItems = [
       },
       {
         title: "Best Tools",
-        href: "/best/ai-governance-platforms",
+        href: "/best",
         description: "Curated tool comparisons",
       },
     ],
@@ -68,7 +68,7 @@ export const footerNavItems = {
   resources: [
     { title: "Blog", href: "/blog" },
     { title: "Guides", href: "/guides" },
-    { title: "Best Tools", href: "/best/ai-governance-platforms" },
+    { title: "Best Tools", href: "/best" },
   ],
   company: [
     { title: "About", href: "/about" },
