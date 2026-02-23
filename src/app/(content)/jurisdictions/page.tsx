@@ -13,7 +13,8 @@ export const metadata = buildMetadata({
   path: "/jurisdictions",
 });
 
-export const revalidate = 3600; // Revalidate every hour
+// Render on-demand — DB not available during Docker build
+export const dynamic = "force-dynamic";
 
 const REGION_LABELS: Record<string, string> = {
   americas: "Americas",
