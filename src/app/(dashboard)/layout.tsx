@@ -8,6 +8,8 @@ import {
   Star,
   FileCheck,
   Settings,
+  Building2,
+  Bell,
 } from "lucide-react";
 
 const dashboardItems = [
@@ -15,6 +17,16 @@ const dashboardItems = [
     title: "Overview",
     href: "/dashboard",
     icon: <LayoutDashboard className="h-4 w-4" />,
+  },
+  {
+    title: "Company Profile",
+    href: "/dashboard/company",
+    icon: <Building2 className="h-4 w-4" />,
+  },
+  {
+    title: "Regulatory Alerts",
+    href: "/dashboard/alerts",
+    icon: <Bell className="h-4 w-4" />,
   },
   {
     title: "Purchases",

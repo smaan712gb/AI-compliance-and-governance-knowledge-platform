@@ -10,6 +10,8 @@ import {
   Link2,
   Users,
   BarChart3,
+  Bell,
+  Briefcase,
 } from "lucide-react";
 
 const adminItems = [
@@ -17,6 +19,16 @@ const adminItems = [
     title: "Overview",
     href: "/admin",
     icon: <LayoutDashboard className="h-4 w-4" />,
+  },
+  {
+    title: "Companies",
+    href: "/admin/companies",
+    icon: <Briefcase className="h-4 w-4" />,
+  },
+  {
+    title: "Alerts",
+    href: "/admin/alerts",
+    icon: <Bell className="h-4 w-4" />,
   },
   {
     title: "Vendors",

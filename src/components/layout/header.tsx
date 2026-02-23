@@ -20,6 +20,11 @@ const toolLinks = [
     description: "Check your AI system's EU AI Act obligations",
   },
   {
+    title: "ERP Compliance Gap Analysis",
+    href: "/erp-analysis",
+    description: "Identify regulatory gaps in your ERP system",
+  },
+  {
     title: "Vendor Risk Questionnaire",
     href: "/vendor-risk-questionnaire",
     description: "Generate AI vendor due diligence questionnaires",
@@ -27,8 +32,9 @@ const toolLinks = [
 ];
 
 const resourceLinks = [
-  { title: "Blog", href: "/blog", description: "AI governance insights and updates" },
+  { title: "Blog", href: "/blog", description: "Compliance insights and regulatory updates" },
   { title: "Guides", href: "/guides", description: "In-depth compliance guides" },
+  { title: "Jurisdictions", href: "/jurisdictions", description: "Regulatory landscape by country" },
   { title: "Best Tools", href: "/best/ai-governance-platforms", description: "Curated tool comparisons" },
 ];
 

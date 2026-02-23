@@ -13,9 +13,9 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { CheckCircle, Minus } from "lucide-react";
 
 export const metadata = buildMetadata({
-  title: "Pricing - AI Governance Tools & Subscriptions",
+  title: "Pricing - Compliance Intelligence & Regulatory Tools",
   description:
-    "Pricing for AIGovHub subscriptions and digital products. Free tools, starter plans from $19/mo, and one-time toolkits from $49.",
+    "Pricing for AIGovHub compliance intelligence platform. Free tools, Starter from $99/mo, Professional from $499/mo with ERP analysis and vendor assessments.",
   path: "/pricing",
 });
 
@@ -23,32 +23,49 @@ const subscriptionTiers = [
   {
     name: "Free",
     price: 0,
-    description: "Get started with basic compliance tools",
+    description: "Explore compliance content and basic tools",
     features: [
+      { text: "Blog content across all compliance domains", included: true },
+      { text: "1 jurisdiction tracker", included: true },
+      { text: "Vendor directory access", included: true },
       { text: "3 compliance checks/month", included: true },
-      { text: "2 questionnaire generations/month", included: true },
-      { text: "Limited vendor tracker access", included: true },
-      { text: "Community resources", included: true },
-      { text: "PDF export", included: false },
-      { text: "Priority support", included: false },
-      { text: "API access", included: false },
+      { text: "Regulatory alerts", included: false },
+      { text: "Vendor assessments", included: false },
+      { text: "ERP gap analysis", included: false },
     ],
     cta: "Get Started Free",
     ctaHref: "/register",
     variant: "outline" as const,
   },
   {
+    name: "Starter",
+    price: 99,
+    description: "For teams starting their compliance journey",
+    features: [
+      { text: "Everything in Free", included: true },
+      { text: "3 jurisdiction trackers", included: true },
+      { text: "Personalized regulatory alerts", included: true },
+      { text: "5 vendor assessments/month", included: true },
+      { text: "Unlimited compliance checks", included: true },
+      { text: "Priority email support", included: true },
+      { text: "ERP gap analysis", included: false },
+    ],
+    cta: "Start Starter",
+    ctaHref: "/dashboard/subscription",
+    variant: "outline" as const,
+  },
+  {
     name: "Professional",
-    price: 49,
-    description: "For teams managing AI compliance programs",
+    price: 499,
+    description: "For organizations with multi-jurisdiction needs",
     badge: "Most Popular",
     features: [
-      { text: "Unlimited compliance checks", included: true },
-      { text: "Unlimited questionnaire generations", included: true },
-      { text: "Full vendor tracker with all filters", included: true },
-      { text: "Updated toolkit downloads", included: true },
+      { text: "Everything in Starter", included: true },
+      { text: "10 jurisdiction trackers", included: true },
+      { text: "25 vendor assessments/month", included: true },
+      { text: "ERP compliance gap analysis", included: true },
+      { text: "Document generation", included: true },
       { text: "PDF & DOCX export", included: true },
-      { text: "Priority email support", included: true },
       { text: "API access", included: false },
     ],
     cta: "Start Professional",
@@ -57,19 +74,19 @@ const subscriptionTiers = [
   },
   {
     name: "Enterprise",
-    price: 99,
-    description: "For organizations with complex compliance needs",
+    price: 2000,
+    description: "For global enterprises with complex compliance",
     features: [
       { text: "Everything in Professional", included: true },
-      { text: "Custom questionnaire templates", included: true },
-      { text: "Multi-user access (up to 10)", included: true },
+      { text: "Unlimited jurisdictions", included: true },
+      { text: "Unlimited vendor assessments", included: true },
       { text: "API access (1000 req/day)", included: true },
-      { text: "Custom framework mappings", included: true },
+      { text: "SSO & SAML", included: true },
+      { text: "Custom reports & integrations", included: true },
       { text: "Dedicated support", included: true },
-      { text: "SSO & SAML (coming soon)", included: true },
     ],
-    cta: "Start Enterprise",
-    ctaHref: "/dashboard/subscription",
+    cta: "Contact Sales",
+    ctaHref: "/contact",
     variant: "outline" as const,
   },
 ];
@@ -86,7 +103,7 @@ export default function PricingPage() {
       </div>
 
       {/* Subscription Tiers */}
-      <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto mb-20">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto mb-20">
         {subscriptionTiers.map((tier) => (
           <Card
             key={tier.name}

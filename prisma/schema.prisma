@@ -24,11 +24,12 @@ model User {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  accounts     Account[]
-  sessions     Session[]
-  purchases    Purchase[]
-  subscription Subscription?
-  savedResults SavedComplianceResult[]
+  accounts       Account[]
+  sessions       Session[]
+  purchases      Purchase[]
+  subscription   Subscription?
+  savedResults   SavedComplianceResult[]
+  companyProfile CompanyProfile?
 
   @@map("users")
 }
@@ -229,6 +230,7 @@ model Vendor {
 
   affiliateLinks  AffiliateLink[]
   contentMentions ContentVendorMention[]
+  assessments     VendorAssessment[]
 
   @@map("vendors")
 }
@@ -659,8 +661,9 @@ model EvidenceCard {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  source       AgentSource         @relation(fields: [sourceId], references: [id], onDelete: Cascade)
-  taskEvidence AgentTaskEvidence[]
+  source           AgentSource         @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  taskEvidence     AgentTaskEvidence[]
+  regulatoryAlerts RegulatoryAlert[]
 
   @@index([isUsed, relevanceScore])
   @@index([url])
@@ -758,4 +761,170 @@ model SocialPostDraft {
 
   @@index([status])
   @@map("social_post_drafts")
+}
+
+// ============================================
+// COMPANY PROFILES & REGULATORY ALERTS (Phase 1)
+// ============================================
+
+model CompanyProfile {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  companyName        String
+  industry           String
+  companySize        String
+  headquarters       String
+  operatingCountries String[]
+  erpSystem          String?
+  complianceDomains  String[]
+  annualRevenue      String?
+  onboardingComplete Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alerts       CompanyAlert[]
+  usageRecords UsageRecord[]
+  erpAnalyses  ERPAnalysis[]
+
+  @@map("company_profiles")
+}
+
+model RegulatoryAlert {
+  id                 String    @id @default(cuid())
+  title              String
+  summary            String    @db.Text
+  regulation         String
+  jurisdiction       String
+  regulatoryBody     String
+  changeType         String
+  urgency            String
+  domain             String
+  effectiveDate      DateTime?
+  sourceUrl          String?
+  actionRequired     String?   @db.Text
+  affectedIndustries String[]
+  affectedCountries  String[]
+  isActive           Boolean   @default(true)
+  createdAt          DateTime  @default(now())
+  evidenceCardId     String?
+
+  evidenceCard EvidenceCard?  @relation(fields: [evidenceCardId], references: [id])
+  companies    CompanyAlert[]
+
+  @@index([domain, createdAt])
+  @@index([urgency, isActive])
+  @@map("regulatory_alerts")
+}
+
+model CompanyAlert {
+  id          String   @id @default(cuid())
+  companyId   String
+  alertId     String
+  isRead      Boolean  @default(false)
+  isDismissed Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  company CompanyProfile  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  alert   RegulatoryAlert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, alertId])
+  @@index([companyId, isRead])
+  @@map("company_alerts")
+}
+
+model AlertRun {
+  id              String         @id @default(cuid())
+  status          AgentRunStatus @default(RUNNING)
+  triggeredBy     String         @default("cron")
+  alertsGenerated Int            @default(0)
+  alertsMatched   Int            @default(0)
+  totalTokensUsed Int            @default(0)
+  totalCostUsd    Float          @default(0)
+  errorLog        Json?
+  startedAt       DateTime       @default(now())
+  completedAt     DateTime?
+
+  @@index([status])
+  @@index([startedAt])
+  @@map("alert_runs")
+}
+
+// ============================================
+// VENDOR ASSESSMENTS (Phase 2)
+// ============================================
+
+model VendorAssessment {
+  id              String   @id @default(cuid())
+  vendorId        String
+  assessmentType  String
+  status          String   @default("PENDING")
+  overallScore    Float?
+  securityScore   Float?
+  privacyScore    Float?
+  complianceScore Float?
+  financialScore  Float?
+  dimensions      Json?
+  findings        String?  @db.Text
+  recommendation  String?  @db.Text
+  rawData         Json?
+  triggeredBy     String   @default("admin")
+  tokensUsed      Int      @default(0)
+  costUsd         Float    @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([vendorId, createdAt])
+  @@index([status])
+  @@map("vendor_assessments")
+}
+
+// ============================================
+// ERP ANALYSIS (Phase 3)
+// ============================================
+
+model ERPAnalysis {
+  id              String   @id @default(cuid())
+  companyId       String?
+  userId          String?
+  erpSystem       String
+  country         String
+  countries       String[]
+  industry        String
+  regulations     Json
+  gapAnalysis     Json
+  recommendations Json
+  actionPlan      String?  @db.Text
+  status          String   @default("PENDING")
+  tokensUsed      Int      @default(0)
+  costUsd         Float    @default(0)
+  createdAt       DateTime @default(now())
+
+  company CompanyProfile? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  @@index([erpSystem])
+  @@index([userId])
+  @@map("erp_analyses")
+}
+
+// ============================================
+// USAGE TRACKING (Cross-cutting)
+// ============================================
+
+model UsageRecord {
+  id        String   @id @default(cuid())
+  companyId String
+  feature   String
+  month     String
+  count     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, feature, month])
+  @@index([companyId, month])
+  @@map("usage_records")
 }
