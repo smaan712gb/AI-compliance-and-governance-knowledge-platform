@@ -36,6 +36,7 @@ export interface ResearchFinding {
   relevanceScore: number;
   category: string;
   tags: string[];
+  domain?: string; // "ai-governance", "e-invoicing", "cybersecurity", etc.
 }
 
 export interface ResearchResult {
@@ -58,6 +59,7 @@ export interface ContentBrief {
   priority: number;
   evidenceCardIds: string[];
   vendorMentions?: string[];
+  domain?: string; // "ai-governance", "e-invoicing", "cybersecurity", etc.
 }
 
 export interface PlannerResult {

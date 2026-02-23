@@ -24,7 +24,7 @@ export const mainNavItems = [
       {
         title: "Blog",
         href: "/blog",
-        description: "AI governance insights and updates",
+        description: "Compliance insights and regulatory updates",
       },
       {
         title: "Guides",

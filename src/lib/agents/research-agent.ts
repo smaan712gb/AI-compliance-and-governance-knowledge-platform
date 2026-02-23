@@ -112,6 +112,11 @@ async function fetchFullArticleContent(url: string): Promise<string> {
 // RESEARCH AGENT
 // ============================================
 
+// Concurrency limit for processing sources in parallel.
+// Keep moderate to avoid overwhelming DeepSeek API rate limits
+// and Railway DB connection limits.
+const SOURCE_CONCURRENCY = 5;
+
 export async function runResearchAgent(
   config: PipelineConfig,
 ): Promise<AgentResult<ResearchResult>> {
@@ -156,147 +161,153 @@ export async function runResearchAgent(
       isArray: (name) => name === "item" || name === "entry",
     });
 
-    // 2. Process each source
-    for (const source of dueSources) {
-      try {
-        // Fetch RSS feed
-        const response = await fetch(source.url, {
-          headers: {
-            "User-Agent": "AIGovHub Research Agent/1.0",
-            Accept: "application/rss+xml, application/atom+xml, application/xml, text/xml",
-          },
-          signal: AbortSignal.timeout(15000),
-        });
+    // Helper: process a single source (fetch RSS, analyze items, store evidence)
+    async function processSource(source: typeof dueSources[number]) {
+      // Fetch RSS feed
+      const response = await fetch(source.url, {
+        headers: {
+          "User-Agent": "AIGovHub Research Agent/1.0",
+          Accept: "application/rss+xml, application/atom+xml, application/xml, text/xml",
+        },
+        signal: AbortSignal.timeout(15000),
+      });
 
-        if (!response.ok) {
-          errors.push(
-            `Source "${source.name}" returned HTTP ${response.status}`,
-          );
-          continue;
-        }
-
-        const xml = await response.text();
-        const parsed = parser.parse(xml);
-
-        // 3. Handle RSS 2.0 and Atom feed formats
-        let items: RawRSSItem[] = [];
-
-        if (parsed?.rss?.channel?.item) {
-          // RSS 2.0
-          items = Array.isArray(parsed.rss.channel.item)
-            ? parsed.rss.channel.item
-            : [parsed.rss.channel.item];
-        } else if (parsed?.feed?.entry) {
-          // Atom
-          items = Array.isArray(parsed.feed.entry)
-            ? parsed.feed.entry
-            : [parsed.feed.entry];
-        } else if (parsed?.["rdf:RDF"]?.item) {
-          // RSS 1.0 / RDF
-          items = Array.isArray(parsed["rdf:RDF"].item)
-            ? parsed["rdf:RDF"].item
-            : [parsed["rdf:RDF"].item];
-        }
-
-        // 4. Process each RSS item
-        for (const item of items) {
-          try {
-            const title = extractTitle(item);
-            const link = normalizeLink(item.link, source.url);
-
-            if (!link) continue;
-
-            // Check if URL already exists in EvidenceCard table
-            const existing = await db.evidenceCard.findFirst({
-              where: { url: link },
-            });
-
-            if (existing) continue;
-
-            // Extract content from RSS, attempt to fetch full article if thin
-            const rssContent = stripHtml(extractContent(item));
-            let articleContent = rssContent;
-
-            // If RSS content is thin (< 1000 chars), try fetching the full article
-            if (rssContent.length < 1000 && link) {
-              const fullContent = await fetchFullArticleContent(link);
-              if (fullContent.length > rssContent.length) {
-                articleContent = fullContent;
-              }
-            }
-
-            const truncatedContent = articleContent.slice(0, 12000);
-
-            if (!truncatedContent || truncatedContent.length < 50) continue;
-
-            // Call DeepSeek for structured analysis
-            const result = await callDeepSeek({
-              systemPrompt: RESEARCH_SYSTEM_PROMPT,
-              userPrompt: buildResearchUserPrompt(title, truncatedContent),
-              model: config.model,
-              jsonMode: true,
-              maxTokens: 1000,
-            });
-
-            totalTokens += result.totalTokens;
-            totalCost += result.costUsd;
-
-            // Parse the structured response
-            const finding = parseJsonResponse<ResearchFinding>(result.content);
-
-            // Create EvidenceCard in database
-            const expiresAt = new Date();
-            expiresAt.setDate(expiresAt.getDate() + config.evidenceExpiryDays);
-
-            await db.evidenceCard.create({
-              data: {
-                sourceId: source.id,
-                title: finding.title || title,
-                url: link,
-                summary: finding.summary,
-                keyFindings: finding.keyFindings,
-                relevanceScore: Math.max(
-                  0,
-                  Math.min(1, finding.relevanceScore),
-                ),
-                category: finding.category,
-                tags: finding.tags || [],
-                rawContent: truncatedContent,
-                expiresAt,
-              },
-            });
-
-            newEvidenceCards++;
-          } catch (itemError) {
-            const message =
-              itemError instanceof Error
-                ? itemError.message
-                : String(itemError);
-            errors.push(
-              `Item error in source "${source.name}": ${message}`,
-            );
-            // Continue to next item
-          }
-        }
-
-        // 5. Update source lastFetchedAt
-        await db.agentSource.update({
-          where: { id: source.id },
-          data: { lastFetchedAt: new Date() },
-        });
-
-        sourcesProcessed++;
-      } catch (sourceError) {
-        const message =
-          sourceError instanceof Error
-            ? sourceError.message
-            : String(sourceError);
-        errors.push(`Source "${source.name}" failed: ${message}`);
-        // Continue to next source
+      if (!response.ok) {
+        errors.push(
+          `Source "${source.name}" returned HTTP ${response.status}`,
+        );
+        return;
       }
+
+      const xml = await response.text();
+      const parsed = parser.parse(xml);
+
+      // Handle RSS 2.0 and Atom feed formats
+      let items: RawRSSItem[] = [];
+
+      if (parsed?.rss?.channel?.item) {
+        items = Array.isArray(parsed.rss.channel.item)
+          ? parsed.rss.channel.item
+          : [parsed.rss.channel.item];
+      } else if (parsed?.feed?.entry) {
+        items = Array.isArray(parsed.feed.entry)
+          ? parsed.feed.entry
+          : [parsed.feed.entry];
+      } else if (parsed?.["rdf:RDF"]?.item) {
+        items = Array.isArray(parsed["rdf:RDF"].item)
+          ? parsed["rdf:RDF"].item
+          : [parsed["rdf:RDF"].item];
+      }
+
+      // Process each RSS item (sequential within a source to avoid DB race conditions)
+      for (const item of items) {
+        try {
+          const title = extractTitle(item);
+          const link = normalizeLink(item.link, source.url);
+
+          if (!link) continue;
+
+          // Check if URL already exists in EvidenceCard table
+          const existing = await db.evidenceCard.findFirst({
+            where: { url: link },
+          });
+
+          if (existing) continue;
+
+          // Extract content from RSS, attempt to fetch full article if thin
+          const rssContent = stripHtml(extractContent(item));
+          let articleContent = rssContent;
+
+          if (rssContent.length < 1000 && link) {
+            const fullContent = await fetchFullArticleContent(link);
+            if (fullContent.length > rssContent.length) {
+              articleContent = fullContent;
+            }
+          }
+
+          const truncatedContent = articleContent.slice(0, 12000);
+
+          if (!truncatedContent || truncatedContent.length < 50) continue;
+
+          // Call DeepSeek for structured analysis
+          const result = await callDeepSeek({
+            systemPrompt: RESEARCH_SYSTEM_PROMPT,
+            userPrompt: buildResearchUserPrompt(title, truncatedContent),
+            model: config.model,
+            jsonMode: true,
+            maxTokens: 1000,
+          });
+
+          totalTokens += result.totalTokens;
+          totalCost += result.costUsd;
+
+          const finding = parseJsonResponse<ResearchFinding>(result.content);
+
+          const expiresAt = new Date();
+          expiresAt.setDate(expiresAt.getDate() + config.evidenceExpiryDays);
+
+          await db.evidenceCard.create({
+            data: {
+              sourceId: source.id,
+              title: finding.title || title,
+              url: link,
+              summary: finding.summary,
+              keyFindings: finding.keyFindings,
+              relevanceScore: Math.max(
+                0,
+                Math.min(1, finding.relevanceScore),
+              ),
+              category: finding.category,
+              tags: finding.tags || [],
+              rawContent: truncatedContent,
+              expiresAt,
+            },
+          });
+
+          newEvidenceCards++;
+        } catch (itemError) {
+          const message =
+            itemError instanceof Error
+              ? itemError.message
+              : String(itemError);
+          errors.push(
+            `Item error in source "${source.name}": ${message}`,
+          );
+        }
+      }
+
+      // Update source lastFetchedAt
+      await db.agentSource.update({
+        where: { id: source.id },
+        data: { lastFetchedAt: new Date() },
+      });
+
+      sourcesProcessed++;
     }
 
-    // 6. Cross-reference newly created evidence cards
+    // 2. Process sources in concurrent batches
+    for (let i = 0; i < dueSources.length; i += SOURCE_CONCURRENCY) {
+      const batch = dueSources.slice(i, i + SOURCE_CONCURRENCY);
+      const results = await Promise.allSettled(
+        batch.map((source) =>
+          processSource(source).catch((sourceError) => {
+            const message =
+              sourceError instanceof Error
+                ? sourceError.message
+                : String(sourceError);
+            errors.push(`Source "${source.name}" failed: ${message}`);
+          }),
+        ),
+      );
+
+      // Log batch progress
+      const completed = results.filter((r) => r.status === "fulfilled").length;
+      console.log(
+        `[ResearchAgent] Batch ${Math.floor(i / SOURCE_CONCURRENCY) + 1}: ${completed}/${batch.length} sources processed`,
+      );
+    }
+
+    // 3. Cross-reference newly created evidence cards
     // Boost relevance when multiple sources corroborate the same topic
     if (newEvidenceCards >= 2) {
       try {

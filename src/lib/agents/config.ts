@@ -3,7 +3,7 @@ import type { PipelineConfig } from "./types";
 
 const DEFAULT_CONFIG: PipelineConfig = {
   enabled: true,
-  dailyArticleTarget: 2,
+  dailyArticleTarget: 4,
   maxRewriteAttempts: 2,
   minQAScore: 7.0,
   researchSourceLimit: 50,
@@ -13,7 +13,7 @@ const DEFAULT_CONFIG: PipelineConfig = {
   qaModel: "deepseek-reasoner",
   writerTemperature: 0.7,
   maxTokensPerArticle: 4000,
-  budgetLimitUsd: 5.0,
+  budgetLimitUsd: 12.0,
 };
 
 export async function loadConfig(): Promise<PipelineConfig> {

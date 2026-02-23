@@ -234,6 +234,7 @@ model Vendor {
 }
 
 enum VendorCategory {
+  // AI Governance (existing)
   AI_GOVERNANCE_PLATFORM
   MODEL_RISK_MANAGEMENT
   BIAS_FAIRNESS_TESTING
@@ -245,6 +246,36 @@ enum VendorCategory {
   CONSULTING_ADVISORY
   GRC_PLATFORM
   MLOPS_WITH_GOVERNANCE
+
+  // Privacy (expanded)
+  CONSENT_MANAGEMENT
+  DSAR_AUTOMATION
+
+  // Cybersecurity (expanded)
+  COMPLIANCE_AUTOMATION
+  CLOUD_SECURITY
+  APPLICATION_SECURITY
+  ENDPOINT_SECURITY
+  SECURITY_AWARENESS
+
+  // ESG & Sustainability
+  ESG_REPORTING
+  CARBON_MANAGEMENT
+  SUSTAINABILITY_MANAGEMENT
+
+  // Fintech & Financial Compliance
+  AML_KYC
+  CRYPTO_COMPLIANCE
+  TRANSACTION_MONITORING
+  REGTECH
+
+  // E-Invoicing & Tax
+  E_INVOICING
+  TAX_COMPLIANCE
+
+  // HR & Employment
+  HR_COMPLIANCE
+  PAY_EQUITY
 }
 
 enum PricingModel {
