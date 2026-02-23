@@ -24,15 +24,8 @@ interface Props {
   params: Promise<{ code: string }>;
 }
 
-export async function generateStaticParams() {
-  try {
-    return COUNTRIES.map((c) => ({ code: c.value }));
-  } catch {
-    return [];
-  }
-}
-
-export const revalidate = 86400;
+// Render on-demand — avoids connection exhaustion during build
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props) {
   const { code } = await params;
