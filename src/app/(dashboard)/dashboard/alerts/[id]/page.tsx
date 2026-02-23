@@ -77,8 +77,8 @@ export default async function AlertDetailPage({ params }: Props) {
   if (!companyAlert.isRead) {
     db.companyAlert
       .update({ where: { id }, data: { isRead: true } })
-      .catch(() => {
-        // Silently fail — reading status is non-critical
+      .catch((err: unknown) => {
+        console.error("Failed to mark alert as read:", err);
       });
   }
 

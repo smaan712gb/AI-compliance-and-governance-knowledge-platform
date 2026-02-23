@@ -2,6 +2,16 @@ import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
+// Append connection_limit if not already in the URL to prevent
+// "too many clients" errors during builds and static generation
+function getDatasourceUrl(): string | undefined {
+  const url = process.env.DATABASE_URL;
+  if (!url) return undefined;
+  if (url.includes("connection_limit")) return url;
+  const sep = url.includes("?") ? "&" : "?";
+  return `${url}${sep}connection_limit=10`;
+}
+
 export const db =
   globalForPrisma.prisma ||
   new PrismaClient({
@@ -9,6 +19,7 @@ export const db =
       process.env.NODE_ENV === "development"
         ? ["query", "error", "warn"]
         : ["error"],
+    datasourceUrl: getDatasourceUrl(),
   });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;

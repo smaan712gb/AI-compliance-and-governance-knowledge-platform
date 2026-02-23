@@ -50,7 +50,7 @@ const subscriptionTiers = [
       { text: "Priority email support", included: true },
       { text: "ERP gap analysis", included: false },
     ],
-    cta: "Start Starter",
+    cta: "Get Started",
     ctaHref: "/dashboard/subscription",
     variant: "outline" as const,
   },
@@ -119,7 +119,9 @@ export default function PricingPage() {
               <CardDescription>{tier.description}</CardDescription>
               <div className="flex items-baseline gap-1 mt-2">
                 <span className="text-4xl font-bold">
-                  {tier.price === 0 ? "Free" : `$${tier.price}`}
+                  {tier.price === 0
+                    ? "Free"
+                    : `$${tier.price.toLocaleString()}`}
                 </span>
                 {tier.price > 0 && (
                   <span className="text-muted-foreground">/month</span>

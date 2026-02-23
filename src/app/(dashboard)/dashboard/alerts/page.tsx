@@ -15,11 +15,9 @@ import Link from "next/link";
 import {
   Bell,
   BellOff,
-  AlertTriangle,
   ArrowRight,
   Building2,
   Shield,
-  ExternalLink,
   Calendar,
   Crown,
 } from "lucide-react";
@@ -128,17 +126,25 @@ export default async function AlertsPage({
   }
 
   // Build query filters
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const where: any = {
+  const alertFilter: { isActive: boolean; domain?: string; urgency?: string } = {
+    isActive: true,
+  };
+  if (filterDomain) alertFilter.domain = filterDomain;
+  if (filterUrgency) alertFilter.urgency = filterUrgency;
+
+  const where: {
+    companyId: string;
+    isDismissed: boolean;
+    isRead?: boolean;
+    alert: typeof alertFilter;
+  } = {
     companyId: company.id,
     isDismissed: false,
-    alert: { isActive: true },
+    alert: alertFilter,
   };
 
   if (filterRead === "true") where.isRead = true;
   if (filterRead === "false") where.isRead = false;
-  if (filterDomain) where.alert.domain = filterDomain;
-  if (filterUrgency) where.alert.urgency = filterUrgency;
 
   // Fetch data
   const [total, unreadCount, companyAlerts] = await Promise.all([

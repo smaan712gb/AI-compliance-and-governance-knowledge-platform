@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -72,6 +74,8 @@ function getCountriesByRegion(region: string) {
 const STEPS = ["ERP System", "Countries", "Industry", "Results"];
 
 export default function ERPAnalysisWizardPage() {
+  const { data: session, status: sessionStatus } = useSession();
+
   const { currentStep, progress, isFirst, isLast, next, previous } =
     useWizardState({ totalSteps: STEPS.length });
 
@@ -222,6 +226,45 @@ export default function ERPAnalysisWizardPage() {
     }
   };
 
+  // Gate: require authentication
+  if (sessionStatus === "loading") {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!session?.user) {
+    return (
+      <div className="container mx-auto px-4 py-16 max-w-lg text-center">
+        <Card>
+          <CardContent className="pt-6 space-y-4">
+            <h2 className="text-xl font-bold">Sign In Required</h2>
+            <p className="text-muted-foreground">
+              ERP Compliance Gap Analysis is available to Professional and
+              Enterprise subscribers. Please sign in to continue.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Link
+                href="/login?callbackUrl=/erp-analysis/wizard"
+                className={buttonVariants({ variant: "default" })}
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/pricing"
+                className={buttonVariants({ variant: "outline" })}
+              >
+                View Plans
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8">
       {/* Progress */}
@@ -350,9 +393,11 @@ export default function ERPAnalysisWizardPage() {
                           </div>
                           <span className="text-sm">
                             <span className="font-medium">
-                              {country.value}
+                              {country.label}
                             </span>{" "}
-                            {country.label}
+                            <span className="text-muted-foreground">
+                              ({country.value})
+                            </span>
                           </span>
                         </CardContent>
                       </Card>
@@ -521,9 +566,9 @@ export default function ERPAnalysisWizardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">
+                <div className="whitespace-pre-wrap text-sm leading-relaxed prose prose-sm max-w-none dark:prose-invert">
                   {streamedText}
-                </pre>
+                </div>
                 {loading && (
                   <div className="flex items-center gap-2 text-muted-foreground mt-4">
                     <Loader2 className="h-4 w-4 animate-spin" />

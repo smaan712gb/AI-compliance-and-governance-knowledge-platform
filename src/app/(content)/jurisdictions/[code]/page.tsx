@@ -140,7 +140,7 @@ export default async function JurisdictionDetailPage({ params }: Props) {
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <Card>
           <CardContent className="pt-6 text-center">
             <div className="text-2xl font-bold">{alerts.length}</div>

@@ -50,21 +50,22 @@ export default async function AdminCompaniesPage() {
       }),
     ]);
 
-  // Determine tier from subscription
+  // Determine tier from subscription using env-var price IDs
+  const priceToTier: Record<string, string> = {};
+  if (process.env.STRIPE_PRICE_SUB_STARTER)
+    priceToTier[process.env.STRIPE_PRICE_SUB_STARTER] = "Starter";
+  if (process.env.STRIPE_PRICE_SUB_PRO)
+    priceToTier[process.env.STRIPE_PRICE_SUB_PRO] = "Professional";
+  if (process.env.STRIPE_PRICE_SUB_ENTERPRISE)
+    priceToTier[process.env.STRIPE_PRICE_SUB_ENTERPRISE] = "Enterprise";
+
   function getTierLabel(
     subscription: { stripePriceId: string; status: string } | null,
   ): string {
     if (!subscription) return "Free";
-    if (subscription.status !== "ACTIVE") return "Inactive";
-    // Simplified tier detection from price ID
-    const priceId = subscription.stripePriceId.toLowerCase();
-    if (priceId.includes("enterprise") || priceId.includes("ent"))
-      return "Enterprise";
-    if (priceId.includes("professional") || priceId.includes("pro"))
-      return "Professional";
-    if (priceId.includes("starter") || priceId.includes("start"))
-      return "Starter";
-    return "Paid";
+    if (subscription.status !== "ACTIVE" && subscription.status !== "TRIALING")
+      return "Inactive";
+    return priceToTier[subscription.stripePriceId] || "Paid";
   }
 
   const tierVariant = (

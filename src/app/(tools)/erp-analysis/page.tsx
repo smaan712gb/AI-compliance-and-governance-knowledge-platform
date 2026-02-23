@@ -80,7 +80,7 @@ export default function ERPAnalysisPage() {
                 <h3 className="font-semibold mb-2">Vendor Recommendations</h3>
                 <p className="text-sm text-muted-foreground">
                   For every gap, receive specific vendor recommendations from
-                  our database of 80+ compliance tools, including e-invoicing
+                  our database of 130+ compliance tools, including e-invoicing
                   providers, GRC platforms, and cybersecurity solutions.
                 </p>
               </CardContent>
