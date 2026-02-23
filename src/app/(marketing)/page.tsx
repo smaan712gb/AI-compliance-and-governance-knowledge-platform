@@ -198,20 +198,21 @@ export default function HomePage() {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold">AI Governance Vendor Tracker</h2>
+            <h2 className="text-3xl font-bold">Compliance Vendor Tracker</h2>
             <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
-              A living database of AI governance, compliance, and risk
-              management tools. Compare features, pricing, and frameworks.
+              A living database of 130+ compliance, GRC, cybersecurity, privacy,
+              ESG, e-invoicing, fintech, and HR tools. Compare features, pricing,
+              and frameworks.
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
             {[
-              "AI Governance Platforms",
-              "GRC Platforms",
-              "Bias & Fairness Testing",
-              "Model Risk Management",
-              "Data Governance",
-              "Privacy & Compliance",
+              "GRC & Compliance",
+              "Cybersecurity",
+              "Data Privacy",
+              "E-Invoicing & Tax",
+              "ESG & Sustainability",
+              "AI Governance",
             ].map((category) => (
               <Card key={category} className="text-center p-6">
                 <Database className="h-8 w-8 text-primary mx-auto mb-3" />

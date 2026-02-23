@@ -9,9 +9,9 @@ import Link from "next/link";
 import { ExternalLink, Star } from "lucide-react";
 
 export const metadata = buildMetadata({
-  title: "AI Governance Vendor Tracker - Compare Tools & Platforms",
+  title: "Compliance Vendor Tracker - Compare 130+ GRC, Security & RegTech Tools",
   description:
-    "Compare 30+ AI governance, compliance, and risk management tools. Filter by framework, pricing, and features. Updated weekly.",
+    "Compare 130+ compliance, GRC, cybersecurity, privacy, ESG, e-invoicing, fintech, and HR tools. Filter by framework, pricing, and features. Updated weekly.",
   path: "/vendors",
 });
 
@@ -28,10 +28,11 @@ export default async function VendorTrackerPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold">AI Governance Vendor Tracker</h1>
+        <h1 className="text-3xl font-bold">Compliance Vendor Tracker</h1>
         <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-          A living database of AI governance, compliance, and risk management
-          tools. Compare features, pricing, frameworks, and more.
+          A living database of compliance, GRC, cybersecurity, privacy, ESG,
+          e-invoicing, fintech, and HR tools. Compare features, pricing,
+          frameworks, and more.
         </p>
         <p className="text-xs text-muted-foreground mt-2">
           {vendors.length} vendors tracked &middot; Updated weekly

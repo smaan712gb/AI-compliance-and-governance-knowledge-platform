@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { Badge } from "@/components/ui/badge";
@@ -19,27 +21,13 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  try {
-    const vendors = await db.vendor.findMany({
-      where: { isPublished: true },
-      select: { slug: true },
-    });
-    return vendors.map((v) => ({ slug: v.slug }));
-  } catch {
-    return [];
-  }
-}
-
-export const revalidate = 3600;
-
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const vendor = await db.vendor.findUnique({ where: { slug } });
   if (!vendor) return {};
 
   return buildMetadata({
-    title: `${vendor.name} Review - AI Governance Platform`,
+    title: `${vendor.name} Review - Compliance Tool`,
     description:
       vendor.metaDescription ||
       vendor.shortDescription ||

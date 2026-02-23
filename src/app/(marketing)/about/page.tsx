@@ -60,7 +60,8 @@ export default function AboutPage() {
               <Target className="h-8 w-8 text-primary mb-3" />
               <h3 className="font-semibold mb-2">Vendor Tracker</h3>
               <p className="text-sm text-muted-foreground">
-                The most comprehensive database of AI governance vendors with
+                The most comprehensive database of compliance vendors across GRC,
+                cybersecurity, privacy, ESG, e-invoicing, fintech, and HR — with
                 independent ratings, framework coverage, and detailed reviews.
               </p>
             </CardContent>
