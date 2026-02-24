@@ -42,5 +42,6 @@ COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 USER nextjs
 EXPOSE 3000
 
-# Use direct node path for prisma (npx doesn't work in standalone)
-CMD ["sh", "-c", "node node_modules/prisma/build/index.js db push --skip-generate && node server.js"]
+# Sync DB schema then start server
+# Use ; not && so server starts even if db push fails (e.g. first deploy)
+CMD ["sh", "-c", "echo 'Running prisma db push...' && node node_modules/prisma/build/index.js db push --skip-generate 2>&1 || echo 'WARNING: prisma db push failed, starting server anyway'; exec node server.js"]

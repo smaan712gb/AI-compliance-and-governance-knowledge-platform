@@ -4,6 +4,44 @@ import { auth } from "@/lib/auth";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 
+// Public fields safe to return in list API
+const PUBLIC_VENDOR_SELECT = {
+  id: true,
+  name: true,
+  slug: true,
+  description: true,
+  shortDescription: true,
+  websiteUrl: true,
+  logoUrl: true,
+  category: true,
+  subcategories: true,
+  pricingModel: true,
+  pricingStartsAt: true,
+  hasFreeTrialOrTier: true,
+  frameworksSupported: true,
+  deploymentsSupported: true,
+  integrationsSupported: true,
+  hasDPA: true,
+  gdprCompliant: true,
+  soc2Certified: true,
+  iso27001Certified: true,
+  overallScore: true,
+  easeOfUse: true,
+  featureRichness: true,
+  valueForMoney: true,
+  customerSupport: true,
+  companySize: true,
+  foundedYear: true,
+  headquarters: true,
+  employeeCount: true,
+  keyFeatures: true,
+  prosConsList: true,
+  isFeatured: true,
+  isPublished: true,
+  createdAt: true,
+  updatedAt: true,
+};
+
 const createVendorSchema = z.object({
   name: z.string().min(1),
   slug: z.string().min(1),
@@ -51,6 +89,7 @@ export async function GET(req: NextRequest) {
   const [vendors, total] = await Promise.all([
     db.vendor.findMany({
       where,
+      select: PUBLIC_VENDOR_SELECT,
       orderBy: [{ isFeatured: "desc" }, { overallScore: "desc" }],
       skip: (page - 1) * limit,
       take: limit,
