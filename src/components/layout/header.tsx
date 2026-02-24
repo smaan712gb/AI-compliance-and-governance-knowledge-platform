@@ -60,7 +60,7 @@ const resourceLinks = [
   { title: "Blog", href: "/blog", description: "Compliance insights and regulatory updates" },
   { title: "Guides", href: "/guides", description: "In-depth compliance guides" },
   { title: "Jurisdictions", href: "/jurisdictions", description: "Regulatory landscape by country" },
-  { title: "Best Tools", href: "/best/ai-governance-platforms", description: "Curated tool comparisons" },
+  { title: "Best Tools", href: "/best", description: "Curated tool comparisons" },
 ];
 
 export function Header() {
