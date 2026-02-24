@@ -13,10 +13,12 @@ export async function POST(req: NextRequest) {
     // Auth is optional — used only for rate limit identification
     let userEmail: string | null = null;
     let isAuthenticated = false;
+    let isAdmin = false;
     try {
       const session = await auth();
       userEmail = session?.user?.email || null;
       isAuthenticated = !!session?.user;
+      isAdmin = ["ADMIN", "SUPER_ADMIN"].includes(session?.user?.role || "");
     } catch {
       // Auth failure should not block the tool
     }
@@ -24,7 +26,7 @@ export async function POST(req: NextRequest) {
     const identifier = userEmail || req.headers.get("x-forwarded-for") || "anonymous";
 
     try {
-      const rateLimit = await checkAIRateLimit(identifier, isAuthenticated);
+      const rateLimit = await checkAIRateLimit(identifier, isAuthenticated, isAdmin);
       if (!rateLimit.success) {
         return NextResponse.json(
           {

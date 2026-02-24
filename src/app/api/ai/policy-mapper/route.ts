@@ -17,20 +17,22 @@ export async function POST(req: NextRequest) {
     let userId: string | null = null;
     let userEmail: string | null = null;
     let isAuthenticated = false;
+    let isAdmin = false;
     try {
       const session = await auth();
       userId = session?.user?.id || null;
       userEmail = session?.user?.email || null;
       isAuthenticated = !!session?.user;
+      isAdmin = ["ADMIN", "SUPER_ADMIN"].includes(session?.user?.role || "");
     } catch {
       // Auth failure should not block public tool
     }
 
     const identifier = userEmail || req.headers.get("x-forwarded-for") || "anonymous";
 
-    // Rate limiting for all users
+    // Rate limiting for all users (admins bypass)
     try {
-      const rateLimit = await checkAIRateLimit(identifier, isAuthenticated);
+      const rateLimit = await checkAIRateLimit(identifier, isAuthenticated, isAdmin);
       if (!rateLimit.success) {
         return NextResponse.json(
           {

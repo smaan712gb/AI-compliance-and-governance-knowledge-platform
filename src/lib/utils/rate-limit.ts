@@ -51,7 +51,12 @@ function getLimiters() {
 export async function checkAIRateLimit(
   identifier: string,
   isAuthenticated: boolean,
+  isAdmin?: boolean,
 ): Promise<{ success: boolean; remaining: number; reset: number }> {
+  // Admin bypass: no rate limits for ADMIN/SUPER_ADMIN
+  if (isAdmin) {
+    return { success: true, remaining: 999, reset: 0 };
+  }
   if (!isRedisConfigured()) {
     return { success: true, remaining: 999, reset: 0 };
   }

@@ -110,6 +110,15 @@ function initPriceTierMap() {
 }
 
 export async function getUserTier(userId: string): Promise<Tier> {
+  // Admin bypass: ADMIN and SUPER_ADMIN get enterprise tier
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  if (user?.role === "ADMIN" || user?.role === "SUPER_ADMIN") {
+    return "enterprise";
+  }
+
   initPriceTierMap();
 
   const subscription = await db.subscription.findUnique({
