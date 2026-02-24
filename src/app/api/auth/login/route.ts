@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { encode } from "next-auth/jwt";
+import { checkAPIRateLimit } from "@/lib/utils/rate-limit";
 
 const isSecure = process.env.NODE_ENV === "production";
 const cookieName = isSecure
@@ -49,6 +50,13 @@ function getOrigin(req: NextRequest): string {
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: 10 attempts per minute per IP
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "anonymous";
+    const rl = await checkAPIRateLimit(`login:${ip}`);
+    if (!rl.success) {
+      return NextResponse.json({ error: "Too many login attempts. Please try again later." }, { status: 429 });
+    }
+
     const contentType = req.headers.get("content-type") || "";
     const origin = getOrigin(req);
 

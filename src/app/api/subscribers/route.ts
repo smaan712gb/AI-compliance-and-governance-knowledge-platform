@@ -2,9 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { subscribeSchema } from "@/lib/validators/subscriber";
 import { startSequence } from "@/lib/email/sequences";
+import { checkSubscribeRateLimit } from "@/lib/utils/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 5 subscriptions per hour per IP
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "anonymous";
+    const rl = await checkSubscribeRateLimit(`subscribe:${ip}`);
+    if (!rl.success) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    }
+
     const body = await request.json();
     const data = subscribeSchema.parse(body);
 

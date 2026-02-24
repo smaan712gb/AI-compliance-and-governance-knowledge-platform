@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,42 +16,43 @@ import { CheckCircle, Star, Loader2 } from "lucide-react";
 const tiers = [
   {
     name: "Starter",
-    price: 19,
-    description: "For individuals exploring AI compliance",
+    price: 99,
+    description: "For small compliance teams getting started",
     features: [
-      "10 compliance checks/month",
-      "5 questionnaire generations/month",
-      "Basic vendor tracker access",
-      "Email support",
+      "3 jurisdiction trackers",
+      "Personalized regulatory alerts",
+      "5 vendor assessments/month",
+      "Unlimited compliance checks",
+      "Priority email support",
     ],
     priceId: "starter",
   },
   {
     name: "Professional",
-    price: 49,
-    description: "For teams managing AI compliance programs",
+    price: 499,
+    description: "For mid-size organizations with multi-jurisdiction needs",
     features: [
-      "Unlimited compliance checks",
-      "Unlimited questionnaire generations",
-      "Full vendor tracker with filters",
-      "Updated toolkit downloads",
-      "Priority email support",
-      "Export to PDF/DOCX",
+      "10 jurisdiction trackers",
+      "ERP compliance gap analysis",
+      "25 vendor assessments/month",
+      "Document generation",
+      "PDF & DOCX export",
+      "Everything in Starter",
     ],
     priceId: "professional",
     popular: true,
   },
   {
     name: "Enterprise",
-    price: 99,
-    description: "For organizations with complex compliance needs",
+    price: 2000,
+    description: "For large enterprises with complex compliance programs",
     features: [
-      "Everything in Professional",
-      "Custom questionnaire templates",
-      "Multi-user access (up to 10)",
-      "API access",
+      "Unlimited jurisdictions",
+      "Unlimited vendor assessments",
+      "API access (1,000 req/day)",
+      "SSO & SAML",
+      "Custom reports & integrations",
       "Dedicated support",
-      "Custom framework mappings",
     ],
     priceId: "enterprise",
   },
@@ -61,6 +62,22 @@ export default function SubscriptionPage() {
   const { data: session } = useSession();
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [currentTier, setCurrentTier] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Fetch current subscription status
+    async function fetchSubscription() {
+      try {
+        const res = await fetch("/api/stripe/portal", { method: "POST" });
+        if (res.ok) {
+          setCurrentTier("active");
+        }
+      } catch {
+        // No active subscription
+      }
+    }
+    if (session?.user) fetchSubscription();
+  }, [session]);
 
   async function handleSubscribe(priceId: string) {
     setLoading(priceId);
@@ -127,7 +144,7 @@ export default function SubscriptionPage() {
               <CardTitle>{tier.name}</CardTitle>
               <CardDescription>{tier.description}</CardDescription>
               <div className="flex items-baseline gap-1 mt-2">
-                <span className="text-3xl font-bold">${tier.price}</span>
+                <span className="text-3xl font-bold">${tier.price.toLocaleString()}</span>
                 <span className="text-muted-foreground">/month</span>
               </div>
             </CardHeader>

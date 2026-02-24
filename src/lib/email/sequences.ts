@@ -45,7 +45,7 @@ export async function processNextStep(progressId: string) {
   const templateData = {
     name: progress.subscriber.name ?? undefined,
     email: progress.subscriber.email,
-    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://aigovhub.com",
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://www.aigovhub.io",
   };
 
   const react = getTemplateComponent(nextStep.templateId, templateData);

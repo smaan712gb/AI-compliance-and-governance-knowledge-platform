@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { stripe } from "@/lib/stripe";
 import type Stripe from "stripe";
 
 export async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
@@ -16,22 +17,42 @@ export async function handleCheckoutCompleted(session: Stripe.Checkout.Session) 
   if (session.mode === "payment") {
     const productId = session.metadata?.productId;
     if (productId) {
-      await db.purchase.create({
-        data: {
-          userId,
-          productId,
-          stripeCheckoutSessionId: session.id,
-          stripePaymentIntentId: session.payment_intent as string,
-          status: "COMPLETED",
-          amount: session.amount_total || 0,
-          currency: session.currency || "usd",
-        },
+      // Idempotency: skip if purchase already exists (handles duplicate webhook delivery)
+      const existing = await db.purchase.findUnique({
+        where: { stripeCheckoutSessionId: session.id },
       });
+      if (!existing) {
+        await db.purchase.create({
+          data: {
+            userId,
+            productId,
+            stripeCheckoutSessionId: session.id,
+            stripePaymentIntentId: session.payment_intent as string,
+            status: "COMPLETED",
+            amount: session.amount_total || 0,
+            currency: session.currency || "usd",
+          },
+        });
+      }
     }
   }
 
   if (session.mode === "subscription") {
     const subscriptionId = session.subscription as string;
+
+    // Fetch real period dates from Stripe instead of hardcoding
+    let periodStart = new Date();
+    let periodEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    try {
+      const sub = await stripe.subscriptions.retrieve(subscriptionId);
+      const firstItem = sub.items.data[0];
+      if (firstItem) {
+        periodStart = new Date(firstItem.current_period_start * 1000);
+        periodEnd = new Date(firstItem.current_period_end * 1000);
+      }
+    } catch {
+      // Fallback to approximate dates if Stripe retrieval fails
+    }
 
     await db.subscription.upsert({
       where: { userId },
@@ -40,22 +61,22 @@ export async function handleCheckoutCompleted(session: Stripe.Checkout.Session) 
         stripeSubscriptionId: subscriptionId,
         stripePriceId: session.metadata?.priceId || "",
         status: "ACTIVE",
-        stripeCurrentPeriodStart: new Date(),
-        stripeCurrentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        stripeCurrentPeriodStart: periodStart,
+        stripeCurrentPeriodEnd: periodEnd,
       },
       update: {
         stripeSubscriptionId: subscriptionId,
         stripePriceId: session.metadata?.priceId || "",
         status: "ACTIVE",
-        stripeCurrentPeriodStart: new Date(),
-        stripeCurrentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        stripeCurrentPeriodStart: periodStart,
+        stripeCurrentPeriodEnd: periodEnd,
       },
     });
   }
 }
 
 export async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
-  const sub = await db.subscription.findFirst({
+  const sub = await db.subscription.findUnique({
     where: { stripeSubscriptionId: subscription.id },
   });
   if (!sub) return;
@@ -77,7 +98,7 @@ export async function handleSubscriptionUpdated(subscription: Stripe.Subscriptio
 }
 
 export async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
-  const sub = await db.subscription.findFirst({
+  const sub = await db.subscription.findUnique({
     where: { stripeSubscriptionId: subscription.id },
   });
   if (!sub) return;
@@ -95,7 +116,7 @@ export async function handlePaymentFailed(invoice: Stripe.Invoice) {
   const subscriptionId =
     typeof subscriptionRef === "string" ? subscriptionRef : subscriptionRef.id;
 
-  const sub = await db.subscription.findFirst({
+  const sub = await db.subscription.findUnique({
     where: { stripeSubscriptionId: subscriptionId },
   });
   if (!sub) return;

@@ -1,5 +1,13 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+
+export const metadata = buildMetadata({
+  title: "AIGovHub - Regulatory Compliance Intelligence Platform",
+  description:
+    "AI-powered compliance intelligence across AI governance, e-invoicing, cybersecurity, data privacy, ESG, fintech, HR, and tax. 47 jurisdictions. 130+ vendors. Daily intelligence.",
+  path: "/",
+});
 import {
   Card,
   CardContent,

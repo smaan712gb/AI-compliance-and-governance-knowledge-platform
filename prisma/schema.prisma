@@ -232,6 +232,8 @@ model Vendor {
   contentMentions ContentVendorMention[]
   assessments     VendorAssessment[]
 
+  @@index([isPublished, isFeatured, overallScore])
+  @@index([isPublished, category])
   @@map("vendors")
 }
 
@@ -329,6 +331,7 @@ model ContentPage {
 
   @@index([type, status])
   @@index([slug])
+  @@index([status, publishedAt])
   @@map("content_pages")
 }
 
@@ -384,7 +387,7 @@ model AffiliateLink {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  vendor       Vendor?              @relation(fields: [vendorId], references: [id])
+  vendor       Vendor?              @relation(fields: [vendorId], references: [id], onDelete: SetNull)
   clicks       AffiliateClick[]
   contentLinks ContentAffiliateLink[]
 
@@ -552,6 +555,7 @@ model SavedComplianceResult {
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([email])
+  @@index([userId])
   @@map("saved_compliance_results")
 }
 
@@ -667,6 +671,7 @@ model EvidenceCard {
 
   @@index([isUsed, relevanceScore])
   @@index([url])
+  @@index([sourceId])
   @@map("evidence_cards")
 }
 
@@ -690,7 +695,7 @@ model AgentTask {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
-  contentPage ContentPage?        @relation(fields: [contentPageId], references: [id])
+  contentPage ContentPage?        @relation(fields: [contentPageId], references: [id], onDelete: SetNull)
   evidence    AgentTaskEvidence[]
   socialPosts SocialPostDraft[]
   run         AgentRun?           @relation(fields: [runId], references: [id])
@@ -809,11 +814,12 @@ model RegulatoryAlert {
   createdAt          DateTime  @default(now())
   evidenceCardId     String?
 
-  evidenceCard EvidenceCard?  @relation(fields: [evidenceCardId], references: [id])
+  evidenceCard EvidenceCard?  @relation(fields: [evidenceCardId], references: [id], onDelete: SetNull)
   companies    CompanyAlert[]
 
   @@index([domain, createdAt])
   @@index([urgency, isActive])
+  @@index([evidenceCardId])
   @@map("regulatory_alerts")
 }
 

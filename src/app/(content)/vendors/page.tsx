@@ -3,10 +3,9 @@ export const dynamic = "force-dynamic";
 import { db } from "@/lib/db";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
-import { ExternalLink, Star } from "lucide-react";
+import { Star } from "lucide-react";
 
 export const metadata = buildMetadata({
   title: "Compliance Vendor Tracker - Compare 130+ GRC, Security & RegTech Tools",
@@ -14,8 +13,6 @@ export const metadata = buildMetadata({
     "Compare 130+ compliance, GRC, cybersecurity, privacy, ESG, e-invoicing, fintech, and HR tools. Filter by framework, pricing, and features. Updated weekly.",
   path: "/vendors",
 });
-
-export const revalidate = 1800; // 30 min ISR
 
 export default async function VendorTrackerPage() {
   const vendors = await db.vendor.findMany({

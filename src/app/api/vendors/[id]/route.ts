@@ -6,10 +6,53 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
+// Public fields safe to return
+const PUBLIC_VENDOR_SELECT = {
+  id: true,
+  name: true,
+  slug: true,
+  description: true,
+  shortDescription: true,
+  websiteUrl: true,
+  logoUrl: true,
+  category: true,
+  subcategories: true,
+  pricingModel: true,
+  pricingStartsAt: true,
+  pricingDetails: true,
+  hasFreeTrialOrTier: true,
+  frameworksSupported: true,
+  deploymentsSupported: true,
+  integrationsSupported: true,
+  hasDPA: true,
+  gdprCompliant: true,
+  soc2Certified: true,
+  iso27001Certified: true,
+  companySize: true,
+  foundedYear: true,
+  headquarters: true,
+  employeeCount: true,
+  keyFeatures: true,
+  prosConsList: true,
+  overallScore: true,
+  easeOfUse: true,
+  featureRichness: true,
+  valueForMoney: true,
+  customerSupport: true,
+  isFeatured: true,
+  isPublished: true,
+  metaDescription: true,
+  createdAt: true,
+  updatedAt: true,
+};
+
 export async function GET(request: NextRequest, { params }: Props) {
   const { id } = await params;
   try {
-    const vendor = await db.vendor.findUnique({ where: { id } });
+    const vendor = await db.vendor.findUnique({
+      where: { id, isPublished: true },
+      select: PUBLIC_VENDOR_SELECT,
+    });
     if (!vendor) {
       return NextResponse.json({ error: "Vendor not found" }, { status: 404 });
     }
@@ -28,6 +71,12 @@ export async function PUT(request: NextRequest, { params }: Props) {
     }
 
     const data = await request.json();
+
+    // Strip fields that should not be set via API
+    delete data.id;
+    delete data.createdAt;
+    delete data.updatedAt;
+
     const vendor = await db.vendor.update({ where: { id }, data });
     return NextResponse.json(vendor);
   } catch {

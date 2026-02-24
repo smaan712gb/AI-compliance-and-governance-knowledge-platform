@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import crypto from "crypto";
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
@@ -20,7 +21,9 @@ export async function GET(request: NextRequest) {
     await db.affiliateClick.create({
       data: {
         affiliateLinkId: link.id,
-        ipHash: request.headers.get("x-forwarded-for") || "unknown",
+        ipHash: crypto.createHash("sha256").update(
+          (request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown") + (process.env.AUTH_SECRET || "")
+        ).digest("hex"),
         userAgent: request.headers.get("user-agent") || "",
         referrerUrl: request.headers.get("referer") || "",
       },

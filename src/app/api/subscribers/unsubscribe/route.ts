@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { generateUnsubscribeToken } from "@/lib/utils/unsubscribe-token";
 
 export async function GET(request: NextRequest) {
   const email = request.nextUrl.searchParams.get("email");
-  if (!email) {
-    return NextResponse.json({ error: "Email required" }, { status: 400 });
+  const token = request.nextUrl.searchParams.get("token");
+
+  if (!email || !token) {
+    return NextResponse.json({ error: "Email and token required" }, { status: 400 });
+  }
+
+  // Verify signed token
+  const expectedToken = generateUnsubscribeToken(email);
+  if (token !== expectedToken) {
+    return NextResponse.json({ error: "Invalid unsubscribe link" }, { status: 403 });
   }
 
   try {

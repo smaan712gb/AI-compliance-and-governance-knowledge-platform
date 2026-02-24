@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || "AIGovHub";
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://aigovhub.com";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.aigovhub.io";
 
 export function buildMetadata({
   title,
