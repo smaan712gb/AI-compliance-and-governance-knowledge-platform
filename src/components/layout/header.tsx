@@ -29,6 +29,31 @@ const toolLinks = [
     href: "/vendor-risk-questionnaire",
     description: "Generate AI vendor due diligence questionnaires",
   },
+  {
+    title: "Policy-to-Control Mapping",
+    href: "/policy-mapper",
+    description: "Map policies to NIST, ISO 27001, SOC 2, PCI DSS controls",
+  },
+  {
+    title: "Incident Materiality Assessment",
+    href: "/incident-assessment",
+    description: "SEC 8-K materiality analysis and breach notification",
+  },
+  {
+    title: "Board Report Generator",
+    href: "/board-report",
+    description: "Generate board-ready cyber and compliance reports",
+  },
+  {
+    title: "AI System Inventory",
+    href: "/ai-inventory",
+    description: "EU AI Act model risk registry and compliance tracking",
+  },
+  {
+    title: "Privacy Operations Toolkit",
+    href: "/privacy-ops",
+    description: "DSAR responses, ROPA generation, DPA review",
+  },
 ];
 
 const resourceLinks = [

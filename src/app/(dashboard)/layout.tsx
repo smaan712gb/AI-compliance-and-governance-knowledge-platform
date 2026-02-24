@@ -10,6 +10,8 @@ import {
   Settings,
   Building2,
   Bell,
+  Brain,
+  ShieldAlert,
 } from "lucide-react";
 
 const dashboardItems = [
@@ -37,6 +39,16 @@ const dashboardItems = [
     title: "Subscription",
     href: "/dashboard/subscription",
     icon: <Star className="h-4 w-4" />,
+  },
+  {
+    title: "AI Inventory",
+    href: "/dashboard/ai-inventory",
+    icon: <Brain className="h-4 w-4" />,
+  },
+  {
+    title: "Risk Register",
+    href: "/dashboard/risk-register",
+    icon: <ShieldAlert className="h-4 w-4" />,
   },
   {
     title: "Saved Results",

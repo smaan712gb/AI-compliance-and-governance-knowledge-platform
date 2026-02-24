@@ -14,6 +14,11 @@ export function MobileNav({ onClose }: MobileNavProps) {
   const links = [
     { title: "AI Act Checker", href: "/ai-act-checker" },
     { title: "Questionnaire Generator", href: "/vendor-risk-questionnaire" },
+    { title: "Policy Mapper", href: "/policy-mapper" },
+    { title: "Incident Assessment", href: "/incident-assessment" },
+    { title: "Board Report", href: "/board-report" },
+    { title: "AI Inventory", href: "/ai-inventory" },
+    { title: "Privacy Ops", href: "/privacy-ops" },
     { title: "Vendor Tracker", href: "/vendors" },
     { title: "Blog", href: "/blog" },
     { title: "Guides", href: "/guides" },

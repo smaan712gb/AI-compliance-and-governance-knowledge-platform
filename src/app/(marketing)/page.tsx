@@ -24,6 +24,11 @@ import {
   CheckCircle,
   Clock,
   Zap,
+  Scale,
+  AlertTriangle,
+  BarChart3,
+  Brain,
+  Lock,
 } from "lucide-react";
 import { InlineCaptureForm } from "@/components/email-capture/inline-capture-form";
 
@@ -104,8 +109,8 @@ export default function HomePage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold">Free Compliance Tools</h2>
             <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
-              Purpose-built tools to accelerate your AI governance journey.
-              No signup required to get started.
+              Start with powerful free tools. No signup required.
+              Upgrade for enterprise-grade GRC automation.
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
@@ -202,8 +207,149 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Vendor Tracker Preview */}
+      {/* Enterprise GRC Suite */}
       <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <Badge variant="outline" className="mb-4">Enterprise GRC Suite</Badge>
+            <h2 className="text-3xl font-bold">Operations-Grade Compliance Tools</h2>
+            <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
+              Purpose-built for CISOs, CROs, and Compliance Officers. Automate the
+              workflows you do every day with AI-powered precision.
+            </p>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                    <Scale className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle className="text-base">Policy-to-Control Mapping</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Map policies to NIST CSF, ISO 27001, SOC 2, PCI DSS, DORA, and NIS2 controls. Identify gaps instantly.
+                </p>
+                <Link href="/policy-mapper">
+                  <Button variant="outline" size="sm" className="w-full gap-2">
+                    Map Controls <ArrowRight className="h-3 w-3" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-destructive/10">
+                    <AlertTriangle className="h-5 w-5 text-destructive" />
+                  </div>
+                  <CardTitle className="text-base">Incident Materiality</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  SEC 8-K materiality analysis, GDPR Art 33 notifications, and multi-jurisdiction breach timelines.
+                </p>
+                <Link href="/incident-assessment">
+                  <Button variant="outline" size="sm" className="w-full gap-2">
+                    Assess Incident <ArrowRight className="h-3 w-3" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                    <BarChart3 className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle className="text-base">Board Report Generator</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Generate board-ready cyber risk and compliance reports with KRIs, RAG status, and recommendations.
+                </p>
+                <Link href="/board-report">
+                  <Button variant="outline" size="sm" className="w-full gap-2">
+                    Generate Report <ArrowRight className="h-3 w-3" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                    <Brain className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle className="text-base">AI System Inventory</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  EU AI Act compliant registry. Track model risk, data sensitivity, and governance requirements.
+                </p>
+                <Link href="/ai-inventory">
+                  <Button variant="outline" size="sm" className="w-full gap-2">
+                    Register Systems <ArrowRight className="h-3 w-3" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-destructive/10">
+                    <Shield className="h-5 w-5 text-destructive" />
+                  </div>
+                  <CardTitle className="text-base">Enterprise Risk Register</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  ISO 31000 risk register with AI-powered analysis, residual scoring, and treatment plans.
+                </p>
+                <Link href="/dashboard/risk-register">
+                  <Button variant="outline" size="sm" className="w-full gap-2">
+                    Manage Risks <ArrowRight className="h-3 w-3" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                    <Lock className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle className="text-base">Privacy Operations</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  DSAR response generation, ROPA documentation, and DPA clause review under GDPR.
+                </p>
+                <Link href="/privacy-ops">
+                  <Button variant="outline" size="sm" className="w-full gap-2">
+                    Privacy Tools <ArrowRight className="h-3 w-3" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Vendor Tracker Preview */}
+      <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold">Compliance Vendor Tracker</h2>

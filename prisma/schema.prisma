@@ -323,7 +323,7 @@ model ContentPage {
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
-  agentGenerated Boolean       @default(false)
+  agentGenerated Boolean @default(false)
 
   vendorMentions ContentVendorMention[]
   affiliateLinks ContentAffiliateLink[]
@@ -387,7 +387,7 @@ model AffiliateLink {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  vendor       Vendor?              @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  vendor       Vendor?                @relation(fields: [vendorId], references: [id], onDelete: SetNull)
   clicks       AffiliateClick[]
   contentLinks ContentAffiliateLink[]
 
@@ -410,7 +410,7 @@ model AffiliateClick {
 }
 
 model ContentAffiliateLink {
-  id              String @id @default(cuid())
+  id              String  @id @default(cuid())
   contentPageId   String
   affiliateLinkId String
   anchorText      String?
@@ -650,20 +650,20 @@ model AgentSource {
 }
 
 model EvidenceCard {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   sourceId       String
   title          String
   url            String
-  summary        String   @db.Text
+  summary        String    @db.Text
   keyFindings    Json
   relevanceScore Float
   category       String
   tags           String[]
-  rawContent     String?  @db.Text
-  isUsed         Boolean  @default(false)
+  rawContent     String?   @db.Text
+  isUsed         Boolean   @default(false)
   expiresAt      DateTime?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   source           AgentSource         @relation(fields: [sourceId], references: [id], onDelete: Cascade)
   taskEvidence     AgentTaskEvidence[]
@@ -791,6 +791,15 @@ model CompanyProfile {
   alerts       CompanyAlert[]
   usageRecords UsageRecord[]
   erpAnalyses  ERPAnalysis[]
+
+  // GRC Tools relations (Phase 5)
+  policyMappings       PolicyMapping[]
+  incidentAssessments  IncidentAssessment[]
+  boardReports         BoardReport[]
+  aiSystems            AISystem[]
+  risks                Risk[]
+  dsarRequests         DSARRequest[]
+  processingActivities ProcessingActivity[]
 
   @@map("company_profiles")
 }
@@ -933,4 +942,314 @@ model UsageRecord {
   @@unique([companyId, feature, month])
   @@index([companyId, month])
   @@map("usage_records")
+}
+
+// ============================================
+// ENTERPRISE GRC TOOLS (Phase 5)
+// ============================================
+
+// ---------- Enums ----------
+
+enum PolicyFramework {
+  NIST_CSF_2
+  ISO_27001_2022
+  SOC_2
+  PCI_DSS_4
+  DORA
+  NIS2
+  HIPAA
+  EU_AI_ACT
+  GDPR
+}
+
+enum PolicyDomain {
+  ACCESS_CONTROL
+  DATA_PROTECTION
+  INCIDENT_RESPONSE
+  RISK_MANAGEMENT
+  GOVERNANCE
+  ASSET_MANAGEMENT
+  SUPPLY_CHAIN
+  SECURITY_OPERATIONS
+}
+
+enum MaturityLevel {
+  INITIAL
+  DEVELOPING
+  DEFINED
+  MANAGED
+  OPTIMIZING
+}
+
+enum IncidentType {
+  DATA_BREACH
+  RANSOMWARE
+  INSIDER_THREAT
+  SUPPLY_CHAIN_COMPROMISE
+  DDOS
+  PHISHING
+  SYSTEM_COMPROMISE
+  UNAUTHORIZED_ACCESS
+  DATA_LOSS
+  BUSINESS_EMAIL_COMPROMISE
+}
+
+enum MaterialityLevel {
+  MATERIAL
+  LIKELY_MATERIAL
+  POSSIBLY_MATERIAL
+  NOT_MATERIAL
+  INSUFFICIENT_DATA
+}
+
+enum BoardReportType {
+  QUARTERLY_CISO
+  ANNUAL_RISK
+  AUDIT_COMMITTEE
+  INCIDENT_BRIEF
+  REGULATORY_UPDATE
+}
+
+enum AIRiskLevel {
+  UNACCEPTABLE
+  HIGH
+  LIMITED
+  MINIMAL
+  GPAI
+  GPAI_SYSTEMIC
+}
+
+enum RiskCategory {
+  CYBER_SECURITY
+  DATA_PRIVACY
+  REGULATORY
+  OPERATIONAL
+  FINANCIAL
+  REPUTATIONAL
+  STRATEGIC
+  THIRD_PARTY
+  AI_MODEL
+}
+
+enum DSARType {
+  ACCESS
+  RECTIFICATION
+  ERASURE
+  RESTRICTION
+  PORTABILITY
+  OBJECTION
+}
+
+enum LegalBasis {
+  CONSENT
+  CONTRACT
+  LEGAL_OBLIGATION
+  VITAL_INTERESTS
+  PUBLIC_TASK
+  LEGITIMATE_INTERESTS
+}
+
+// ---------- Tool 1: Policy-to-Control Mapping ----------
+
+model PolicyMapping {
+  id           String            @id @default(cuid())
+  userId       String?
+  companyId    String?
+  frameworks   PolicyFramework[]
+  policyDomain PolicyDomain?
+  policyText   String?           @db.Text
+  industry     String?
+  companySize  String?
+  aiResponse   String?           @db.Text
+  tokensUsed   Int               @default(0)
+  costUsd      Float             @default(0)
+  createdAt    DateTime          @default(now())
+
+  company CompanyProfile? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([companyId])
+  @@map("policy_mappings")
+}
+
+// ---------- Tool 2: Incident Materiality Assessment ----------
+
+model IncidentAssessment {
+  id                String            @id @default(cuid())
+  userId            String
+  companyId         String?
+  incidentType      IncidentType
+  description       String            @db.Text
+  recordsAffected   Int?
+  dataTypesInvolved String[]
+  discoveryDate     DateTime?
+  containmentDate   DateTime?
+  industry          String?
+  isPublicCompany   Boolean           @default(false)
+  materialityLevel  MaterialityLevel?
+  aiResponse        String?           @db.Text
+  tokensUsed        Int               @default(0)
+  costUsd           Float             @default(0)
+  createdAt         DateTime          @default(now())
+
+  company CompanyProfile? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([companyId])
+  @@map("incident_assessments")
+}
+
+// ---------- Tool 3: Board Report Generator ----------
+
+model BoardReport {
+  id          String          @id @default(cuid())
+  userId      String
+  companyId   String?
+  reportType  BoardReportType
+  periodStart DateTime
+  periodEnd   DateTime
+  focusAreas  String[]
+  audience    String?
+  aiResponse  String?         @db.Text
+  tokensUsed  Int             @default(0)
+  costUsd     Float           @default(0)
+  createdAt   DateTime        @default(now())
+
+  company CompanyProfile? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([companyId])
+  @@map("board_reports")
+}
+
+// ---------- Tool 4: AI System Inventory ----------
+
+model AISystem {
+  id                 String       @id @default(cuid())
+  companyId          String
+  name               String
+  description        String       @db.Text
+  purpose            String?      @db.Text
+  modelType          String?
+  modelProvider      String?
+  dataClassification String?
+  riskLevel          AIRiskLevel?
+  department         String?
+  owner              String?
+  status             String       @default("ACTIVE")
+  deploymentDate     DateTime?
+  lastReviewDate     DateTime?
+  dataSources        String[]
+  outputTypes        String[]
+  affectedPersons    String[]
+  humanOversight     String?      @db.Text
+  aiAnalysis         Json?
+  tokensUsed         Int          @default(0)
+  costUsd            Float        @default(0)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  company CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([riskLevel])
+  @@index([status])
+  @@map("ai_systems")
+}
+
+// ---------- Tool 5: Enterprise Risk Register ----------
+
+model Risk {
+  id            String       @id @default(cuid())
+  companyId     String
+  title         String
+  description   String       @db.Text
+  category      RiskCategory
+  likelihood    Int          @default(3)
+  impact        Int          @default(3)
+  inherentScore Float?
+  owner         String?
+  status        String       @default("OPEN")
+  mitigations   String[]
+  controls      String[]
+  residualScore Float?
+  targetDate    DateTime?
+  reviewDate    DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  company     CompanyProfile   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  assessments RiskAssessment[]
+
+  @@index([companyId])
+  @@index([category])
+  @@index([status])
+  @@map("risks")
+}
+
+model RiskAssessment {
+  id         String   @id @default(cuid())
+  riskId     String
+  analysis   Json
+  tokensUsed Int      @default(0)
+  costUsd    Float    @default(0)
+  createdAt  DateTime @default(now())
+
+  risk Risk @relation(fields: [riskId], references: [id], onDelete: Cascade)
+
+  @@index([riskId])
+  @@map("risk_assessments")
+}
+
+// ---------- Tool 6a: DSAR Response Generator ----------
+
+model DSARRequest {
+  id              String   @id @default(cuid())
+  userId          String?
+  companyId       String?
+  dsarType        DSARType
+  dataSubjectType String?
+  jurisdiction    String?
+  requestDetails  String   @db.Text
+  aiResponse      String?  @db.Text
+  tokensUsed      Int      @default(0)
+  costUsd         Float    @default(0)
+  createdAt       DateTime @default(now())
+
+  company CompanyProfile? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([companyId])
+  @@map("dsar_requests")
+}
+
+// ---------- Tool 6b: ROPA / Processing Activities ----------
+
+model ProcessingActivity {
+  id                     String     @id @default(cuid())
+  companyId              String
+  activityName           String
+  purpose                String     @db.Text
+  legalBasis             LegalBasis
+  dataCategories         String[]
+  dataSubjectTypes       String[]
+  recipients             String[]
+  transferMechanisms     String[]
+  retentionPeriod        String?
+  technicalMeasures      String[]
+  organizationalMeasures String[]
+  dpiaConducted          Boolean    @default(false)
+  dpiaDate               DateTime?
+  aiGenerated            Boolean    @default(false)
+  aiResponse             String?    @db.Text
+  tokensUsed             Int        @default(0)
+  costUsd                Float      @default(0)
+  createdAt              DateTime   @default(now())
+  updatedAt              DateTime   @updatedAt
+
+  company CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([legalBasis])
+  @@map("processing_activities")
 }
