@@ -33,7 +33,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy Prisma schema + client for db push on startup
+# Copy Prisma schema + engine for db push on startup
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
@@ -42,5 +42,5 @@ COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 USER nextjs
 EXPOSE 3000
 
-# Sync schema then start the standalone server
-CMD npx prisma db push --skip-generate && node server.js
+# Use direct node path for prisma (npx doesn't work in standalone)
+CMD ["sh", "-c", "node node_modules/prisma/build/index.js db push --skip-generate && node server.js"]
