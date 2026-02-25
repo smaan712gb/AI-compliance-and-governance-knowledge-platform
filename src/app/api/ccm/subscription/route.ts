@@ -4,11 +4,7 @@ import { db } from "@/lib/db";
 import { checkCCMPermission, getUserOrganization } from "@/lib/ccm/rbac";
 import { getOrgCCMTier, getCCMTierLimits } from "@/lib/ccm/feature-gating";
 import { logAuditEvent, extractRequestMeta } from "@/lib/ccm/audit-logger";
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-02-24.acacia" as Stripe.LatestApiVersion,
-});
+import { stripe } from "@/lib/stripe";
 
 const CCM_PRICE_IDS: Record<string, string> = {
   starter: process.env.STRIPE_PRICE_CCM_STARTER || "",
@@ -147,8 +143,8 @@ export async function POST(req: NextRequest) {
       customer: customerId,
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/ccm/dashboard/settings?checkout=success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/ccm/pricing?checkout=cancelled`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/ccm/dashboard/settings?checkout=success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/ccm/pricing?checkout=cancelled`,
       metadata: {
         product: "ccm",
         organizationId: orgId,
