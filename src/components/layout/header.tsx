@@ -95,7 +95,7 @@ export function Header() {
               <ChevronDown className="h-4 w-4" />
             </button>
             {activeDropdown === "tools" && (
-              <div className="absolute left-0 top-full mt-0 w-80 rounded-md border bg-popover p-4 shadow-md">
+              <div className="absolute left-0 top-full mt-0 w-80 max-h-[70vh] overflow-y-auto rounded-md border bg-popover p-4 shadow-md">
                 {toolLinks.map((link) => (
                   <Link
                     key={link.href}
