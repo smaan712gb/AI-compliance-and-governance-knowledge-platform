@@ -163,6 +163,13 @@ export function Header() {
           </div>
 
           <Link
+            href="/ccm"
+            className="px-3 py-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+          >
+            CCM Platform
+          </Link>
+
+          <Link
             href="/products"
             className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >

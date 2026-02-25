@@ -24,12 +24,13 @@ model User {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  accounts       Account[]
-  sessions       Session[]
-  purchases      Purchase[]
-  subscription   Subscription?
-  savedResults   SavedComplianceResult[]
-  companyProfile CompanyProfile?
+  accounts         Account[]
+  sessions         Session[]
+  purchases        Purchase[]
+  subscription     Subscription?
+  savedResults     SavedComplianceResult[]
+  companyProfile   CompanyProfile?
+  ccmMemberships   CCMOrganizationMember[]
 
   @@map("users")
 }
@@ -1346,4 +1347,470 @@ model PCIComplianceCheck {
   @@index([userId])
   @@index([companyId])
   @@map("pci_compliance_checks")
+}
+
+// ============================================
+// CCM — CONTINUOUS CONTROLS MONITORING
+// ============================================
+
+enum CCMOrgRole {
+  OWNER
+  ADMIN
+  ANALYST
+  VIEWER
+  AUDITOR
+}
+
+enum LLMProvider {
+  OPENAI
+  ANTHROPIC
+  DEEPSEEK
+  AZURE_OPENAI
+  GOOGLE_VERTEX
+}
+
+enum ERPType {
+  SAP_S4HANA_CLOUD
+  SAP_S4HANA_ONPREM
+  SAP_ECC
+  ORACLE_CLOUD
+  ORACLE_EBUSINESS
+  WORKDAY
+  CONCUR
+  DYNAMICS_365
+  NETSUITE
+  MOCK
+}
+
+enum ConnectorStatus {
+  CONFIGURED
+  TESTING
+  CONNECTED
+  SYNC_ERROR
+  DISABLED
+}
+
+enum SyncJobStatus {
+  QUEUED
+  RUNNING
+  COMPLETED
+  FAILED
+  PARTIAL
+}
+
+enum SyncDomain {
+  SOX_CONTROLS
+  AML_KYC
+  ACCESS_CONTROL
+  AUDIT_TRAIL
+  ALL
+}
+
+enum RuleFramework {
+  SOX
+  PCI_DSS
+  HIPAA
+  AML_BSA
+  GDPR
+  ISO_27001
+  NIST_CSF
+  CUSTOM
+}
+
+enum RuleSeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+  INFO
+}
+
+enum MonitoringRunStatus {
+  MON_RUNNING
+  MON_COMPLETED
+  MON_FAILED
+}
+
+enum FindingStatus {
+  OPEN
+  IN_PROGRESS
+  REMEDIATED
+  ACCEPTED_RISK
+  FALSE_POSITIVE
+  CLOSED
+}
+
+enum EvidenceType {
+  SCREENSHOT
+  LOG_EXPORT
+  CONFIGURATION
+  POLICY_DOCUMENT
+  TEST_RESULT
+  SYSTEM_REPORT
+  AUTO_COLLECTED
+}
+
+enum AuditAction {
+  LOGIN
+  LOGOUT
+  INVITE_MEMBER
+  REMOVE_MEMBER
+  UPDATE_MEMBER_ROLE
+  CREATE_CONNECTOR
+  UPDATE_CONNECTOR
+  DELETE_CONNECTOR
+  TEST_CONNECTOR
+  TRIGGER_SYNC
+  CREATE_RULE
+  UPDATE_RULE
+  DELETE_RULE
+  UPDATE_FINDING_STATUS
+  ASSIGN_FINDING
+  GENERATE_REMEDIATION
+  APPROVE_REMEDIATION
+  UPLOAD_EVIDENCE
+  DELETE_EVIDENCE
+  EXPORT_EVIDENCE
+  UPDATE_LLM_CONFIG
+  UPDATE_ORG_SETTINGS
+  EXPORT_DATA
+  VIEW_SENSITIVE_DATA
+  RUN_AI_ANALYSIS
+  GENERATE_REPORT
+}
+
+// ---- Organization & Members ----
+
+model CCMOrganization {
+  id                String   @id @default(cuid())
+  name              String
+  slug              String   @unique
+  industry          String?
+  companySize       String?
+  headquarters      String?
+  encryptionKeyHash String   @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  members      CCMOrganizationMember[]
+  connectors   ERPConnector[]
+  rules        MonitoringRule[]
+  findings     Finding[]
+  evidence     Evidence[]
+  llmConfigs   LLMConfiguration[]
+  subscription CCMSubscription?
+  auditLogs    CCMAuditLog[]
+  reports      CCMReport[]
+
+  @@map("ccm_organizations")
+}
+
+model CCMOrganizationMember {
+  id             String     @id @default(cuid())
+  organizationId String
+  userId         String
+  role           CCMOrgRole @default(VIEWER)
+  invitedBy      String?
+  invitedAt      DateTime   @default(now())
+  acceptedAt     DateTime?
+  isActive       Boolean    @default(true)
+
+  organization CCMOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@map("ccm_organization_members")
+}
+
+// ---- BYOK LLM Configuration ----
+
+model LLMConfiguration {
+  id              String      @id @default(cuid())
+  organizationId  String
+  provider        LLMProvider
+  modelId         String
+  displayName     String
+  apiKeyEncrypted String      @db.Text
+  baseUrl         String?
+  isDefault       Boolean     @default(false)
+  isActive        Boolean     @default(true)
+  lastTestedAt    DateTime?
+  lastError       String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  organization CCMOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, isDefault])
+  @@map("ccm_llm_configurations")
+}
+
+// ---- ERP Connectors ----
+
+model ERPConnector {
+  id              String          @id @default(cuid())
+  organizationId  String
+  name            String
+  erpType         ERPType
+  status          ConnectorStatus @default(CONFIGURED)
+  configEncrypted String          @db.Text
+  lastTestedAt    DateTime?
+  lastSyncAt      DateTime?
+  lastError       String?         @db.Text
+  syncFrequency   String          @default("6h")
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  organization CCMOrganization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  syncJobs     ConnectorSyncJob[]
+  dataPoints   ERPDataPoint[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId, isActive])
+  @@map("ccm_erp_connectors")
+}
+
+model ConnectorSyncJob {
+  id            String        @id @default(cuid())
+  connectorId   String
+  domain        SyncDomain
+  status        SyncJobStatus @default(QUEUED)
+  startedAt     DateTime?
+  completedAt   DateTime?
+  recordsPulled Int           @default(0)
+  recordsFailed Int           @default(0)
+  errorLog      Json?
+  parameters    Json?
+  createdAt     DateTime      @default(now())
+
+  connector  ERPConnector @relation(fields: [connectorId], references: [id], onDelete: Cascade)
+  dataPoints ERPDataPoint[]
+
+  @@index([connectorId, status])
+  @@index([createdAt])
+  @@map("ccm_connector_sync_jobs")
+}
+
+model ERPDataPoint {
+  id           String    @id @default(cuid())
+  connectorId  String
+  syncJobId    String?
+  domain       String
+  dataType     String
+  externalId   String?
+  data         Json
+  rawData      Json?
+  severity     String?
+  flagged      Boolean   @default(false)
+  flagReason   String?
+  pulledAt     DateTime  @default(now())
+  dataDate     DateTime?
+
+  connector ERPConnector      @relation(fields: [connectorId], references: [id], onDelete: Cascade)
+  syncJob   ConnectorSyncJob? @relation(fields: [syncJobId], references: [id], onDelete: SetNull)
+  findings  FindingDataPoint[]
+
+  @@index([connectorId, domain, dataType])
+  @@index([connectorId, flagged])
+  @@index([dataDate])
+  @@map("ccm_erp_data_points")
+}
+
+// ---- Monitoring Rules & Findings ----
+
+model MonitoringRule {
+  id             String        @id @default(cuid())
+  organizationId String
+  name           String
+  description    String        @db.Text
+  framework      RuleFramework
+  controlId      String?
+  domain         SyncDomain
+  severity       RuleSeverity  @default(MEDIUM)
+  isBuiltIn      Boolean       @default(false)
+  ruleDefinition Json
+  isActive       Boolean       @default(true)
+  lastRunAt      DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  organization CCMOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  runs         MonitoringRun[]
+  findings     Finding[]
+
+  @@index([organizationId, isActive])
+  @@index([framework])
+  @@map("ccm_monitoring_rules")
+}
+
+model MonitoringRun {
+  id                String              @id @default(cuid())
+  ruleId            String
+  status            MonitoringRunStatus @default(MON_RUNNING)
+  dataPointsScanned Int                 @default(0)
+  findingsCreated   Int                 @default(0)
+  startedAt         DateTime            @default(now())
+  completedAt       DateTime?
+  errorLog          String?             @db.Text
+  aiTokensUsed      Int                 @default(0)
+  aiCostUsd         Float               @default(0)
+
+  rule     MonitoringRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  findings Finding[]
+
+  @@index([ruleId, startedAt])
+  @@map("ccm_monitoring_runs")
+}
+
+model Finding {
+  id              String        @id @default(cuid())
+  organizationId  String
+  ruleId          String?
+  runId           String?
+  title           String
+  description     String        @db.Text
+  severity        RuleSeverity
+  status          FindingStatus @default(OPEN)
+  framework       RuleFramework
+  controlId       String?
+  aiAnalysis      String?       @db.Text
+  assignedTo      String?
+  dueDate         DateTime?
+  resolvedAt      DateTime?
+  resolvedBy      String?
+  resolutionNotes String?       @db.Text
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  organization    CCMOrganization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  rule            MonitoringRule?  @relation(fields: [ruleId], references: [id], onDelete: SetNull)
+  run             MonitoringRun?   @relation(fields: [runId], references: [id], onDelete: SetNull)
+  remediationPlan RemediationPlan?
+  dataPoints      FindingDataPoint[]
+  evidence        Evidence[]
+
+  @@index([organizationId, status])
+  @@index([organizationId, severity])
+  @@index([framework])
+  @@map("ccm_findings")
+}
+
+model FindingDataPoint {
+  findingId   String
+  dataPointId String
+
+  finding   Finding      @relation(fields: [findingId], references: [id], onDelete: Cascade)
+  dataPoint ERPDataPoint @relation(fields: [dataPointId], references: [id], onDelete: Cascade)
+
+  @@id([findingId, dataPointId])
+  @@map("ccm_finding_data_points")
+}
+
+model RemediationPlan {
+  id          String    @id @default(cuid())
+  findingId   String    @unique
+  steps       Json
+  aiGenerated Boolean   @default(true)
+  aiResponse  String?   @db.Text
+  tokensUsed  Int       @default(0)
+  costUsd     Float     @default(0)
+  approvedBy  String?
+  approvedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  finding Finding @relation(fields: [findingId], references: [id], onDelete: Cascade)
+
+  @@map("ccm_remediation_plans")
+}
+
+// ---- Evidence ----
+
+model Evidence {
+  id              String       @id @default(cuid())
+  organizationId  String
+  findingId       String?
+  type            EvidenceType
+  title           String
+  description     String?
+  fileUrl         String?
+  fileSize        Int?
+  mimeType        String?
+  data            Json?
+  collectedAt     DateTime     @default(now())
+  collectedBy     String?
+  isAutoCollected Boolean      @default(false)
+
+  organization CCMOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  finding      Finding?        @relation(fields: [findingId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, type])
+  @@index([findingId])
+  @@map("ccm_evidence")
+}
+
+// ---- CCM Subscription ----
+
+model CCMSubscription {
+  id                       String             @id @default(cuid())
+  organizationId           String             @unique
+  stripeSubscriptionId     String             @unique
+  stripePriceId            String
+  stripeCurrentPeriodStart DateTime
+  stripeCurrentPeriodEnd   DateTime
+  status                   SubscriptionStatus
+  cancelAtPeriodEnd        Boolean            @default(false)
+  maxConnectors            Int                @default(1)
+  maxMembers               Int                @default(5)
+  maxRules                 Int                @default(50)
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+
+  organization CCMOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("ccm_subscriptions")
+}
+
+// ---- CCM Audit Log ----
+
+model CCMAuditLog {
+  id             String      @id @default(cuid())
+  organizationId String
+  userId         String
+  action         AuditAction
+  resourceType   String?
+  resourceId     String?
+  details        Json?
+  ipAddress      String?
+  userAgent      String?
+  timestamp      DateTime    @default(now())
+
+  organization CCMOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, timestamp])
+  @@index([userId, timestamp])
+  @@index([action])
+  @@map("ccm_audit_logs")
+}
+
+// ---- CCM Reports ----
+
+model CCMReport {
+  id             String   @id @default(cuid())
+  organizationId String
+  reportType     String
+  title          String
+  generatedBy    String
+  data           Json
+  aiResponse     String?  @db.Text
+  tokensUsed     Int      @default(0)
+  costUsd        Float    @default(0)
+  createdAt      DateTime @default(now())
+
+  organization CCMOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, reportType])
+  @@map("ccm_reports")
 }

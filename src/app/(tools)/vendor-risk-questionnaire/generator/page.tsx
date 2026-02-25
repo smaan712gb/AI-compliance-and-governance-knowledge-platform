@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select } from "@/components/ui/select";
+import { SelectNative } from "@/components/ui/select";
 import { Loader2, FileCheck, ArrowRight } from "lucide-react";
 
 const MODEL_TYPES = [
@@ -131,10 +131,10 @@ export default function QuestionnaireGeneratorPage() {
 
                 <div>
                   <Label htmlFor="modelType">AI Model Type *</Label>
-                  <Select
+                  <SelectNative
                     id="modelType"
                     value={formData.modelType}
-                    onChange={(e) => update("modelType", e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => update("modelType", e.target.value)}
                     required
                     className="mt-1"
                   >
@@ -144,15 +144,15 @@ export default function QuestionnaireGeneratorPage() {
                         {type}
                       </option>
                     ))}
-                  </Select>
+                  </SelectNative>
                 </div>
 
                 <div>
                   <Label htmlFor="deployment">Deployment Model *</Label>
-                  <Select
+                  <SelectNative
                     id="deployment"
                     value={formData.deployment}
-                    onChange={(e) => update("deployment", e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => update("deployment", e.target.value)}
                     required
                     className="mt-1"
                   >
@@ -162,7 +162,7 @@ export default function QuestionnaireGeneratorPage() {
                         {opt}
                       </option>
                     ))}
-                  </Select>
+                  </SelectNative>
                 </div>
 
                 <div>

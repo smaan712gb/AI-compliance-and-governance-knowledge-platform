@@ -158,7 +158,103 @@ async function main() {
     console.log(`  Set ${sub.envKey}=${stripePrice.id} in your .env\n`);
   }
 
-  console.log("Sync complete!");
+  // ── CCM Subscription Tiers ──────────────────────────────────────────────────
+  const CCM_SUBSCRIPTIONS = [
+    {
+      name: "CCM Starter",
+      slug: "ccm-starter",
+      description: "Continuous controls monitoring for 1 ERP connector. Includes SOX framework, 25 rules, 100 AI analyses/month.",
+      interval: "month" as const,
+      price: 49900, // $499.00
+      envKey: "STRIPE_PRICE_CCM_STARTER",
+    },
+    {
+      name: "CCM Professional",
+      slug: "ccm-professional",
+      description: "Up to 3 ERP connectors. SOX + PCI DSS + AML/BSA frameworks, 100 rules, 500 AI analyses/month, BYOK LLM.",
+      interval: "month" as const,
+      price: 149900, // $1,499.00
+      envKey: "STRIPE_PRICE_CCM_PRO",
+    },
+    {
+      name: "CCM Enterprise",
+      slug: "ccm-enterprise",
+      description: "Unlimited connectors, all 8 compliance frameworks, unlimited AI analyses, BYOK + self-hosted LLM, dedicated CSM.",
+      interval: "month" as const,
+      price: 499900, // $4,999.00
+      envKey: "STRIPE_PRICE_CCM_ENTERPRISE",
+    },
+  ];
+
+  console.log("Syncing CCM subscription tiers...\n");
+
+  const ccmPriceIds: Record<string, string> = {};
+
+  for (const sub of CCM_SUBSCRIPTIONS) {
+    const existingProducts = await stripe.products.search({
+      query: `metadata["slug"]:"${sub.slug}"`,
+    });
+
+    let stripeProduct: Stripe.Product;
+    if (existingProducts.data.length > 0) {
+      stripeProduct = existingProducts.data[0];
+      console.log(`  Found existing: ${sub.name} (${stripeProduct.id})`);
+    } else {
+      stripeProduct = await stripe.products.create({
+        name: sub.name,
+        description: sub.description,
+        metadata: { slug: sub.slug, product: "ccm" },
+      });
+      console.log(`  Created: ${sub.name} (${stripeProduct.id})`);
+    }
+
+    const prices = await stripe.prices.list({ product: stripeProduct.id, active: true });
+    let stripePrice = prices.data.find(
+      (p) => p.unit_amount === sub.price && p.recurring?.interval === sub.interval
+    );
+
+    if (!stripePrice) {
+      stripePrice = await stripe.prices.create({
+        product: stripeProduct.id,
+        unit_amount: sub.price,
+        currency: "usd",
+        recurring: { interval: sub.interval },
+        metadata: { slug: sub.slug, product: "ccm" },
+      });
+      console.log(`  Created price: ${stripePrice.id} ($${sub.price / 100}/mo)`);
+    } else {
+      console.log(`  Existing price: ${stripePrice.id} ($${sub.price / 100}/mo)`);
+    }
+
+    ccmPriceIds[sub.envKey] = stripePrice.id;
+    console.log(`  ${sub.envKey}=${stripePrice.id}\n`);
+  }
+
+  // Auto-update .env file with CCM price IDs
+  const fs = await import("fs");
+  const path = await import("path");
+  const envPath = path.join(process.cwd(), ".env");
+
+  if (fs.existsSync(envPath)) {
+    let envContent = fs.readFileSync(envPath, "utf8");
+    for (const [key, value] of Object.entries(ccmPriceIds)) {
+      const regex = new RegExp(`^${key}=.*$`, "m");
+      if (regex.test(envContent)) {
+        envContent = envContent.replace(regex, `${key}="${value}"`);
+      } else {
+        envContent += `\n${key}="${value}"`;
+      }
+    }
+    fs.writeFileSync(envPath, envContent, "utf8");
+    console.log("✅ .env updated with CCM price IDs.\n");
+  } else {
+    console.log("⚠️  .env not found — add these manually:\n");
+    for (const [key, value] of Object.entries(ccmPriceIds)) {
+      console.log(`  ${key}="${value}"`);
+    }
+  }
+
+  console.log("✅ Sync complete!");
   await prisma.$disconnect();
 }
 

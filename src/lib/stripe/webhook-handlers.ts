@@ -43,49 +43,97 @@ export async function handleCheckoutCompleted(session: Stripe.Checkout.Session) 
     // Fetch real period dates from Stripe instead of hardcoding
     let periodStart = new Date();
     let periodEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    let stripePriceId = session.metadata?.priceId || "";
     try {
       const sub = await stripe.subscriptions.retrieve(subscriptionId);
       const firstItem = sub.items.data[0];
       if (firstItem) {
         periodStart = new Date(firstItem.current_period_start * 1000);
         periodEnd = new Date(firstItem.current_period_end * 1000);
+        if (!stripePriceId) stripePriceId = firstItem.price.id;
       }
     } catch {
       // Fallback to approximate dates if Stripe retrieval fails
     }
 
-    await db.subscription.upsert({
-      where: { userId },
-      create: {
-        userId,
-        stripeSubscriptionId: subscriptionId,
-        stripePriceId: session.metadata?.priceId || "",
-        status: "ACTIVE",
-        stripeCurrentPeriodStart: periodStart,
-        stripeCurrentPeriodEnd: periodEnd,
-      },
-      update: {
-        stripeSubscriptionId: subscriptionId,
-        stripePriceId: session.metadata?.priceId || "",
-        status: "ACTIVE",
-        stripeCurrentPeriodStart: periodStart,
-        stripeCurrentPeriodEnd: periodEnd,
-      },
-    });
+    // Route CCM subscriptions to CCMSubscription table
+    if (session.metadata?.product === "ccm") {
+      const orgId = session.metadata?.organizationId;
+      if (orgId) {
+        await db.cCMSubscription.upsert({
+          where: { organizationId: orgId },
+          create: {
+            organizationId: orgId,
+            stripeSubscriptionId: subscriptionId,
+            stripePriceId,
+            status: "ACTIVE",
+            stripeCurrentPeriodStart: periodStart,
+            stripeCurrentPeriodEnd: periodEnd,
+          },
+          update: {
+            stripeSubscriptionId: subscriptionId,
+            stripePriceId,
+            status: "ACTIVE",
+            stripeCurrentPeriodStart: periodStart,
+            stripeCurrentPeriodEnd: periodEnd,
+          },
+        });
+      }
+    } else {
+      await db.subscription.upsert({
+        where: { userId },
+        create: {
+          userId,
+          stripeSubscriptionId: subscriptionId,
+          stripePriceId,
+          status: "ACTIVE",
+          stripeCurrentPeriodStart: periodStart,
+          stripeCurrentPeriodEnd: periodEnd,
+        },
+        update: {
+          stripeSubscriptionId: subscriptionId,
+          stripePriceId,
+          status: "ACTIVE",
+          stripeCurrentPeriodStart: periodStart,
+          stripeCurrentPeriodEnd: periodEnd,
+        },
+      });
+    }
   }
 }
 
 export async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
+  const firstItem = subscription.items.data[0];
+  const mappedStatus = mapSubscriptionStatus(subscription.status);
+
+  // Check if this is a CCM subscription
+  if (subscription.metadata?.product === "ccm") {
+    const ccmSub = await db.cCMSubscription.findUnique({
+      where: { stripeSubscriptionId: subscription.id },
+    });
+    if (ccmSub) {
+      await db.cCMSubscription.update({
+        where: { id: ccmSub.id },
+        data: {
+          status: mappedStatus,
+          stripeCurrentPeriodStart: firstItem ? new Date(firstItem.current_period_start * 1000) : undefined,
+          stripeCurrentPeriodEnd: firstItem ? new Date(firstItem.current_period_end * 1000) : undefined,
+          cancelAtPeriodEnd: subscription.cancel_at_period_end,
+        },
+      });
+      return;
+    }
+  }
+
   const sub = await db.subscription.findUnique({
     where: { stripeSubscriptionId: subscription.id },
   });
   if (!sub) return;
 
-  const firstItem = subscription.items.data[0];
   await db.subscription.update({
     where: { id: sub.id },
     data: {
-      status: mapSubscriptionStatus(subscription.status),
+      status: mappedStatus,
       stripeCurrentPeriodStart: firstItem
         ? new Date(firstItem.current_period_start * 1000)
         : undefined,
@@ -98,6 +146,20 @@ export async function handleSubscriptionUpdated(subscription: Stripe.Subscriptio
 }
 
 export async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+  // Check if this is a CCM subscription
+  if (subscription.metadata?.product === "ccm") {
+    const ccmSub = await db.cCMSubscription.findUnique({
+      where: { stripeSubscriptionId: subscription.id },
+    });
+    if (ccmSub) {
+      await db.cCMSubscription.update({
+        where: { id: ccmSub.id },
+        data: { status: "CANCELED" },
+      });
+      return;
+    }
+  }
+
   const sub = await db.subscription.findUnique({
     where: { stripeSubscriptionId: subscription.id },
   });

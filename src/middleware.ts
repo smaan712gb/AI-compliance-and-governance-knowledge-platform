@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
   };
 
   // Auth-protected routes
-  const protectedPaths = ["/dashboard", "/checkout"];
+  const protectedPaths = ["/dashboard", "/checkout", "/ccm/dashboard"];
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
 
   if (isProtected) {
@@ -70,6 +70,7 @@ export const config = {
     "/dashboard/:path*",
     "/admin/:path*",
     "/checkout/:path*",
+    "/ccm/dashboard/:path*",
     "/go/:path*",
   ],
 };

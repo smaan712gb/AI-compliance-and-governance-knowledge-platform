@@ -24,6 +24,7 @@ export function MobileNav({ onClose }: MobileNavProps) {
     { title: "HIPAA Compliance", href: "/hipaa-compliance-checker" },
     { title: "PCI Compliance", href: "/pci-compliance-checker" },
     { title: "ERP Analysis", href: "/erp-analysis" },
+    { title: "CCM Platform", href: "/ccm" },
     { title: "Vendor Tracker", href: "/vendors" },
     { title: "Blog", href: "/blog" },
     { title: "Guides", href: "/guides" },
