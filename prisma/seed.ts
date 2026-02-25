@@ -956,6 +956,37 @@ async function main() {
       type: "RSS_FEED" as const,
       category: "vendor-news",
     },
+    // HR & Employment Law Sources
+    {
+      name: "SHRM - HR News",
+      url: "https://www.shrm.org/rss/pages/rss.aspx",
+      type: "INDUSTRY_REPORT" as const,
+      category: "hr-compliance",
+    },
+    {
+      name: "US DOL - News Releases",
+      url: "https://www.dol.gov/rss/releases.xml",
+      type: "REGULATORY_BODY" as const,
+      category: "hr-compliance",
+    },
+    {
+      name: "EEOC - News",
+      url: "https://www.eeoc.gov/rss/press-releases.xml",
+      type: "REGULATORY_BODY" as const,
+      category: "hr-compliance",
+    },
+    {
+      name: "National Law Review - Employment",
+      url: "https://natlawreview.com/recent-contributions/feed",
+      type: "RSS_FEED" as const,
+      category: "hr-compliance",
+    },
+    {
+      name: "HR Dive",
+      url: "https://www.hrdive.com/feeds/news/",
+      type: "RSS_FEED" as const,
+      category: "hr-compliance",
+    },
   ];
 
   for (const source of agentSources) {

@@ -54,6 +54,11 @@ const toolLinks = [
     href: "/privacy-ops",
     description: "DSAR responses, ROPA generation, DPA review",
   },
+  {
+    title: "HR Compliance Checker",
+    href: "/hr-compliance-checker",
+    description: "AI hiring, pay transparency, and employment law compliance",
+  },
 ];
 
 const resourceLinks = [

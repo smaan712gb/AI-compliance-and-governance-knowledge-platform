@@ -89,10 +89,11 @@ export async function POST(req: NextRequest) {
           controller.enqueue(encoder.encode("data: [DONE]\n\n"));
           controller.close();
         } catch (streamError) {
-          console.error("Compliance check stream error:", streamError instanceof Error ? streamError.message : String(streamError));
+          const errMsg = streamError instanceof Error ? streamError.message : String(streamError);
+          console.error("Compliance check stream error:", errMsg);
           controller.enqueue(
             encoder.encode(
-              `data: ${JSON.stringify({ error: "Stream error occurred" })}\n\n`
+              `data: ${JSON.stringify({ error: `Compliance check failed: ${errMsg}` })}\n\n`
             )
           );
           controller.close();

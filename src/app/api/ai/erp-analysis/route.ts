@@ -269,9 +269,10 @@ export async function POST(req: NextRequest) {
               ? streamError.message
               : String(streamError),
           );
+          const errMsg = streamError instanceof Error ? streamError.message : String(streamError);
           controller.enqueue(
             encoder.encode(
-              `data: ${JSON.stringify({ error: "An error occurred during analysis. Please try again." })}\n\n`,
+              `data: ${JSON.stringify({ error: `ERP analysis failed: ${errMsg}` })}\n\n`,
             ),
           );
           controller.close();

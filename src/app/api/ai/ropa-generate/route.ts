@@ -109,8 +109,9 @@ export async function POST(req: NextRequest) {
             console.error("[ROPA] Failed to save:", dbError instanceof Error ? dbError.message : String(dbError));
           }
         } catch (streamError) {
-          console.error("[ROPA] Stream error:", streamError instanceof Error ? streamError.message : String(streamError));
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "An error occurred. Please try again." })}\n\n`));
+          const errMsg = streamError instanceof Error ? streamError.message : String(streamError);
+          console.error("[ROPA] Stream error:", errMsg);
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: `ROPA generation failed: ${errMsg}` })}\n\n`));
           controller.close();
         }
       },

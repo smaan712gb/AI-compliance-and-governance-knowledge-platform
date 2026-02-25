@@ -1,19 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { policyMapperSchema } from "@/lib/validators/policy-mapper";
+import { hrComplianceSchema } from "@/lib/validators/hr-compliance";
 import {
-  buildPolicyMapperPrompt,
-  POLICY_MAPPER_SYSTEM_PROMPT,
-} from "@/lib/ai/policy-mapper-prompts";
+  buildHRCompliancePrompt,
+  HR_COMPLIANCE_SYSTEM_PROMPT,
+} from "@/lib/ai/hr-compliance-prompts";
 import { deepseek } from "@/lib/deepseek";
 import { auth } from "@/lib/auth";
 import { checkAIRateLimit } from "@/lib/utils/rate-limit";
 import { db } from "@/lib/db";
-import { checkFeatureAccess, incrementUsage } from "@/lib/feature-gating";
 import { estimateCost } from "@/lib/agents/types";
 
 export async function POST(req: NextRequest) {
   try {
-    // Auth is optional — used for rate limit and feature gating
+    // Auth is optional — public tool with rate limiting
     let userId: string | null = null;
     let userEmail: string | null = null;
     let isAuthenticated = false;
@@ -30,7 +29,7 @@ export async function POST(req: NextRequest) {
 
     const identifier = userEmail || req.headers.get("x-forwarded-for") || "anonymous";
 
-    // Rate limiting for all users (admins bypass)
+    // Rate limiting (admins bypass)
     try {
       const rateLimit = await checkAIRateLimit(identifier, isAuthenticated, isAdmin);
       if (!rateLimit.success) {
@@ -49,30 +48,8 @@ export async function POST(req: NextRequest) {
       console.warn("Rate limit check failed, allowing through:", rateLimitError instanceof Error ? rateLimitError.message : String(rateLimitError));
     }
 
-    // Feature gating for authenticated users (free users get limited access)
-    if (userId) {
-      const access = await checkFeatureAccess(userId, "policy_mapping");
-      if (!access.allowed) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: {
-              code: "FEATURE_LOCKED",
-              message: access.upgradeRequired
-                ? `You've reached your monthly policy mapping limit (${access.used}/${access.limit}). Upgrade for more.`
-                : "Policy mapping is not available on your current plan.",
-              tier: access.tier,
-              limit: access.limit,
-              used: access.used,
-            },
-          },
-          { status: 403 }
-        );
-      }
-    }
-
     const body = await req.json();
-    const parsed = policyMapperSchema.safeParse(body);
+    const parsed = hrComplianceSchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -88,8 +65,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const prompt = buildPolicyMapperPrompt(parsed.data);
-
+    const prompt = buildHRCompliancePrompt(parsed.data);
     const encoder = new TextEncoder();
     let fullContent = "";
     let inputTokens = 0;
@@ -101,7 +77,7 @@ export async function POST(req: NextRequest) {
           const stream = await deepseek.chat.completions.create({
             model: "deepseek-chat",
             messages: [
-              { role: "system", content: POLICY_MAPPER_SYSTEM_PROMPT },
+              { role: "system", content: HR_COMPLIANCE_SYSTEM_PROMPT },
               { role: "user", content: prompt },
             ],
             stream: true,
@@ -113,9 +89,7 @@ export async function POST(req: NextRequest) {
             const text = chunk.choices[0]?.delta?.content || "";
             if (text) {
               fullContent += text;
-              controller.enqueue(
-                encoder.encode(`data: ${JSON.stringify({ text })}\n\n`)
-              );
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`));
             }
             if (chunk.usage) {
               inputTokens = chunk.usage.prompt_tokens || 0;
@@ -126,43 +100,37 @@ export async function POST(req: NextRequest) {
           controller.enqueue(encoder.encode("data: [DONE]\n\n"));
           controller.close();
 
-          // Post-stream: save to DB and increment usage
+          // Post-stream: save to DB
           try {
             const cost = estimateCost(inputTokens, outputTokens, "deepseek-chat");
-
             let companyId: string | null = null;
             if (userId) {
               const company = await db.companyProfile.findUnique({ where: { userId } });
               companyId = company?.id || null;
-
-              if (company) {
-                await incrementUsage(company.id, "policy_mapping");
-              }
             }
 
-            await db.policyMapping.create({
+            await db.hRComplianceCheck.create({
               data: {
                 userId,
                 companyId,
-                frameworks: parsed.data.frameworks,
-                policyDomain: parsed.data.policyDomain || null,
-                policyText: parsed.data.policyText || null,
+                domain: parsed.data.domain,
+                jurisdictions: parsed.data.jurisdictions,
                 industry: parsed.data.industry || null,
-                companySize: parsed.data.companySize || null,
+                workforceSize: parsed.data.workforceSize || null,
+                hrToolsUsed: parsed.data.hrToolsUsed || [],
+                concerns: parsed.data.concerns || [],
                 aiResponse: fullContent,
                 tokensUsed: inputTokens + outputTokens,
                 costUsd: cost,
               },
             });
           } catch (dbError) {
-            console.error("[Policy Mapper] Failed to save record:", dbError instanceof Error ? dbError.message : String(dbError));
+            console.error("[HR Compliance] Failed to save:", dbError instanceof Error ? dbError.message : String(dbError));
           }
         } catch (streamError) {
           const errMsg = streamError instanceof Error ? streamError.message : String(streamError);
-          console.error("[Policy Mapper] Stream error:", errMsg);
-          controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ error: `Policy mapping failed: ${errMsg}` })}\n\n`)
-          );
+          console.error("[HR Compliance] Stream error:", errMsg);
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: `HR compliance check failed: ${errMsg}` })}\n\n`));
           controller.close();
         }
       },
@@ -177,13 +145,13 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("[Policy Mapper] Error:", message);
+    console.error("[HR Compliance] Error:", message);
     return NextResponse.json(
       {
         success: false,
         error: {
           code: "INTERNAL_ERROR",
-          message: `Failed to run policy mapping: ${message}`,
+          message: `Failed to run HR compliance check: ${message}`,
         },
       },
       { status: 500 }

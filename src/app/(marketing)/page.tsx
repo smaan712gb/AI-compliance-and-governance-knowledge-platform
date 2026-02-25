@@ -29,6 +29,7 @@ import {
   BarChart3,
   Brain,
   Lock,
+  Users,
 } from "lucide-react";
 import { InlineCaptureForm } from "@/components/email-capture/inline-capture-form";
 
@@ -340,6 +341,27 @@ export default function HomePage() {
                 <Link href="/privacy-ops">
                   <Button variant="outline" size="sm" className="w-full gap-2">
                     Privacy Tools <ArrowRight className="h-3 w-3" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                    <Users className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle className="text-base">HR Compliance Checker</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  AI hiring bias audits, pay transparency, employee data privacy, and global workforce compliance.
+                </p>
+                <Link href="/hr-compliance-checker">
+                  <Button variant="outline" size="sm" className="w-full gap-2">
+                    Check Compliance <ArrowRight className="h-3 w-3" />
                   </Button>
                 </Link>
               </CardContent>

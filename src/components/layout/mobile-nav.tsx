@@ -19,6 +19,7 @@ export function MobileNav({ onClose }: MobileNavProps) {
     { title: "Board Report", href: "/board-report" },
     { title: "AI Inventory", href: "/ai-inventory" },
     { title: "Privacy Ops", href: "/privacy-ops" },
+    { title: "HR Compliance", href: "/hr-compliance-checker" },
     { title: "Vendor Tracker", href: "/vendors" },
     { title: "Blog", href: "/blog" },
     { title: "Guides", href: "/guides" },

@@ -88,10 +88,11 @@ export async function POST(req: NextRequest) {
           controller.enqueue(encoder.encode("data: [DONE]\n\n"));
           controller.close();
         } catch (streamError) {
-          console.error("Questionnaire stream error:", streamError instanceof Error ? streamError.message : String(streamError));
+          const errMsg = streamError instanceof Error ? streamError.message : String(streamError);
+          console.error("Questionnaire stream error:", errMsg);
           controller.enqueue(
             encoder.encode(
-              `data: ${JSON.stringify({ error: "Stream error" })}\n\n`
+              `data: ${JSON.stringify({ error: `Questionnaire generation failed: ${errMsg}` })}\n\n`
             )
           );
           controller.close();
