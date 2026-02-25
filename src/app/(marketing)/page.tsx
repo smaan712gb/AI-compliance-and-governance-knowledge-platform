@@ -30,6 +30,9 @@ import {
   Brain,
   Lock,
   Users,
+  Banknote,
+  HeartPulse,
+  CreditCard,
 } from "lucide-react";
 import { InlineCaptureForm } from "@/components/email-capture/inline-capture-form";
 
@@ -366,6 +369,69 @@ export default function HomePage() {
                 </Link>
               </CardContent>
             </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                    <Banknote className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle className="text-base">Financial Compliance Checker</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  AML/KYC program assessment, transaction monitoring, sanctions screening, and SOX controls.
+                </p>
+                <Link href="/financial-compliance-checker">
+                  <Button variant="outline" size="sm" className="w-full gap-2">
+                    Check Compliance <ArrowRight className="h-3 w-3" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-destructive/10">
+                    <HeartPulse className="h-5 w-5 text-destructive" />
+                  </div>
+                  <CardTitle className="text-base">HIPAA Compliance Checker</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  PHI safeguards, breach notification, business associate agreements, and OCR audit readiness.
+                </p>
+                <Link href="/hipaa-compliance-checker">
+                  <Button variant="outline" size="sm" className="w-full gap-2">
+                    Check Compliance <ArrowRight className="h-3 w-3" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                    <CreditCard className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle className="text-base">PCI DSS Compliance Checker</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Payment card security, SAQ determination, v4.0.1 requirements, and card brand programs.
+                </p>
+                <Link href="/pci-compliance-checker">
+                  <Button variant="outline" size="sm" className="w-full gap-2">
+                    Check Compliance <ArrowRight className="h-3 w-3" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -389,6 +455,8 @@ export default function HomePage() {
               "E-Invoicing & Tax",
               "ESG & Sustainability",
               "AI Governance",
+              "Financial Compliance",
+              "Healthcare",
             ].map((category) => (
               <Card key={category} className="text-center p-6">
                 <Database className="h-8 w-8 text-primary mx-auto mb-3" />

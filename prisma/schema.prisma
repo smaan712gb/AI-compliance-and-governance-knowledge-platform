@@ -800,7 +800,10 @@ model CompanyProfile {
   risks                Risk[]
   dsarRequests         DSARRequest[]
   processingActivities ProcessingActivity[]
-  hrComplianceChecks   HRComplianceCheck[]
+  hrComplianceChecks        HRComplianceCheck[]
+  financialComplianceChecks FinancialComplianceCheck[]
+  hipaaComplianceChecks     HIPAAComplianceCheck[]
+  pciComplianceChecks       PCIComplianceCheck[]
 
   @@map("company_profiles")
 }
@@ -1277,4 +1280,70 @@ model HRComplianceCheck {
   @@index([userId])
   @@index([companyId])
   @@map("hr_compliance_checks")
+}
+
+model FinancialComplianceCheck {
+  id                    String   @id @default(cuid())
+  userId                String?
+  companyId             String?
+  domain                String
+  jurisdictions         String[]
+  entityType            String?
+  transactionVolume     String?
+  financialSystemsUsed  String[]
+  concerns              String[]
+  aiResponse            String?  @db.Text
+  tokensUsed            Int      @default(0)
+  costUsd               Float    @default(0)
+  createdAt             DateTime @default(now())
+
+  company CompanyProfile? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([companyId])
+  @@map("financial_compliance_checks")
+}
+
+model HIPAAComplianceCheck {
+  id                String   @id @default(cuid())
+  userId            String?
+  companyId         String?
+  domain            String
+  jurisdictions     String[]
+  entityType        String?
+  organizationSize  String?
+  systemsUsed       String[]
+  concerns          String[]
+  aiResponse        String?  @db.Text
+  tokensUsed        Int      @default(0)
+  costUsd           Float    @default(0)
+  createdAt         DateTime @default(now())
+
+  company CompanyProfile? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([companyId])
+  @@map("hipaa_compliance_checks")
+}
+
+model PCIComplianceCheck {
+  id              String   @id @default(cuid())
+  userId          String?
+  companyId       String?
+  domain          String
+  jurisdictions   String[]
+  saqType         String?
+  merchantLevel   String?
+  systemsUsed     String[]
+  concerns        String[]
+  aiResponse      String?  @db.Text
+  tokensUsed      Int      @default(0)
+  costUsd         Float    @default(0)
+  createdAt       DateTime @default(now())
+
+  company CompanyProfile? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([companyId])
+  @@map("pci_compliance_checks")
 }

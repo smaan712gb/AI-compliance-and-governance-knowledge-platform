@@ -59,6 +59,21 @@ const toolLinks = [
     href: "/hr-compliance-checker",
     description: "AI hiring, pay transparency, and employment law compliance",
   },
+  {
+    title: "Financial Compliance Checker",
+    href: "/financial-compliance-checker",
+    description: "AML/KYC, transaction monitoring, sanctions screening, and SOX compliance",
+  },
+  {
+    title: "HIPAA Compliance Checker",
+    href: "/hipaa-compliance-checker",
+    description: "PHI safeguards, breach notification, BAA management, and OCR audit readiness",
+  },
+  {
+    title: "PCI DSS Compliance Checker",
+    href: "/pci-compliance-checker",
+    description: "Payment card security, SAQ assessment, and PCI DSS v4.0.1 requirements",
+  },
 ];
 
 const resourceLinks = [
