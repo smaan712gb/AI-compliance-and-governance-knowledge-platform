@@ -23,6 +23,7 @@ import {
   AlertTriangle,
   ExternalLink,
   TrendingUp,
+  Zap,
 } from "lucide-react";
 
 interface OrgData {
@@ -172,6 +173,7 @@ export default function SettingsPage() {
   const [creating, setCreating] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
   const [subscribing, setSubscribing] = useState<string | null>(null);
+  const [trialLoading, setTrialLoading] = useState(false);
   const [error, setError] = useState("");
   const [slugEdited, setSlugEdited] = useState(false);
   const [form, setForm] = useState({
@@ -224,6 +226,24 @@ export default function SettingsPage() {
       setError("An error occurred. Please try again.");
     } finally {
       setCreating(false);
+    }
+  }
+
+  async function handleStartTrial() {
+    setTrialLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/ccm/trial", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Failed to start trial");
+        return;
+      }
+      window.location.reload();
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setTrialLoading(false);
     }
   }
 
@@ -468,34 +488,58 @@ export default function SettingsPage() {
             CCM Subscription
           </CardTitle>
           <CardDescription>
-            {tier
+            {sub?.subscription?.status === "TRIALING"
+              ? `14-day free trial — Professional access`
+              : tier
               ? `Active ${tierConfig?.label} plan`
               : "No active CCM subscription"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {tier && sub ? (
-            <>
-              {/* Usage bars */}
-              <div className="space-y-4">
-                <UsageBar
-                  label="ERP Connectors"
-                  used={sub.usage.connectors}
-                  max={sub.limits.connectors}
-                />
-                <UsageBar
-                  label="Team Members"
-                  used={sub.usage.members}
-                  max={sub.limits.members}
-                />
-                <UsageBar
-                  label="Monitoring Rules"
-                  used={sub.usage.rules}
-                  max={sub.limits.rules}
-                />
+          {/* ── Trial banner ── */}
+          {sub?.subscription?.status === "TRIALING" && (
+            <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 flex items-start gap-3">
+              <CheckCircle2 className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="font-semibold text-purple-800">
+                  Professional Trial Active — {daysLeft} days remaining
+                </p>
+                <p className="text-sm text-purple-700 mt-0.5">
+                  You have full Professional access. Subscribe below to keep
+                  access after your trial ends on{" "}
+                  {sub.subscription?.currentPeriodEnd
+                    ? new Date(sub.subscription.currentPeriodEnd).toLocaleDateString()
+                    : ""}
+                  .
+                </p>
               </div>
+            </div>
+          )}
 
-              {/* Renewal / cancellation info */}
+          {/* ── Usage bars (shown for trial + active) ── */}
+          {tier && sub && (
+            <div className="space-y-4">
+              <UsageBar
+                label="ERP Connectors"
+                used={sub.usage.connectors}
+                max={sub.limits.connectors}
+              />
+              <UsageBar
+                label="Team Members"
+                used={sub.usage.members}
+                max={sub.limits.members}
+              />
+              <UsageBar
+                label="Monitoring Rules"
+                used={sub.usage.rules}
+                max={sub.limits.rules}
+              />
+            </div>
+          )}
+
+          {/* ── Active paid subscription controls ── */}
+          {tier && sub && sub.subscription?.status === "ACTIVE" && (
+            <>
               {sub.subscription && (
                 <div
                   className={`rounded-lg border p-3 text-sm flex items-start gap-2 ${
@@ -516,8 +560,6 @@ export default function SettingsPage() {
                   </span>
                 </div>
               )}
-
-              {/* Billing portal button */}
               <Button
                 variant="outline"
                 onClick={handleManageBilling}
@@ -536,8 +578,35 @@ export default function SettingsPage() {
                 Stripe Billing Portal.
               </p>
             </>
-          ) : (
-            /* No subscription — show plan options */
+          )}
+
+          {/* ── No subscription: Start Free Trial CTA ── */}
+          {!tier && !sub && (
+            <div className="rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-6 text-center space-y-3">
+              <Zap className="h-8 w-8 text-primary mx-auto" />
+              <div>
+                <p className="font-semibold text-lg">Start your 14-day free trial</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Full Professional access — no credit card required. Includes 3 ERP connectors,
+                  SOX + PCI DSS + AML/BSA, 100 monitoring rules, and 500 AI analyses/month.
+                </p>
+              </div>
+              <Button onClick={handleStartTrial} disabled={trialLoading} size="lg">
+                {trialLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Zap className="mr-2 h-4 w-4" />
+                )}
+                Start Free Trial
+              </Button>
+              <p className="text-xs text-muted-foreground">
+                Or subscribe directly to a paid plan below.
+              </p>
+            </div>
+          )}
+
+          {/* ── Plan options (shown for trial + no subscription) ── */}
+          {(!tier || sub?.subscription?.status === "TRIALING") && (
             <div className="grid gap-4 md:grid-cols-3">
               {[
                 {

@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Create organization + owner membership in a transaction
+    // Create organization + owner membership + 14-day trial in a transaction
     const org = await db.$transaction(async (tx) => {
       const newOrg = await tx.cCMOrganization.create({
         data: {
@@ -92,6 +92,21 @@ export async function POST(req: NextRequest) {
           userId: session.user.id,
           role: "OWNER",
           acceptedAt: new Date(),
+        },
+      });
+
+      // Auto-provision a 14-day Professional trial so the owner has full access immediately
+      const now = new Date();
+      const trialEnd = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
+      await tx.cCMSubscription.create({
+        data: {
+          organizationId: newOrg.id,
+          stripeSubscriptionId: `trial_${newOrg.id}`,
+          stripePriceId: "trial_professional",
+          stripeCurrentPeriodStart: now,
+          stripeCurrentPeriodEnd: trialEnd,
+          status: "TRIALING",
+          cancelAtPeriodEnd: true,
         },
       });
 

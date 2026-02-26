@@ -92,6 +92,11 @@ export async function getOrgCCMTier(organizationId: string): Promise<CCMTier> {
     return "none";
   }
 
+  // TRIALING subscriptions (auto-provisioned on org creation) always get Professional access
+  if (subscription.status === "TRIALING") {
+    return "professional";
+  }
+
   return CCM_PRICE_TO_TIER[subscription.stripePriceId] || "none";
 }
 
@@ -197,11 +202,15 @@ export async function isFrameworkAllowed(
 
 /**
  * Check if an LLM provider is allowed on the organization's tier.
+ * DeepSeek is always allowed — it's the platform's included default provider.
  */
 export async function isProviderAllowed(
   organizationId: string,
   provider: string
 ): Promise<boolean> {
+  // DeepSeek is the platform's own included provider — never blocked
+  if (provider === "DEEPSEEK") return true;
+
   const tier = await getOrgCCMTier(organizationId);
   const limits = CCM_TIER_LIMITS[tier];
   return limits.byokProviders.includes(provider);
