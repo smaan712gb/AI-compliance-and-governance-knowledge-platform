@@ -173,12 +173,23 @@ export default function SettingsPage() {
   const [portalLoading, setPortalLoading] = useState(false);
   const [subscribing, setSubscribing] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [slugEdited, setSlugEdited] = useState(false);
   const [form, setForm] = useState({
     name: "",
     slug: "",
     industry: "",
     companySize: "",
   });
+
+  function handleNameChange(name: string) {
+    setForm((p) => ({
+      ...p,
+      name,
+      slug: slugEdited
+        ? p.slug
+        : name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""),
+    }));
+  }
 
   useEffect(() => {
     Promise.all([
@@ -299,35 +310,34 @@ export default function SettingsPage() {
               <Label htmlFor="org-name">Organization Name *</Label>
               <Input
                 id="org-name"
-                placeholder="Acme Corporation"
+                placeholder="Estee Lauder"
                 value={form.name}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, name: e.target.value }))
-                }
+                onChange={(e) => handleNameChange(e.target.value)}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="org-slug">
                 Slug{" "}
                 <span className="text-xs text-muted-foreground">
-                  (URL identifier) *
+                  (auto-generated · editable)
                 </span>
               </Label>
               <Input
                 id="org-slug"
-                placeholder="acme-corp"
+                placeholder="estee-lauder"
                 value={form.slug}
-                onChange={(e) =>
+                onChange={(e) => {
+                  setSlugEdited(true);
                   setForm((p) => ({
                     ...p,
                     slug: e.target.value
                       .toLowerCase()
                       .replace(/[^a-z0-9-]/g, "-"),
-                  }))
-                }
+                  }));
+                }}
               />
               <p className="text-xs text-muted-foreground">
-                Lowercase letters, numbers, and hyphens only.
+                Auto-filled from name. Lowercase, numbers, hyphens only.
               </p>
             </div>
             <div className="space-y-2">
