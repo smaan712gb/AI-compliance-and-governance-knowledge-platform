@@ -30,6 +30,15 @@ export async function POST(req: NextRequest) {
       (body as { triggeredBy?: string }).triggeredBy || "cron";
 
     // Check if an alert pipeline is already running
+    // Also clean up stale RUNNING records older than 30 minutes (e.g. from server restarts)
+    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+    await db.alertRun.updateMany({
+      where: { status: "RUNNING", startedAt: { lt: thirtyMinutesAgo } },
+      data: { status: "FAILED", completedAt: new Date(), errorLog: ["Stale run auto-expired after 30 minutes"] },
+    }).catch((err) => {
+      console.error("[AlertCron] Failed to clean up stale runs:", err);
+    });
+
     const running = await db.alertRun.findFirst({
       where: { status: "RUNNING" },
     });
