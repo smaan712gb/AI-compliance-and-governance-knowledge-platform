@@ -80,19 +80,44 @@ function initCCMPriceTierMap() {
 
 /**
  * Get the CCM tier for an organization.
+ * Auto-provisions a 14-day Professional trial if no subscription exists.
  */
 export async function getOrgCCMTier(organizationId: string): Promise<CCMTier> {
   initCCMPriceTierMap();
 
-  const subscription = await db.cCMSubscription.findUnique({
+  let subscription = await db.cCMSubscription.findUnique({
     where: { organizationId },
   });
+
+  // Auto-provision 14-day Professional trial for new orgs with no subscription
+  if (!subscription) {
+    const now = new Date();
+    const trialEnd = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
+    try {
+      subscription = await db.cCMSubscription.create({
+        data: {
+          organizationId,
+          stripeSubscriptionId: `trial_${organizationId}`,
+          stripePriceId: "trial_professional",
+          stripeCurrentPeriodStart: now,
+          stripeCurrentPeriodEnd: trialEnd,
+          status: "TRIALING",
+          cancelAtPeriodEnd: true,
+        },
+      });
+    } catch {
+      // Race condition: another request created it first — fetch it
+      subscription = await db.cCMSubscription.findUnique({
+        where: { organizationId },
+      });
+    }
+  }
 
   if (!subscription || (subscription.status !== "ACTIVE" && subscription.status !== "TRIALING")) {
     return "none";
   }
 
-  // TRIALING subscriptions (auto-provisioned on org creation) always get Professional access
+  // TRIALING always maps to Professional regardless of the price ID placeholder
   if (subscription.status === "TRIALING") {
     return "professional";
   }
