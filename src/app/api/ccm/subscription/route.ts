@@ -100,7 +100,9 @@ export async function POST(req: NextRequest) {
     const priceId = CCM_PRICE_IDS[plan];
     if (!priceId) {
       return NextResponse.json(
-        { error: "Price not configured. Contact support." },
+        {
+          error: `Stripe price not configured for plan "${plan}". Set STRIPE_PRICE_CCM_${plan.toUpperCase()} in environment variables.`,
+        },
         { status: 500 }
       );
     }
@@ -139,12 +141,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Create checkout session
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "http://localhost:3000";
     const checkoutSession = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/ccm/dashboard/settings?checkout=success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/ccm/pricing?checkout=cancelled`,
+      success_url: `${siteUrl}/ccm/dashboard/settings?checkout=success`,
+      cancel_url: `${siteUrl}/ccm/pricing?checkout=cancelled`,
       metadata: {
         product: "ccm",
         organizationId: orgId,
@@ -174,6 +177,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ data: { checkoutUrl: checkoutSession.url } });
   } catch (error) {
     console.error("[CCM Subscription] POST error:", error);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    // Surface the actual error message so the client can display it
+    const message =
+      error instanceof Error ? error.message : "An unexpected error occurred";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

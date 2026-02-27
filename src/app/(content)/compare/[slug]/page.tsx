@@ -13,15 +13,9 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  try {
-    const pages = await db.contentPage.findMany({
-      where: { type: "COMPARISON", status: "PUBLISHED" },
-      select: { slug: true },
-    });
-    return pages.map((p) => ({ slug: p.slug }));
-  } catch {
-    return [];
-  }
+  // Return empty to avoid concurrent DB connection exhaustion during build.
+  // Pages are generated on first request via ISR (revalidate).
+  return [];
 }
 
 export const revalidate = 86400;
