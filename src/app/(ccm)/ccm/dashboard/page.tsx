@@ -39,7 +39,7 @@ interface Finding {
 interface Connector {
   id: string;
   name: string;
-  type: string;
+  erpType: string;
   status: string;
   lastSyncAt: string | null;
   syncJobCount?: number;
@@ -463,7 +463,7 @@ export default function CCMDashboardPage() {
                       <div>
                         <p className="text-sm font-medium">{c.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {c.type.replace(/_/g, " ")}
+                          {c.erpType?.replace(/_/g, " ")}
                           {c.lastSyncAt &&
                             ` · Last sync ${new Date(c.lastSyncAt).toLocaleDateString()}`}
                         </p>
