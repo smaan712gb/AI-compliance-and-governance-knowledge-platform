@@ -35,14 +35,14 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy Prisma schema + generated client (needed by the app at runtime)
+# Copy Prisma schema + compiled query engine binaries.
+# @prisma/client is already bundled inside .next/standalone/node_modules.
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
-# Install the Prisma CLI with all its transitive deps for db push.
-# node:20-alpine includes npm, so we can do a clean targeted install.
-# --ignore-scripts prevents postinstall hooks from running.
+# Install the Prisma CLI with ALL its transitive deps (effect, empathic, c12…).
+# We must NOT pre-copy @prisma here — npm needs to install @prisma/config
+# and its deps itself, otherwise it skips them (sees @prisma already present).
 COPY --from=builder /app/package.json ./package.json
 RUN npm install --ignore-scripts --no-audit --no-fund prisma && rm package.json
 
