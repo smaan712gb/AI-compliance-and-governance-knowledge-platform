@@ -1,0 +1,592 @@
+{
+  "vendors": [
+    {
+      "name": "Fiddler AI",
+      "slug": "fiddler-ai",
+      "description": "Fiddler AI is an enterprise-grade AI observability platform that provides comprehensive model monitoring, explainability, and bias detection capabilities for machine learning systems in production. Founded in 2018 and headquartered in Palo Alto, California, Fiddler has established itself as a leader in the AI observability space, serving mid-market and enterprise organizations across financial services, healthcare, e-commerce, and technology sectors.\n\nAt its core, Fiddler offers a unified platform that enables data science and ML engineering teams to monitor model performance in real time, detect data drift, identify bias in model predictions, and generate human-readable explanations for individual predictions. The platform supports a wide range of model types including tabular, NLP, computer vision, and large language models, making it versatile enough to cover diverse AI deployments within an organization.\n\nFiddler's bias detection capabilities are particularly noteworthy. The platform allows teams to define fairness metrics across protected attributes such as race, gender, and age, and continuously monitors model outputs for disparate impact and other fairness violations. When bias is detected, Fiddler provides actionable insights and root cause analysis, enabling teams to understand not just that bias exists but why it emerged and how it can be mitigated. This proactive approach to fairness monitoring is critical for organizations operating under regulatory frameworks like the EU AI Act and NIST AI RMF.\n\nThe platform's explainability engine leverages techniques including SHAP values, feature importance, and counterfactual explanations to make model behavior transparent to both technical and non-technical stakeholders. This is particularly valuable for regulated industries where model decisions must be justifiable to auditors, regulators, and affected individuals.\n\nFiddler integrates with major cloud platforms and ML infrastructure tools including AWS SageMaker, Google Vertex AI, and Databricks, enabling seamless deployment into existing ML workflows. The platform also offers robust alerting, dashboarding, and reporting capabilities that facilitate cross-functional collaboration between data science, compliance, and business teams.",
+      "shortDescription": "AI observability platform providing real-time model monitoring, bias detection, and explainability for enterprise ML systems.",
+      "websiteUrl": "https://www.fiddler.ai",
+      "category": "BIAS_FAIRNESS_TESTING",
+      "pricingModel": "ENTERPRISE_ONLY",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": true,
+      "frameworksSupported": ["EU AI Act", "NIST AI RMF", "ISO 42001", "EEOC Guidelines"],
+      "deploymentsSupported": ["Cloud", "VPC"],
+      "integrationsSupported": ["AWS SageMaker", "Google Vertex AI", "Databricks", "MLflow", "Azure ML", "Snowflake"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": false,
+      "overallScore": 8.0,
+      "easeOfUse": 7.5,
+      "featureRichness": 8.5,
+      "valueForMoney": 7.5,
+      "customerSupport": 8.0,
+      "prosConsList": {
+        "pros": [
+          "Excellent explainability features with SHAP-based and counterfactual explanations",
+          "Strong real-time bias detection and monitoring across protected attributes",
+          "Comprehensive model monitoring with drift detection and performance tracking",
+          "Supports diverse model types including LLMs, NLP, and computer vision"
+        ],
+        "cons": [
+          "Pricing is not transparent and requires engaging with sales",
+          "Platform can be complex to configure for organizations without dedicated ML ops teams",
+          "Steeper learning curve compared to simpler point solutions"
+        ]
+      },
+      "companySize": "Enterprise",
+      "foundedYear": 2018,
+      "headquarters": "Palo Alto, CA",
+      "employeeCount": "51-200",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Parity AI",
+      "slug": "parity-ai",
+      "description": "Parity AI is a dedicated algorithmic fairness and bias testing platform designed to help organizations identify, measure, and mitigate bias in their AI and machine learning systems. Founded in 2020 and headquartered in New York, New York, Parity AI was built with the singular mission of making AI systems fairer and more equitable, addressing one of the most pressing challenges in responsible AI deployment.\n\nThe platform provides an intuitive interface for conducting bias audits across the entire machine learning lifecycle, from training data analysis through model development to production monitoring. Parity AI's approach centers on making fairness testing accessible to a broad range of stakeholders, not just data scientists. Business analysts, compliance officers, and product managers can use the platform to run bias assessments without deep technical expertise, thanks to a guided workflow that walks users through defining protected attributes, selecting appropriate fairness metrics, and interpreting results.\n\nParity AI supports a comprehensive set of fairness metrics including demographic parity, equalized odds, predictive parity, and calibration across groups. The platform can analyze both structured and unstructured data, and provides detailed reports that map findings to regulatory requirements under frameworks such as the EU AI Act, NIST AI RMF, and EEOC guidelines. These audit reports are designed to be presentation-ready for regulators, board members, and external auditors.\n\nA key differentiator for Parity AI is its focus on actionable remediation. Rather than simply flagging bias, the platform provides concrete recommendations for mitigation, including pre-processing techniques for training data, in-processing constraints for model training, and post-processing adjustments for model outputs. This end-to-end approach helps organizations move from bias detection to bias resolution efficiently.\n\nParity AI primarily serves mid-market organizations in financial services, insurance, healthcare, and human resources, where algorithmic decision-making has direct impacts on individuals and regulatory scrutiny is high. The platform's cloud-based architecture enables rapid deployment, and its API-first design allows integration into existing CI/CD pipelines for automated fairness testing.",
+      "shortDescription": "Algorithmic fairness and bias testing platform enabling accessible bias audits with actionable remediation guidance.",
+      "websiteUrl": "https://www.getparity.ai",
+      "category": "BIAS_FAIRNESS_TESTING",
+      "pricingModel": "SUBSCRIPTION",
+      "pricingStartsAt": "$2,000/month",
+      "hasFreeTrialOrTier": true,
+      "frameworksSupported": ["EU AI Act", "NIST AI RMF", "EEOC Guidelines", "NYC Local Law 144"],
+      "deploymentsSupported": ["Cloud"],
+      "integrationsSupported": ["Python SDK", "REST API", "AWS", "Azure"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": false,
+      "iso27001Certified": false,
+      "overallScore": 7.5,
+      "easeOfUse": 8.5,
+      "featureRichness": 7.0,
+      "valueForMoney": 7.5,
+      "customerSupport": 7.5,
+      "prosConsList": {
+        "pros": [
+          "Laser-focused on fairness and bias testing with deep domain expertise",
+          "Easy-to-use bias auditing interface accessible to non-technical stakeholders",
+          "Actionable remediation recommendations beyond simple bias flagging",
+          "Audit reports designed to meet regulatory requirements"
+        ],
+        "cons": [
+          "Narrow focus on fairness means it lacks broader AI governance capabilities",
+          "Smaller company with more limited resources compared to larger competitors",
+          "Fewer integrations with enterprise ML infrastructure tools"
+        ]
+      },
+      "companySize": "Mid-Market",
+      "foundedYear": 2020,
+      "headquarters": "New York, NY",
+      "employeeCount": "11-50",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Lumenova AI",
+      "slug": "lumenova-ai",
+      "description": "Lumenova AI is an AI governance platform with particularly strong bias assessment and fairness testing capabilities, designed to help organizations manage the risks associated with deploying artificial intelligence systems. Founded in 2021 and headquartered in Toronto, Canada, Lumenova AI serves small-to-medium businesses and mid-market organizations that need a comprehensive yet affordable approach to responsible AI.\n\nThe platform provides a centralized AI governance hub where organizations can inventory their AI systems, assess risks, conduct bias evaluations, and maintain compliance documentation. Lumenova's bias testing module allows users to upload model data and run fairness assessments across multiple protected attributes simultaneously, generating detailed reports that highlight areas of concern and provide severity ratings. The platform supports a wide range of fairness metrics and allows organizations to customize thresholds based on their specific regulatory requirements and risk appetite.\n\nOne of Lumenova AI's key strengths is its alignment with international AI governance frameworks. The platform maps directly to the EU AI Act risk categories, the NIST AI Risk Management Framework, the Canadian Directive on Automated Decision-Making, and ISO 42001 standards. This multi-framework approach is particularly valuable for organizations operating across jurisdictions that must satisfy multiple regulatory regimes simultaneously.\n\nLumenova's approach to bias assessment goes beyond statistical metrics to include contextual fairness analysis, where the platform considers the real-world impact of model decisions on different demographic groups. The platform also provides a model risk assessment workflow that considers bias as one component of overall AI risk, alongside factors like transparency, robustness, and accountability.\n\nThe platform's pricing model is designed to be accessible to smaller organizations, with tiered plans that scale based on the number of AI models being governed. This positioning fills an important gap in the market, as many AI governance tools are priced exclusively for large enterprises. Lumenova AI also offers guided onboarding and templates that help organizations new to AI governance get started quickly without requiring extensive internal expertise in fairness testing or regulatory compliance.",
+      "shortDescription": "AI governance platform with strong bias assessment capabilities, designed for SMBs and mid-market organizations.",
+      "websiteUrl": "https://www.lumenova.ai",
+      "category": "BIAS_FAIRNESS_TESTING",
+      "pricingModel": "SUBSCRIPTION",
+      "pricingStartsAt": "$500/month",
+      "hasFreeTrialOrTier": true,
+      "frameworksSupported": ["EU AI Act", "NIST AI RMF", "ISO 42001", "Canadian Directive on Automated Decision-Making"],
+      "deploymentsSupported": ["Cloud"],
+      "integrationsSupported": ["REST API", "Python SDK", "AWS"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": false,
+      "iso27001Certified": false,
+      "overallScore": 7.3,
+      "easeOfUse": 8.0,
+      "featureRichness": 7.0,
+      "valueForMoney": 8.0,
+      "customerSupport": 7.5,
+      "prosConsList": {
+        "pros": [
+          "Comprehensive bias testing integrated with broader AI governance capabilities",
+          "Affordable pricing tiers accessible to SMBs and mid-market organizations",
+          "Strong alignment with multiple international AI governance frameworks",
+          "Guided onboarding and templates for organizations new to AI governance"
+        ],
+        "cons": [
+          "Newer company with shorter track record compared to established competitors",
+          "Limited integrations with major cloud ML platforms",
+          "Smaller customer community and fewer third-party resources available"
+        ]
+      },
+      "companySize": "SMB",
+      "foundedYear": 2021,
+      "headquarters": "Toronto, Canada",
+      "employeeCount": "11-50",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Eticas",
+      "slug": "eticas",
+      "description": "Eticas is a pioneering algorithmic auditing firm and AI ethics consultancy that combines purpose-built audit technology with deep domain expertise to help organizations assess and mitigate the risks of algorithmic decision-making. Founded in 2014 and headquartered in Madrid, Spain, Eticas is one of the earliest companies dedicated to algorithmic accountability, giving it a significant track record in a field that many competitors entered only recently.\n\nThe company's flagship offering is its AEQUALITAS platform, an algorithmic auditing tool that enables systematic evaluation of AI systems for bias, fairness, transparency, and compliance with ethical standards. The platform provides a structured methodology for auditing algorithms across their full lifecycle, from data collection practices through model design to deployment outcomes. AEQUALITAS generates comprehensive audit reports that document findings, assess risk levels, and provide actionable recommendations for remediation.\n\nEticas' approach is distinguished by its strong European focus and deep roots in EU regulatory frameworks. The company has been actively involved in shaping the EU AI Act and related regulatory initiatives, giving it firsthand insight into regulatory expectations and compliance requirements. This makes Eticas particularly well-suited for organizations that need to prepare for or demonstrate compliance with European AI regulations. The platform also supports assessments against the NIST AI RMF, OECD AI Principles, and other international frameworks.\n\nBeyond its technology platform, Eticas offers consulting services that include independent algorithmic audits, AI ethics training, impact assessments, and regulatory readiness evaluations. This hybrid model of technology plus consulting allows Eticas to handle complex, high-stakes auditing scenarios that require human judgment and domain expertise beyond what automated tools alone can provide. Clients include public sector agencies, financial institutions, and technology companies across Europe and Latin America.\n\nEticas' research-backed methodology draws on academic partnerships and published research in algorithmic fairness, lending credibility and rigor to its audit findings. The company regularly publishes case studies, white papers, and contributes to academic conferences, further establishing its position as a thought leader in the algorithmic accountability space.",
+      "shortDescription": "European algorithmic auditing firm combining AI ethics consulting with bias and fairness audit technology.",
+      "websiteUrl": "https://www.eticas.ai",
+      "category": "BIAS_FAIRNESS_TESTING",
+      "pricingModel": "CONTACT_SALES",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["EU AI Act", "NIST AI RMF", "OECD AI Principles", "GDPR", "Spanish AI Strategy"],
+      "deploymentsSupported": ["Cloud", "Consulting"],
+      "integrationsSupported": ["Custom API", "Manual Data Upload"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": false,
+      "iso27001Certified": false,
+      "overallScore": 7.5,
+      "easeOfUse": 7.0,
+      "featureRichness": 7.5,
+      "valueForMoney": 7.0,
+      "customerSupport": 8.5,
+      "prosConsList": {
+        "pros": [
+          "Deep European regulatory expertise with direct involvement in EU AI Act development",
+          "Proven audit methodology backed by academic research and published case studies",
+          "Hybrid technology-plus-consulting approach handles complex high-stakes scenarios",
+          "One of the longest track records in algorithmic auditing, founded in 2014"
+        ],
+        "cons": [
+          "More of a consulting firm than a pure SaaS product, limiting scalability",
+          "Primarily European-focused which may limit relevance for US-centric organizations",
+          "Higher engagement costs due to consulting component"
+        ]
+      },
+      "companySize": "Mid-Market",
+      "foundedYear": 2014,
+      "headquarters": "Madrid, Spain",
+      "employeeCount": "11-50",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "AI Fairness 360",
+      "slug": "ai-fairness-360",
+      "description": "AI Fairness 360 (AIF360) is a comprehensive open-source toolkit developed by IBM Research for detecting and mitigating bias in machine learning models and datasets. Released in 2018 and maintained as part of IBM's Trusted AI initiative, AIF360 has become one of the most widely referenced and adopted bias detection toolkits in both academic research and industry practice, establishing itself as a foundational tool in the responsible AI ecosystem.\n\nThe toolkit provides an extensible library of over 70 fairness metrics and more than 10 bias mitigation algorithms spanning three critical stages of the ML pipeline: pre-processing (techniques applied to training data before model building), in-processing (constraints applied during model training), and post-processing (adjustments applied to model predictions). This comprehensive coverage allows practitioners to address bias at whatever stage is most appropriate for their use case and constraints.\n\nKey algorithms included in AIF360 range from well-established techniques like reweighing and disparate impact remover in pre-processing, to adversarial debiasing and prejudice remover in in-processing, to calibrated equalized odds and reject option classification in post-processing. The toolkit supports multiple fairness definitions including statistical parity, equal opportunity, equalized odds, and predictive equality, reflecting the academic consensus that fairness is context-dependent and no single metric is universally appropriate.\n\nAIF360 is implemented in Python with an R port available, making it accessible to the broad data science community. The library integrates with standard Python ML tools including scikit-learn, TensorFlow, and PyTorch. IBM provides extensive tutorials, Jupyter notebooks, and documentation that walk users through common bias detection and mitigation workflows, significantly lowering the barrier to entry for teams new to fairness testing.\n\nAs an open-source project licensed under Apache 2.0, AIF360 can be freely used, modified, and distributed by any organization. This makes it an excellent choice for organizations that want to build internal bias testing capabilities without vendor lock-in. However, the trade-off is that AIF360 is a developer library rather than a turnkey product, meaning it requires programming expertise to use effectively and lacks a graphical user interface, enterprise access controls, and commercial support.",
+      "shortDescription": "IBM's open-source toolkit providing 70+ fairness metrics and 10+ bias mitigation algorithms for ML systems.",
+      "websiteUrl": "https://github.com/Trusted-AI/AIF360",
+      "category": "BIAS_FAIRNESS_TESTING",
+      "pricingModel": "FREE",
+      "pricingStartsAt": "Free",
+      "hasFreeTrialOrTier": true,
+      "frameworksSupported": ["NIST AI RMF", "EU AI Act", "EEOC Guidelines"],
+      "deploymentsSupported": ["On-Premise", "Cloud", "Local"],
+      "integrationsSupported": ["Python", "R", "scikit-learn", "TensorFlow", "PyTorch", "Jupyter"],
+      "hasDPA": false,
+      "gdprCompliant": false,
+      "soc2Certified": false,
+      "iso27001Certified": false,
+      "overallScore": 7.8,
+      "easeOfUse": 6.5,
+      "featureRichness": 9.0,
+      "valueForMoney": 9.5,
+      "customerSupport": 6.0,
+      "prosConsList": {
+        "pros": [
+          "Free and open source with Apache 2.0 license and no vendor lock-in",
+          "Comprehensive library of 70+ fairness metrics and 10+ mitigation algorithms",
+          "Backed by IBM Research with strong academic and industry credibility",
+          "Covers pre-processing, in-processing, and post-processing bias mitigation"
+        ],
+        "cons": [
+          "Requires significant ML and programming expertise to use effectively",
+          "No graphical user interface; command-line and code-only interaction",
+          "No commercial support, SLAs, or enterprise features like access controls"
+        ]
+      },
+      "companySize": "Enterprise",
+      "foundedYear": 2018,
+      "headquarters": "Yorktown Heights, NY",
+      "employeeCount": "10,000+",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Fairlearn",
+      "slug": "fairlearn",
+      "description": "Fairlearn is an open-source Python toolkit developed by Microsoft Research for assessing and improving the fairness of machine learning models. Originally created as an internal Microsoft project, Fairlearn was open-sourced in 2020 and has since grown into a community-driven project with contributions from researchers and practitioners worldwide. It is now one of the most popular and accessible fairness assessment tools in the Python data science ecosystem.\n\nThe toolkit is organized around two core capabilities: fairness assessment and bias mitigation. The assessment module provides a rich set of fairness metrics that can evaluate model performance across different demographic groups defined by sensitive features such as race, gender, age, or disability status. Fairlearn's MetricFrame class makes it straightforward to disaggregate any standard ML metric by group, enabling practitioners to quickly identify performance disparities that may indicate unfair outcomes.\n\nFor mitigation, Fairlearn provides several algorithms including Exponentiated Gradient, Grid Search, and Threshold Optimizer. These algorithms work by applying fairness constraints during or after model training, allowing practitioners to find models that balance predictive accuracy with fairness objectives. The Exponentiated Gradient algorithm is particularly powerful, as it can enforce a wide variety of fairness constraints including demographic parity, equalized odds, and bounded group loss.\n\nA major strength of Fairlearn is its seamless integration with the Python data science stack. The library works natively with scikit-learn estimators and follows familiar fit/predict/transform patterns, making it easy for data scientists to incorporate fairness assessment into their existing workflows. Fairlearn also provides interactive visualizations through its Fairlearn Dashboard, which can be used in Jupyter notebooks to explore fairness metrics interactively.\n\nFairlearn benefits from excellent documentation, including detailed user guides, API references, case studies, and example notebooks that cover common fairness assessment scenarios. Microsoft's backing ensures ongoing maintenance and development, though the project operates as a genuine open-source community effort with its own governance structure. The toolkit is licensed under MIT, making it permissive for both commercial and non-commercial use.",
+      "shortDescription": "Microsoft's open-source Python toolkit for assessing and improving fairness of machine learning models.",
+      "websiteUrl": "https://github.com/fairlearn/fairlearn",
+      "category": "BIAS_FAIRNESS_TESTING",
+      "pricingModel": "FREE",
+      "pricingStartsAt": "Free",
+      "hasFreeTrialOrTier": true,
+      "frameworksSupported": ["NIST AI RMF", "EU AI Act"],
+      "deploymentsSupported": ["On-Premise", "Cloud", "Local"],
+      "integrationsSupported": ["Python", "scikit-learn", "Jupyter", "Azure ML"],
+      "hasDPA": false,
+      "gdprCompliant": false,
+      "soc2Certified": false,
+      "iso27001Certified": false,
+      "overallScore": 7.5,
+      "easeOfUse": 7.5,
+      "featureRichness": 7.5,
+      "valueForMoney": 9.5,
+      "customerSupport": 6.0,
+      "prosConsList": {
+        "pros": [
+          "Free and open source with permissive MIT license",
+          "Python-native with seamless scikit-learn integration and familiar API patterns",
+          "Excellent documentation with user guides, case studies, and example notebooks",
+          "Backed by Microsoft Research with active community development"
+        ],
+        "cons": [
+          "Requires Python programming skills with no GUI for non-technical users",
+          "No enterprise features like access controls, audit trails, or role management",
+          "Limited bias mitigation options compared to more comprehensive toolkits like AIF360"
+        ]
+      },
+      "companySize": "Enterprise",
+      "foundedYear": 2020,
+      "headquarters": "Redmond, WA",
+      "employeeCount": "10,000+",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Aequitas",
+      "slug": "aequitas",
+      "description": "Aequitas is an open-source bias and fairness audit toolkit developed by the Center for Data Science and Public Policy at the University of Chicago. Designed primarily for evaluating the fairness of decisions made by algorithmic systems, Aequitas provides both a Python library and a web-based interface that make bias auditing accessible to a wide range of users, from data scientists writing code to policy analysts using a browser-based tool.\n\nThe toolkit focuses on assessing the fairness of binary classification and scoring models, which are the most common types of algorithmic decision-making systems used in high-stakes domains such as criminal justice, child welfare, healthcare, and education. Aequitas evaluates model predictions against multiple fairness criteria simultaneously, including statistical parity, false positive rate parity, false negative rate parity, false discovery rate parity, and false omission rate parity, providing a comprehensive view of how a model treats different demographic groups.\n\nOne of Aequitas' distinctive features is its Fairness Tree, a decision framework that helps practitioners navigate the often-confusing landscape of fairness definitions and select the most appropriate metrics for their specific context. The Fairness Tree considers factors such as the nature of the intervention (punitive vs. assistive), the population being assessed, and the availability of resources, guiding users toward fairness definitions that are most relevant to their use case.\n\nAequitas generates clear, visual bias reports that are designed to be interpretable by non-technical stakeholders including policymakers, program managers, and oversight bodies. This accessibility is a direct reflection of the project's origins in public policy research, where communicating findings to diverse audiences is essential.\n\nAs an academic project, Aequitas is freely available under an open-source license and has been cited in numerous research papers and policy documents. However, it is important to note that Aequitas is maintained by a university research team rather than a commercial entity, meaning that updates and support are provided on a best-effort basis. The toolkit is well-suited for organizations conducting initial bias assessments or those in the public sector, but may lack the robustness and scalability needed for continuous production monitoring in enterprise environments.",
+      "shortDescription": "University of Chicago's open-source bias audit toolkit with a Fairness Tree framework for selecting appropriate metrics.",
+      "websiteUrl": "https://github.com/dssg/aequitas",
+      "category": "BIAS_FAIRNESS_TESTING",
+      "pricingModel": "FREE",
+      "pricingStartsAt": "Free",
+      "hasFreeTrialOrTier": true,
+      "frameworksSupported": ["NIST AI RMF"],
+      "deploymentsSupported": ["On-Premise", "Cloud", "Local"],
+      "integrationsSupported": ["Python", "Jupyter", "Web Interface"],
+      "hasDPA": false,
+      "gdprCompliant": false,
+      "soc2Certified": false,
+      "iso27001Certified": false,
+      "overallScore": 7.0,
+      "easeOfUse": 7.5,
+      "featureRichness": 6.5,
+      "valueForMoney": 9.0,
+      "customerSupport": 6.0,
+      "prosConsList": {
+        "pros": [
+          "Free and open source with both Python library and web-based interface",
+          "Academic rigor with Fairness Tree framework for selecting appropriate metrics",
+          "Clear visual bias reports designed for non-technical policymakers",
+          "Strong track record in public sector and social impact applications"
+        ],
+        "cons": [
+          "Academic project with best-effort maintenance and limited dedicated support",
+          "Basic web UI lacking enterprise features like user management and audit trails",
+          "Focused primarily on binary classification, less suited for complex ML systems"
+        ]
+      },
+      "companySize": "Academic",
+      "foundedYear": 2018,
+      "headquarters": "Chicago, IL",
+      "employeeCount": "1-10",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "BABL AI",
+      "slug": "babl-ai",
+      "description": "BABL AI is a Canadian AI governance and bias testing platform that helps organizations assess, monitor, and mitigate bias in their artificial intelligence systems. Founded in 2020 and headquartered in Montreal, Canada, BABL AI operates at the intersection of AI ethics research and practical enterprise tooling, offering a platform that translates academic fairness concepts into actionable governance workflows.\n\nThe platform provides a structured approach to AI bias assessment, enabling organizations to evaluate their ML models against a comprehensive set of fairness metrics and generate audit-ready reports. BABL AI's bias testing capabilities cover the full model lifecycle, from training data analysis to post-deployment monitoring, allowing organizations to identify and address fairness issues at each stage. The platform supports multiple fairness definitions and allows organizations to define custom thresholds based on their specific regulatory context and risk tolerance.\n\nA notable differentiator for BABL AI is its bilingual capability, offering full French and English language support across its platform, documentation, and customer service. This bilingual approach is particularly valuable for organizations operating in Quebec and across Canadian jurisdictions where bilingual service delivery is either legally required or commercially advantageous. The platform also aligns closely with Canadian AI governance requirements, including the Canadian Directive on Automated Decision-Making and the proposed Artificial Intelligence and Data Act (AIDA).\n\nBABL AI's governance features extend beyond bias testing to include AI system inventory management, risk assessment workflows, stakeholder impact assessments, and compliance documentation generation. This holistic approach allows organizations to manage their entire AI governance program within a single platform rather than assembling multiple point solutions.\n\nThe platform is primarily targeted at SMBs and mid-market organizations in Canada, with particular strength in financial services, insurance, and public sector verticals. BABL AI's pricing is designed to be accessible to smaller organizations, positioning it as a cost-effective alternative to larger enterprise governance platforms. The team draws on Montreal's rich AI research ecosystem, maintaining connections with leading academic institutions including Mila, the Quebec AI Institute.",
+      "shortDescription": "Canadian bilingual AI governance and bias testing platform for SMBs with strong alignment to Canadian regulations.",
+      "websiteUrl": "https://www.babl.ai",
+      "category": "BIAS_FAIRNESS_TESTING",
+      "pricingModel": "SUBSCRIPTION",
+      "pricingStartsAt": "$1,000/month",
+      "hasFreeTrialOrTier": true,
+      "frameworksSupported": ["EU AI Act", "NIST AI RMF", "Canadian Directive on Automated Decision-Making", "AIDA"],
+      "deploymentsSupported": ["Cloud"],
+      "integrationsSupported": ["REST API", "Python SDK", "AWS"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": false,
+      "iso27001Certified": false,
+      "overallScore": 7.2,
+      "easeOfUse": 7.5,
+      "featureRichness": 7.0,
+      "valueForMoney": 7.5,
+      "customerSupport": 7.5,
+      "prosConsList": {
+        "pros": [
+          "Full bilingual French-English support across platform and customer service",
+          "Strong alignment with Canadian AI governance regulations and frameworks",
+          "Affordable pricing accessible to SMBs and mid-market organizations",
+          "Holistic governance approach combining bias testing with inventory and risk management"
+        ],
+        "cons": [
+          "Smaller platform with more limited scale compared to enterprise competitors",
+          "Limited enterprise features such as advanced RBAC and SSO",
+          "Primarily focused on Canadian market with less global presence"
+        ]
+      },
+      "companySize": "SMB",
+      "foundedYear": 2020,
+      "headquarters": "Montreal, Canada",
+      "employeeCount": "11-50",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "SHAP",
+      "slug": "shap",
+      "description": "SHAP (SHapley Additive exPlanations) is the gold-standard open-source library for machine learning model explainability, providing a unified approach to interpreting model predictions based on the mathematically rigorous framework of Shapley values from cooperative game theory. Developed by Scott Lundberg and collaborators at the University of Washington, SHAP has become the most widely adopted and cited explainability tool in the machine learning community, with applications spanning virtually every industry and model type.\n\nAt its core, SHAP assigns each feature an importance value for a particular prediction, indicating how much that feature contributed to pushing the prediction away from the base value (the average model prediction). Unlike ad hoc feature importance methods, SHAP values satisfy three desirable theoretical properties: local accuracy (the explanation matches the model prediction), missingness (features with no impact receive zero attribution), and consistency (a feature's attribution never decreases when the model relies more on it). These properties make SHAP the most theoretically grounded approach to feature attribution in machine learning.\n\nThe library provides optimized implementations for several model types, including TreeSHAP for tree-based models (XGBoost, LightGBM, Random Forests), DeepSHAP for deep learning models, and KernelSHAP as a model-agnostic fallback. TreeSHAP is particularly noteworthy for its computational efficiency, computing exact Shapley values in polynomial time for tree ensembles, whereas the general Shapley computation is exponential.\n\nSHAP provides rich visualization capabilities including force plots, summary plots, dependence plots, and interaction plots that can communicate model behavior to both technical and non-technical audiences. These visualizations have become standard in model documentation, regulatory submissions, and stakeholder presentations across regulated industries.\n\nThe library integrates seamlessly with the Python data science stack including scikit-learn, XGBoost, LightGBM, TensorFlow, and PyTorch. It is freely available under the MIT license and has garnered over 20,000 GitHub stars, making it one of the most popular machine learning libraries. However, SHAP is a developer library requiring Python programming expertise and can be computationally expensive on large datasets, particularly when using the model-agnostic KernelSHAP approach.",
+      "shortDescription": "The gold-standard open-source library for ML explainability using Shapley values from game theory.",
+      "websiteUrl": "https://github.com/shap/shap",
+      "category": "EXPLAINABILITY_TOOLS",
+      "pricingModel": "FREE",
+      "pricingStartsAt": "Free",
+      "hasFreeTrialOrTier": true,
+      "frameworksSupported": ["NIST AI RMF", "EU AI Act", "ISO 42001"],
+      "deploymentsSupported": ["On-Premise", "Cloud", "Local"],
+      "integrationsSupported": ["Python", "scikit-learn", "XGBoost", "LightGBM", "TensorFlow", "PyTorch", "Jupyter"],
+      "hasDPA": false,
+      "gdprCompliant": false,
+      "soc2Certified": false,
+      "iso27001Certified": false,
+      "overallScore": 8.5,
+      "easeOfUse": 7.0,
+      "featureRichness": 9.5,
+      "valueForMoney": 10.0,
+      "customerSupport": 6.5,
+      "prosConsList": {
+        "pros": [
+          "Gold standard for ML explainability with rigorous theoretical grounding in Shapley values",
+          "Most widely adopted and cited explainability library with massive community support",
+          "Rich visualization capabilities including force plots, summary plots, and interaction plots",
+          "Optimized implementations for tree models, deep learning, and model-agnostic scenarios"
+        ],
+        "cons": [
+          "Can be computationally slow on large datasets, especially with KernelSHAP",
+          "Requires Python programming expertise with no GUI or no-code interface",
+          "Community-based support only with no commercial SLAs or enterprise features"
+        ]
+      },
+      "companySize": "Open Source",
+      "foundedYear": 2017,
+      "headquarters": "Seattle, WA",
+      "employeeCount": "1-10",
+      "isPublished": true,
+      "isFeatured": true
+    },
+    {
+      "name": "LIME",
+      "slug": "lime",
+      "description": "LIME (Local Interpretable Model-agnostic Explanations) is an influential open-source library for explaining individual predictions of any machine learning model in an interpretable and faithful manner. Developed by Marco Tulio Ribeiro and collaborators at the University of Washington and published in a seminal 2016 paper, LIME pioneered the concept of local, model-agnostic explanations and has become one of the most widely referenced techniques in the explainable AI literature.\n\nLIME's core approach works by generating perturbations of an input instance, observing how the model's prediction changes, and then fitting a simple, interpretable model (typically a sparse linear model) to these perturbations in the local neighborhood of the instance being explained. This local surrogate model approximates the complex model's behavior in the vicinity of the specific prediction, providing an explanation that is both interpretable and faithful to the original model's local decision boundary.\n\nThe library supports explanations for multiple data modalities, including tabular data, text, and images. For text classification, LIME highlights which words most influenced the prediction; for image classification, it identifies which regions of the image were most important; and for tabular data, it shows which features drove the prediction and in which direction. This versatility makes LIME applicable across a wide range of ML applications.\n\nLIME's model-agnostic nature is one of its greatest strengths. Because it treats the model as a black box and only requires the ability to query the model for predictions, LIME can explain any classifier or regressor regardless of its internal architecture. This means the same explanation technique can be applied to logistic regression, random forests, neural networks, and even proprietary API-based models.\n\nThe library is implemented in Python and integrates with standard ML tools. It is freely available under the BSD 2-Clause license and has accumulated over 10,000 GitHub stars. LIME has been widely adopted in both academic research and industry practice, and is frequently used alongside SHAP to provide complementary perspectives on model behavior. However, LIME explanations can sometimes be unstable, meaning that small changes to the input or the perturbation sampling can produce different explanations, which is an important consideration for critical applications.",
+      "shortDescription": "Pioneering open-source library for local, model-agnostic ML explanations across tabular, text, and image data.",
+      "websiteUrl": "https://github.com/marcotcr/lime",
+      "category": "EXPLAINABILITY_TOOLS",
+      "pricingModel": "FREE",
+      "pricingStartsAt": "Free",
+      "hasFreeTrialOrTier": true,
+      "frameworksSupported": ["NIST AI RMF", "EU AI Act"],
+      "deploymentsSupported": ["On-Premise", "Cloud", "Local"],
+      "integrationsSupported": ["Python", "scikit-learn", "Jupyter", "TensorFlow", "PyTorch"],
+      "hasDPA": false,
+      "gdprCompliant": false,
+      "soc2Certified": false,
+      "iso27001Certified": false,
+      "overallScore": 7.8,
+      "easeOfUse": 7.5,
+      "featureRichness": 7.5,
+      "valueForMoney": 10.0,
+      "customerSupport": 6.0,
+      "prosConsList": {
+        "pros": [
+          "Truly model-agnostic, works with any classifier or regressor as a black box",
+          "Intuitive local explanations that are easy for non-technical stakeholders to understand",
+          "Supports multiple data types including tabular, text, and image data",
+          "Widely cited and adopted with strong academic credibility"
+        ],
+        "cons": [
+          "Explanations can be unstable with sensitivity to perturbation sampling",
+          "Requires Python programming expertise to use, no graphical interface",
+          "Local explanations may not capture global model behavior patterns"
+        ]
+      },
+      "companySize": "Open Source",
+      "foundedYear": 2016,
+      "headquarters": "Seattle, WA",
+      "employeeCount": "1-10",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "InterpretML",
+      "slug": "interpretml",
+      "description": "InterpretML is an open-source Python package developed by Microsoft Research for training interpretable machine learning models and explaining black-box systems. The project represents Microsoft's comprehensive approach to machine learning interpretability, combining inherently interpretable 'glassbox' models with post-hoc explanation techniques for black-box models into a single, unified framework.\n\nThe crown jewel of InterpretML is the Explainable Boosting Machine (EBM), a glassbox model that achieves accuracy comparable to state-of-the-art black-box models like XGBoost and random forests while remaining fully interpretable. EBMs are a modern implementation of generalized additive models with pairwise interactions (GA2Ms), using gradient boosting to learn smooth, non-linear feature functions while preserving the ability to visualize and understand each feature's exact contribution to predictions. This combination of high accuracy and full interpretability makes EBMs particularly valuable in regulated industries where model decisions must be fully explainable.\n\nBeyond EBMs, InterpretML provides implementations of other interpretable model types including decision rules, linear models with automatic feature engineering, and decision trees. For black-box models that cannot be replaced with interpretable alternatives, the package includes explanation methods such as SHAP, LIME, Partial Dependence Plots, and Morris Sensitivity Analysis, allowing practitioners to choose the most appropriate explanation technique for their context.\n\nInterpretML's unified API design is a significant advantage. All models and explainers follow a consistent interface, making it easy to compare interpretable and black-box approaches side by side. The package also provides an interactive visualization dashboard that renders explanations in Jupyter notebooks or standalone web views, enabling exploration of global model behavior and individual predictions through intuitive charts and graphs.\n\nThe library integrates with the broader Python ML ecosystem and is compatible with scikit-learn pipelines. It is freely available under the MIT license and is actively maintained by Microsoft Research. InterpretML is particularly well-suited for organizations that want to adopt interpretable-by-design models rather than relying solely on post-hoc explanations, an approach increasingly recommended by AI governance frameworks and regulators.",
+      "shortDescription": "Microsoft's open-source toolkit combining interpretable glassbox models (EBMs) with black-box explanation techniques.",
+      "websiteUrl": "https://github.com/interpretml/interpret",
+      "category": "EXPLAINABILITY_TOOLS",
+      "pricingModel": "FREE",
+      "pricingStartsAt": "Free",
+      "hasFreeTrialOrTier": true,
+      "frameworksSupported": ["NIST AI RMF", "EU AI Act"],
+      "deploymentsSupported": ["On-Premise", "Cloud", "Local"],
+      "integrationsSupported": ["Python", "scikit-learn", "Jupyter", "Azure ML"],
+      "hasDPA": false,
+      "gdprCompliant": false,
+      "soc2Certified": false,
+      "iso27001Certified": false,
+      "overallScore": 7.5,
+      "easeOfUse": 7.5,
+      "featureRichness": 8.0,
+      "valueForMoney": 9.5,
+      "customerSupport": 6.0,
+      "prosConsList": {
+        "pros": [
+          "Explainable Boosting Machines achieve near-black-box accuracy with full interpretability",
+          "Unified API combining glassbox models and black-box explanation techniques",
+          "Interactive visualization dashboard for exploring global and local explanations",
+          "Free and open source under MIT license with active Microsoft Research maintenance"
+        ],
+        "cons": [
+          "EBMs are limited to tabular data and cannot handle images, text, or sequences",
+          "Requires Python programming skills with no low-code or no-code options",
+          "Smaller community compared to SHAP and LIME, fewer third-party resources"
+        ]
+      },
+      "companySize": "Enterprise",
+      "foundedYear": 2019,
+      "headquarters": "Redmond, WA",
+      "employeeCount": "10,000+",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Seldon Alibi",
+      "slug": "seldon-alibi",
+      "description": "Seldon Alibi (formally known as Alibi) is an open-source Python library for machine learning model inspection and interpretation, developed and maintained by Seldon Technologies. Part of the broader Seldon ecosystem for ML deployment and serving, Alibi provides a comprehensive collection of algorithms for explaining individual predictions, detecting outliers, and identifying concept drift, making it a versatile toolkit for understanding and monitoring ML model behavior in production.\n\nAlibi's explanation capabilities span multiple algorithmic families. For black-box models, the library implements Anchors (rule-based explanations that identify sufficient conditions for a prediction), Contrastive Explanations (CEM), and integrated gradients. For white-box models with gradient access, it offers additional techniques including saliency maps and layer-wise relevance propagation. The library also provides counterfactual explanations, which answer the question 'what would need to change about this input for the model to produce a different prediction?' These counterfactual explanations are increasingly important for regulatory compliance, as they provide actionable recourse information to individuals affected by algorithmic decisions.\n\nBeyond local explanations, Alibi includes global explanation methods such as ALE (Accumulated Local Effects) plots and tree-based SHAP implementations. The library also offers outlier detection algorithms including Variational Auto-Encoder based detectors, isolation forests, and Mahalanobis distance detectors, which can identify inputs that fall outside the model's training distribution and may produce unreliable predictions.\n\nA key advantage of Alibi is its integration with the Seldon ecosystem. Organizations using Seldon Core or Seldon Deploy for ML model serving can seamlessly add Alibi explainers to their deployment pipelines, enabling real-time explanations for every prediction served. This production-oriented design distinguishes Alibi from research-focused libraries that are primarily used during model development.\n\nAlibi supports multiple data types including tabular, text, and image data, and works with models from major frameworks including TensorFlow, PyTorch, and scikit-learn. The library is freely available under the Apache 2.0 license and is actively maintained, though the most advanced deployment and monitoring features require the commercial Seldon Deploy platform.",
+      "shortDescription": "Open-source ML explanation library with counterfactual reasoning, integrating with the Seldon deployment ecosystem.",
+      "websiteUrl": "https://github.com/SeldonIO/alibi",
+      "category": "EXPLAINABILITY_TOOLS",
+      "pricingModel": "FREE",
+      "pricingStartsAt": "Free (open source) / Contact sales for Seldon Deploy",
+      "hasFreeTrialOrTier": true,
+      "frameworksSupported": ["NIST AI RMF", "EU AI Act"],
+      "deploymentsSupported": ["On-Premise", "Cloud", "Kubernetes", "Local"],
+      "integrationsSupported": ["Python", "TensorFlow", "PyTorch", "scikit-learn", "Seldon Core", "Seldon Deploy", "Kubernetes"],
+      "hasDPA": false,
+      "gdprCompliant": false,
+      "soc2Certified": false,
+      "iso27001Certified": false,
+      "overallScore": 7.3,
+      "easeOfUse": 6.5,
+      "featureRichness": 8.0,
+      "valueForMoney": 8.0,
+      "customerSupport": 6.5,
+      "prosConsList": {
+        "pros": [
+          "Comprehensive algorithms including counterfactual explanations and Anchors",
+          "Seamless integration with Seldon Core and Seldon Deploy for production use",
+          "Covers explainability, outlier detection, and drift detection in one library",
+          "Supports tabular, text, and image data across major ML frameworks"
+        ],
+        "cons": [
+          "Complex setup especially outside the Seldon ecosystem",
+          "Limited standalone value without Seldon deployment infrastructure",
+          "Steeper learning curve due to the breadth of algorithms and configuration options"
+        ]
+      },
+      "companySize": "Mid-Market",
+      "foundedYear": 2019,
+      "headquarters": "London, UK",
+      "employeeCount": "51-200",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "WhyLabs",
+      "slug": "whylabs",
+      "description": "WhyLabs is an AI observability platform that provides real-time monitoring, explainability, and data quality assurance for machine learning models in production. Founded in 2019 and headquartered in Seattle, Washington, WhyLabs was created by a team of former Amazon AI engineers who experienced firsthand the challenges of operating ML systems at scale. The platform is built on top of the open-source whylogs library, which provides lightweight, privacy-preserving data logging capabilities.\n\nWhyLabs' core value proposition is enabling organizations to monitor their ML models and data pipelines continuously without requiring access to raw data. The platform uses statistical profiling to capture the behavior of data and models over time, detecting anomalies, drift, and quality issues in real time while preserving data privacy. This privacy-preserving approach is particularly valuable for organizations in regulated industries that cannot send sensitive data to external monitoring services.\n\nOn the explainability front, WhyLabs integrates feature importance tracking and model behavior analysis into its monitoring workflows. The platform can track how feature contributions change over time, identify when model explanations shift in ways that may indicate problems, and alert teams when model behavior deviates from expected patterns. While WhyLabs' explainability capabilities are more focused on monitoring explanation quality over time than generating initial explanations (for which tools like SHAP are better suited), this temporal perspective on explainability is uniquely valuable for production systems.\n\nWhyLabs offers a freemium pricing model, with a generous free tier that supports basic monitoring for a limited number of models, making it accessible for teams to evaluate and adopt incrementally. The platform integrates with major ML frameworks and deployment tools including MLflow, SageMaker, Databricks, and Apache Spark, enabling rapid adoption into existing workflows.\n\nThe platform's drift detection capabilities are particularly strong, supporting both data drift and concept drift monitoring across structured and unstructured data types including text, images, and embeddings. WhyLabs also provides automated alerting, dashboarding, and reporting features that help ML teams stay on top of model health without requiring constant manual oversight.",
+      "shortDescription": "AI observability platform providing privacy-preserving model monitoring, drift detection, and explainability tracking.",
+      "websiteUrl": "https://www.whylabs.ai",
+      "category": "EXPLAINABILITY_TOOLS",
+      "pricingModel": "FREEMIUM",
+      "pricingStartsAt": "Free tier available / Paid plans from $250/month",
+      "hasFreeTrialOrTier": true,
+      "frameworksSupported": ["NIST AI RMF", "EU AI Act", "ISO 42001"],
+      "deploymentsSupported": ["Cloud", "VPC"],
+      "integrationsSupported": ["AWS SageMaker", "MLflow", "Databricks", "Apache Spark", "Python", "whylogs", "Langkit"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": false,
+      "overallScore": 7.8,
+      "easeOfUse": 8.0,
+      "featureRichness": 8.0,
+      "valueForMoney": 8.5,
+      "customerSupport": 7.5,
+      "prosConsList": {
+        "pros": [
+          "Real-time monitoring with privacy-preserving statistical profiling",
+          "Strong drift detection across structured and unstructured data types",
+          "Generous free tier and freemium model for accessible evaluation",
+          "Easy integration with major ML platforms and deployment tools"
+        ],
+        "cons": [
+          "Explainability is secondary to monitoring and observability features",
+          "Feature importance tracking is less detailed than dedicated explainability tools like SHAP",
+          "Advanced features and higher model limits require paid plans"
+        ]
+      },
+      "companySize": "Mid-Market",
+      "foundedYear": 2019,
+      "headquarters": "Seattle, WA",
+      "employeeCount": "51-200",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Truera",
+      "slug": "truera",
+      "description": "Truera is an enterprise AI quality management platform that provides comprehensive model explainability, performance monitoring, and fairness assessment capabilities. Founded in 2019 and originally headquartered in Redwood City, California, Truera was built on research from Carnegie Mellon University and rapidly established itself as a leading platform for AI quality in enterprise environments. In 2024, Truera was acquired by Snowflake, integrating its AI quality capabilities into the Snowflake Data Cloud ecosystem and significantly expanding its potential reach.\n\nTruera's platform is organized around the concept of AI quality, which encompasses explainability, fairness, robustness, and performance as interconnected dimensions of trustworthy AI. The platform's explainability engine supports multiple explanation techniques including SHAP-based feature importance, partial dependence analysis, counterfactual explanations, and cohort-level analysis. These capabilities enable organizations to understand not just why individual predictions were made, but also how models behave across different segments of the population.\n\nA key differentiator for Truera is its ability to provide explanations that are meaningful to different audiences. The platform can generate technical explanations for data scientists that include detailed feature attributions and model diagnostics, as well as simplified explanations for business stakeholders and compliance teams that focus on key drivers and risk factors. This multi-audience approach to explainability is essential for organizations where model decisions must be understood and validated by diverse stakeholders.\n\nFollowing its acquisition by Snowflake, Truera's capabilities are being integrated into the Snowflake ML ecosystem, allowing organizations to add AI quality assessment directly to their Snowflake-based ML workflows. This integration is particularly valuable for organizations that have standardized on Snowflake for data management and analytics, as it eliminates the need to move data to external platforms for quality assessment.\n\nTruera supports a wide range of model types including traditional ML models, gradient boosted trees, deep learning models, and increasingly large language models. The platform provides automated testing pipelines that can be integrated into CI/CD workflows, enabling continuous AI quality assessment as models are developed, updated, and redeployed. Enterprise features include role-based access controls, audit logging, and SOC 2 compliant infrastructure.",
+      "shortDescription": "Enterprise AI quality platform with comprehensive explainability, now part of Snowflake's data cloud ecosystem.",
+      "websiteUrl": "https://truera.com",
+      "category": "EXPLAINABILITY_TOOLS",
+      "pricingModel": "ENTERPRISE_ONLY",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["EU AI Act", "NIST AI RMF", "ISO 42001", "SR 11-7"],
+      "deploymentsSupported": ["Cloud", "Snowflake Native", "VPC"],
+      "integrationsSupported": ["Snowflake", "Databricks", "AWS SageMaker", "MLflow", "Python", "Spark"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": false,
+      "overallScore": 8.0,
+      "easeOfUse": 7.5,
+      "featureRichness": 9.0,
+      "valueForMoney": 7.0,
+      "customerSupport": 8.0,
+      "prosConsList": {
+        "pros": [
+          "Comprehensive AI quality platform covering explainability, fairness, and performance",
+          "Deep Snowflake integration following acquisition for seamless data cloud workflows",
+          "Enterprise-grade features including RBAC, audit logging, and SOC 2 compliance",
+          "Multi-audience explanations tailored for data scientists, business, and compliance teams"
+        ],
+        "cons": [
+          "Post-acquisition pricing and product roadmap have some uncertainty",
+          "Enterprise-only pricing makes it inaccessible for smaller organizations",
+          "Increasing focus on Snowflake ecosystem may limit appeal for non-Snowflake users"
+        ]
+      },
+      "companySize": "Enterprise",
+      "foundedYear": 2019,
+      "headquarters": "Redwood City, CA",
+      "employeeCount": "51-200",
+      "isPublished": true,
+      "isFeatured": false
+    }
+  ]
+}

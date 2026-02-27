@@ -128,12 +128,107 @@ export const mockConnectorConfigSchema = z.object({
 export type MockConnectorConfig = z.infer<typeof mockConnectorConfigSchema>;
 
 // ============================================
+// DYNAMICS 365 SCHEMA
+// ============================================
+
+export const dynamics365ConfigSchema = z.object({
+  system: z.literal("DYNAMICS_365"),
+  tenantId: z.string().min(1, "Azure AD Tenant ID is required"),
+  clientId: z.string().min(1, "Azure AD Client ID is required"),
+  clientSecret: z.string().min(1, "Azure AD Client Secret is required"),
+  environmentUrl: z.string().url("Environment URL must be a valid URL (e.g. https://mycompany.operations.dynamics.com)"),
+  legalEntityId: z.string().optional(),
+  maxConcurrency: z.number().int().min(1).max(10).default(3),
+  requestsPerMinute: z.number().int().min(1).max(120).default(60),
+  timeoutMs: z.number().int().min(5000).max(300000).default(30000),
+});
+
+export type Dynamics365Config = z.infer<typeof dynamics365ConfigSchema>;
+
+// ============================================
+// WORKDAY SCHEMA
+// ============================================
+
+export const workdayConfigSchema = z.object({
+  system: z.literal("WORKDAY"),
+  hostname: z.string().min(1, "Workday hostname is required (e.g. wd2-impl-services1.workday.com)"),
+  tenantName: z.string().min(1, "Workday tenant name is required"),
+  clientId: z.string().min(1, "OAuth2 Client ID is required"),
+  clientSecret: z.string().min(1, "OAuth2 Client Secret is required"),
+  maxConcurrency: z.number().int().min(1).max(10).default(3),
+  requestsPerMinute: z.number().int().min(1).max(120).default(60),
+  timeoutMs: z.number().int().min(5000).max(300000).default(30000),
+});
+
+export type WorkdayConfig = z.infer<typeof workdayConfigSchema>;
+
+// ============================================
+// ORACLE ERP CLOUD SCHEMA
+// ============================================
+
+export const oracleCloudConfigSchema = z.discriminatedUnion("authMethod", [
+  z.object({
+    system: z.literal("ORACLE_CLOUD"),
+    authMethod: z.literal("basic"),
+    hostname: z.string().min(1, "Oracle ERP Cloud hostname is required (e.g. fa-xxxx.oraclecloud.com)"),
+    username: z.string().min(1, "Username is required"),
+    password: z.string().min(1, "Password is required"),
+    defaultBusinessUnit: z.string().optional(),
+    maxConcurrency: z.number().int().min(1).max(10).default(3),
+    requestsPerMinute: z.number().int().min(1).max(120).default(60),
+    timeoutMs: z.number().int().min(5000).max(300000).default(30000),
+    clientId: z.string().optional(),
+    clientSecret: z.string().optional(),
+    oauthScope: z.string().optional(),
+  }),
+  z.object({
+    system: z.literal("ORACLE_CLOUD"),
+    authMethod: z.literal("oauth2"),
+    hostname: z.string().min(1, "Oracle ERP Cloud hostname is required"),
+    clientId: z.string().min(1, "Client ID is required"),
+    clientSecret: z.string().min(1, "Client Secret is required"),
+    oauthScope: z.string().optional(),
+    defaultBusinessUnit: z.string().optional(),
+    maxConcurrency: z.number().int().min(1).max(10).default(3),
+    requestsPerMinute: z.number().int().min(1).max(120).default(60),
+    timeoutMs: z.number().int().min(5000).max(300000).default(30000),
+    username: z.string().optional(),
+    password: z.string().optional(),
+  }),
+]);
+
+export type OracleCloudConfig = z.infer<typeof oracleCloudConfigSchema>;
+
+// ============================================
+// NETSUITE SCHEMA
+// ============================================
+
+export const netSuiteConfigSchema = z.object({
+  system: z.literal("NETSUITE"),
+  accountId: z.string().min(1, "NetSuite Account ID is required (e.g. 1234567 or 1234567-SB1)"),
+  consumerKey: z.string().min(1, "OAuth 1.0a Consumer Key is required"),
+  consumerSecret: z.string().min(1, "OAuth 1.0a Consumer Secret is required"),
+  tokenId: z.string().min(1, "OAuth 1.0a Token ID is required"),
+  tokenSecret: z.string().min(1, "OAuth 1.0a Token Secret is required"),
+  subsidiaryId: z.string().optional(),
+  maxConcurrency: z.number().int().min(1).max(5).default(2),
+  requestsPerMinute: z.number().int().min(1).max(60).default(30),
+  timeoutMs: z.number().int().min(5000).max(300000).default(30000),
+});
+
+export type NetSuiteConfig = z.infer<typeof netSuiteConfigSchema>;
+
+// ============================================
 // UNIFIED CONFIG SCHEMA
 // ============================================
 
 export const connectorConfigSchema = z.union([
   sapConfigSchema,
   mockConnectorConfigSchema,
+  dynamics365ConfigSchema,
+  workdayConfigSchema,
+  oracleCloudConfigSchema,
+  netSuiteConfigSchema,
 ]);
 
 export type ConnectorConfig = z.infer<typeof connectorConfigSchema>;

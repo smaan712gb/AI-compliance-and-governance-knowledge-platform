@@ -25,10 +25,34 @@ function ensureRegistered() {
     return new MockConnector(config);
   };
 
+  const dynamics365Factory: ConnectorFactory = (config) => {
+    const { Dynamics365Connector } = require("./dynamics365/dynamics365-connector");
+    return new Dynamics365Connector(config);
+  };
+
+  const workdayFactory: ConnectorFactory = (config) => {
+    const { WorkdayConnector } = require("./workday/workday-connector");
+    return new WorkdayConnector(config);
+  };
+
+  const oracleCloudFactory: ConnectorFactory = (config) => {
+    const { OracleCloudConnector } = require("./oracle/oracle-connector");
+    return new OracleCloudConnector(config);
+  };
+
+  const netSuiteFactory: ConnectorFactory = (config) => {
+    const { NetSuiteConnector } = require("./netsuite/netsuite-connector");
+    return new NetSuiteConnector(config);
+  };
+
   CONNECTOR_REGISTRY.SAP_S4HANA_CLOUD = sapFactory;
   CONNECTOR_REGISTRY.SAP_S4HANA_ONPREM = sapFactory;
   CONNECTOR_REGISTRY.SAP_ECC = sapFactory;
   CONNECTOR_REGISTRY.MOCK = mockFactory;
+  CONNECTOR_REGISTRY.DYNAMICS_365 = dynamics365Factory;
+  CONNECTOR_REGISTRY.WORKDAY = workdayFactory;
+  CONNECTOR_REGISTRY.ORACLE_CLOUD = oracleCloudFactory;
+  CONNECTOR_REGISTRY.NETSUITE = netSuiteFactory;
 }
 
 /**

@@ -1,0 +1,616 @@
+{
+  "vendors": [
+    {
+      "name": "HiddenLayer",
+      "slug": "hiddenlayer",
+      "description": "HiddenLayer is a pioneering AI security platform that specializes in protecting machine learning models from adversarial attacks, model tampering, and supply chain threats. Founded in 2022 and headquartered in Austin, Texas, the company has rapidly established itself as a first mover in the emerging AI Security Posture Management (AISPM) category, attracting significant venture capital backing from investors including M12 (Microsoft's Venture Fund), Moore Strategic Ventures, and Booz Allen Ventures. The platform provides continuous monitoring and protection for ML models across their entire lifecycle, from development through production deployment.\n\nHiddenLayer's core capabilities include automated model scanning that detects adversarial manipulation, model poisoning, and evasion attacks before they can compromise AI systems. The platform's Model Scanner analyzes trained models for embedded vulnerabilities and backdoors, while its runtime protection layer monitors inference pipelines in real time to identify and block adversarial inputs. The company supports protection for a broad range of model architectures including deep learning, gradient-boosted decision trees, and large language models, making it applicable across diverse enterprise AI deployments.\n\nThe platform integrates with major MLOps and cloud environments, allowing security teams to gain visibility into their organization's entire AI model inventory and assess the security posture of each model. HiddenLayer provides detailed risk scoring, vulnerability reports, and remediation guidance that align with frameworks such as the NIST AI Risk Management Framework, OWASP ML Top 10, and MITRE ATLAS. This makes it particularly valuable for organizations operating in regulated industries that need to demonstrate robust AI security controls.\n\nHiddenLayer targets mid-market and enterprise customers, with particular strength in financial services, healthcare, and defense sectors where model integrity is critical. The company's research team actively publishes threat intelligence on emerging AI attack vectors, contributing to the broader understanding of AI security risks. While the AISPM category is still nascent and HiddenLayer has a limited track record compared to established cybersecurity vendors, its focused approach to AI-specific threats positions it as a key player in the rapidly growing AI security market.",
+      "shortDescription": "AI security platform protecting ML models from adversarial attacks, model tampering, and supply chain threats.",
+      "websiteUrl": "https://www.hiddenlayer.com",
+      "category": "SECURITY_POSTURE",
+      "pricingModel": "ENTERPRISE_ONLY",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["NIST AI RMF", "OWASP ML Top 10", "MITRE ATLAS", "EU AI Act"],
+      "deploymentsSupported": ["Cloud"],
+      "integrationsSupported": ["AWS", "Azure", "Google Cloud", "MLflow", "SageMaker"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": false,
+      "overallScore": 8.2,
+      "easeOfUse": 7.8,
+      "featureRichness": 8.5,
+      "valueForMoney": 7.5,
+      "customerSupport": 8.0,
+      "prosConsList": {
+        "pros": [
+          "First mover in the AISPM category with dedicated AI model security focus",
+          "Comprehensive model scanning and adversarial attack detection capabilities",
+          "Strong venture capital backing from strategic investors including Microsoft's M12",
+          "Supports wide range of model architectures including LLMs, deep learning, and tree-based models"
+        ],
+        "cons": [
+          "Very new category with limited market track record and customer case studies",
+          "Premium pricing may be challenging for organizations still exploring AI security"
+        ]
+      },
+      "companySize": "Mid-Market to Enterprise",
+      "foundedYear": 2022,
+      "headquarters": "Austin, TX",
+      "employeeCount": "51-200",
+      "isPublished": true,
+      "isFeatured": true
+    },
+    {
+      "name": "Protect AI",
+      "slug": "protect-ai",
+      "description": "Protect AI is an AI and machine learning security platform focused on securing the entire ML supply chain, from model development and training data through to production deployment. Founded in 2022 and headquartered in Seattle, Washington, the company was founded by former Amazon and Oracle security leaders who recognized the growing need for purpose-built security tooling for AI systems. Protect AI has raised significant funding to build out its comprehensive ML security platform, which addresses threats across the entire AI lifecycle including model vulnerabilities, dependency risks, and data pipeline integrity.\n\nThe platform's flagship capabilities center on ML supply chain security and model scanning. Protect AI's ModelScan, an open-source tool that the company released to the community, enables organizations to detect serialized model attacks and unsafe code execution in model files before they are deployed. The commercial platform extends this with Guardian, a comprehensive model security gateway that enforces security policies across model repositories, and Radar, an AI risk assessment and visibility tool that provides organizations with a centralized view of their AI/ML attack surface.\n\nProtect AI also maintains huntr, the world's first AI and ML bug bounty program, which incentivizes security researchers to discover and responsibly disclose vulnerabilities in popular open-source AI tools and frameworks. This community-driven approach to threat intelligence gives Protect AI unique insight into emerging attack vectors and allows the company to proactively protect customers against newly discovered vulnerabilities in the ML ecosystem.\n\nThe platform integrates with popular MLOps tools and model registries, cloud environments, and CI/CD pipelines to embed security checks throughout the model development workflow. Protect AI supports frameworks including the NIST AI RMF, OWASP ML Top 10, and MITRE ATLAS for risk assessment and compliance reporting. The company targets mid-market and enterprise organizations, with particular strength in technology, financial services, and government sectors. While still a young company with an evolving product suite, Protect AI's combination of open-source community engagement, commercial platform capabilities, and deep ML security expertise makes it a significant player in the AI security landscape.",
+      "shortDescription": "AI/ML security platform specializing in supply chain protection, model scanning, and vulnerability management.",
+      "websiteUrl": "https://www.protectai.com",
+      "category": "SECURITY_POSTURE",
+      "pricingModel": "ENTERPRISE_ONLY",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["NIST AI RMF", "OWASP ML Top 10", "MITRE ATLAS", "EU AI Act"],
+      "deploymentsSupported": ["Cloud"],
+      "integrationsSupported": ["AWS", "Azure", "Google Cloud", "Hugging Face", "MLflow", "GitHub"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": false,
+      "overallScore": 8.0,
+      "easeOfUse": 7.5,
+      "featureRichness": 8.5,
+      "valueForMoney": 7.8,
+      "customerSupport": 7.5,
+      "prosConsList": {
+        "pros": [
+          "Comprehensive model scanning and ML supply chain security with dependency analysis",
+          "Open-source tools like ModelScan demonstrate transparency and community engagement",
+          "Operates huntr, the first AI/ML bug bounty program providing unique threat intelligence",
+          "Founded by experienced security leaders from Amazon and Oracle"
+        ],
+        "cons": [
+          "Relatively new company with an evolving and rapidly changing product suite",
+          "Commercial platform still maturing alongside the open-source offerings"
+        ]
+      },
+      "companySize": "Mid-Market to Enterprise",
+      "foundedYear": 2022,
+      "headquarters": "Seattle, WA",
+      "employeeCount": "51-200",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "CalypsoAI",
+      "slug": "calypsoai",
+      "description": "CalypsoAI is an AI security and governance platform purpose-built for enterprises and government organizations deploying large language models and generative AI applications. Founded in 2018 and headquartered in McLean, Virginia, CalypsoAI has distinguished itself through its deep focus on the defense and intelligence community, building security-first solutions that meet the stringent requirements of classified and sensitive environments. The company's proximity to the federal government ecosystem and early investment in AI security give it a unique position at the intersection of national security and AI governance.\n\nThe platform's core offering centers on LLM guardrails and security controls that protect organizations from the risks associated with generative AI adoption. CalypsoAI provides real-time content filtering, prompt injection detection, data leakage prevention, and output validation for LLM-powered applications. These capabilities allow organizations to enforce acceptable use policies, prevent sensitive information from being exposed through AI interactions, and ensure that AI-generated content meets quality and safety standards. The platform operates as a security layer that sits between users and LLM endpoints, providing centralized policy enforcement and monitoring.\n\nCalypsoAI also offers comprehensive audit logging and compliance reporting capabilities, enabling organizations to maintain detailed records of all AI interactions for regulatory compliance and forensic analysis. The platform supports deployment in both cloud and on-premise environments, which is critical for government and defense customers who often operate in air-gapped or highly restricted network environments. This flexibility extends to support for multiple LLM providers and self-hosted models.\n\nThe platform aligns with key governance frameworks including the NIST AI Risk Management Framework, the EU AI Act, and DoD-specific AI ethics principles. CalypsoAI's focus on the government and defense market means its solutions are designed with the highest security standards in mind, though this specialization also means the platform may be less optimized for purely commercial use cases. The company targets enterprise and government customers who need robust, auditable AI security controls, particularly those in defense, intelligence, financial services, and healthcare where data sensitivity and regulatory compliance are paramount concerns.",
+      "shortDescription": "AI security and governance platform for LLMs with a strong focus on government and defense applications.",
+      "websiteUrl": "https://www.calypsoai.com",
+      "category": "SECURITY_POSTURE",
+      "pricingModel": "ENTERPRISE_ONLY",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["NIST AI RMF", "EU AI Act", "DoD AI Ethics Principles", "OWASP ML Top 10"],
+      "deploymentsSupported": ["Cloud", "On-Premise"],
+      "integrationsSupported": ["AWS", "Azure", "OpenAI", "Anthropic", "Google Cloud"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": true,
+      "overallScore": 7.8,
+      "easeOfUse": 7.0,
+      "featureRichness": 8.0,
+      "valueForMoney": 7.0,
+      "customerSupport": 8.0,
+      "prosConsList": {
+        "pros": [
+          "Deep government and defense sector focus with high-security deployment options",
+          "Comprehensive LLM guardrails including prompt injection detection and data leakage prevention",
+          "Supports both cloud and on-premise deployment for air-gapped environments",
+          "Security-first architecture designed for sensitive and classified workloads"
+        ],
+        "cons": [
+          "Niche market focus on government/defense may limit commercial feature development",
+          "Less commercial ecosystem integrations compared to broader-market competitors"
+        ]
+      },
+      "companySize": "Enterprise",
+      "foundedYear": 2018,
+      "headquarters": "McLean, VA",
+      "employeeCount": "51-200",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Lakera",
+      "slug": "lakera",
+      "description": "Lakera is a European AI security company specializing in protecting LLM-powered applications from prompt injection attacks, data leakage, and other generative AI-specific threats. Founded in 2021 and headquartered in Zurich, Switzerland, Lakera has built a focused and developer-friendly platform that enables organizations to secure their LLM applications with minimal integration effort. The company's European roots give it a natural alignment with EU data protection and AI regulation requirements, making it particularly attractive to organizations subject to GDPR and the EU AI Act.\n\nLakera's flagship product, Lakera Guard, operates as a real-time security layer that intercepts and analyzes prompts and responses flowing to and from LLMs. The platform detects and blocks prompt injection attempts, jailbreak attacks, toxic content generation, PII exposure, and other common LLM security threats. Lakera Guard is designed for easy integration via a simple API call, allowing development teams to add security controls to their LLM applications in minutes rather than weeks. This developer-first approach has made Lakera popular among startups and mid-market companies rapidly deploying generative AI features.\n\nThe company's threat detection capabilities are powered by a proprietary AI model trained on one of the largest datasets of prompt injection attacks, sourced in part through Gandalf, Lakera's public interactive game that challenges users to trick an LLM into revealing a secret password. This gamified approach to threat intelligence gathering has attracted millions of interactions, providing Lakera with a continuously growing corpus of real-world attack patterns that improve its detection accuracy over time.\n\nLakera offers a freemium pricing model, with a free tier that allows developers to test and evaluate the platform before committing to a paid plan. The commercial tiers provide higher throughput, advanced analytics, and enterprise features. The platform integrates with popular LLM providers including OpenAI, Anthropic, and open-source models, as well as cloud platforms and CI/CD tools. While Lakera's focused scope on LLM security means it does not address broader ML model security concerns like adversarial attacks on traditional models, its depth of expertise in the LLM security space and ease of integration make it a compelling choice for organizations prioritizing generative AI safety.",
+      "shortDescription": "European AI security platform providing real-time LLM protection against prompt injection and data leakage.",
+      "websiteUrl": "https://www.lakera.ai",
+      "category": "SECURITY_POSTURE",
+      "pricingModel": "FREEMIUM",
+      "pricingStartsAt": "Free tier available",
+      "hasFreeTrialOrTier": true,
+      "frameworksSupported": ["EU AI Act", "NIST AI RMF", "OWASP LLM Top 10", "GDPR"],
+      "deploymentsSupported": ["Cloud"],
+      "integrationsSupported": ["OpenAI", "Anthropic", "AWS", "Azure", "Google Cloud", "Hugging Face"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": false,
+      "overallScore": 7.8,
+      "easeOfUse": 9.0,
+      "featureRichness": 7.5,
+      "valueForMoney": 8.5,
+      "customerSupport": 7.5,
+      "prosConsList": {
+        "pros": [
+          "Real-time LLM protection with industry-leading prompt injection defense",
+          "Extremely easy API integration allowing rapid deployment in minutes",
+          "European company with strong GDPR and EU AI Act alignment",
+          "Freemium model allows developers to test and evaluate before committing"
+        ],
+        "cons": [
+          "Focused exclusively on LLM security without broader ML model protection",
+          "Relatively small company compared to larger cybersecurity incumbents"
+        ]
+      },
+      "companySize": "Mid-Market",
+      "foundedYear": 2021,
+      "headquarters": "Zurich, Switzerland",
+      "employeeCount": "51-200",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Adversa AI",
+      "slug": "adversa-ai",
+      "description": "Adversa AI is an AI red teaming and security testing platform that enables organizations to proactively identify and mitigate vulnerabilities in their AI and machine learning systems. Founded in 2021 and headquartered in Tel Aviv, Israel, the company brings a research-driven approach to AI security, drawing on deep expertise in adversarial machine learning, robustness testing, and AI threat modeling. Adversa AI's founding team includes published researchers in the field of adversarial AI, and the company maintains an active research program that informs its commercial products.\n\nThe platform provides automated AI red teaming capabilities that systematically probe AI models for weaknesses across multiple attack vectors. These include adversarial input attacks (crafting inputs that cause models to misclassify or produce incorrect outputs), model evasion techniques, data poisoning detection, model extraction attempts, and LLM-specific attacks such as prompt injection and jailbreaking. Adversa AI's testing framework covers the full spectrum of AI threats catalogued in frameworks like MITRE ATLAS and the OWASP Machine Learning Top 10, providing organizations with a comprehensive assessment of their AI attack surface.\n\nAdversa AI offers both automated scanning tools and guided red teaming engagements, allowing organizations to choose the level of depth appropriate for their security maturity. The platform generates detailed vulnerability reports with severity ratings, exploitation scenarios, and remediation recommendations that can be shared with development teams, security teams, and compliance stakeholders. These reports map findings to recognized frameworks, facilitating regulatory compliance documentation.\n\nThe company targets mid-market organizations deploying AI in sensitive applications such as computer vision, natural language processing, and autonomous systems. Adversa AI integrates with common ML development environments and can test models deployed across major cloud platforms. While the company is smaller than some competitors and may offer fewer enterprise-grade features like SSO and advanced RBAC, its depth of adversarial AI expertise and research-backed testing methodologies make it a valuable tool for organizations seeking to understand and improve the security posture of their AI deployments. The platform is particularly well-suited for organizations required to demonstrate AI robustness testing under emerging regulations.",
+      "shortDescription": "AI red teaming and security testing platform for proactive vulnerability detection in ML models.",
+      "websiteUrl": "https://www.adversa.ai",
+      "category": "SECURITY_POSTURE",
+      "pricingModel": "CONTACT_SALES",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["NIST AI RMF", "MITRE ATLAS", "OWASP ML Top 10", "EU AI Act"],
+      "deploymentsSupported": ["Cloud"],
+      "integrationsSupported": ["AWS", "Azure", "Google Cloud", "TensorFlow", "PyTorch"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": false,
+      "iso27001Certified": false,
+      "overallScore": 7.5,
+      "easeOfUse": 7.0,
+      "featureRichness": 8.0,
+      "valueForMoney": 7.5,
+      "customerSupport": 7.0,
+      "prosConsList": {
+        "pros": [
+          "Comprehensive AI red teaming with multi-vector vulnerability scanning",
+          "Research-backed testing methodologies from published adversarial AI experts",
+          "Covers broad spectrum of AI threats including LLM, vision, and NLP models"
+        ],
+        "cons": [
+          "Smaller company with more limited enterprise features and support resources",
+          "Fewer out-of-the-box integrations compared to larger security platforms"
+        ]
+      },
+      "companySize": "Mid-Market",
+      "foundedYear": 2021,
+      "headquarters": "Tel Aviv, Israel",
+      "employeeCount": "11-50",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Cranium AI",
+      "slug": "cranium-ai",
+      "description": "Cranium AI is an AI Security Posture Management (AISPM) platform that provides enterprise organizations with visibility, risk assessment, and governance capabilities for their AI and machine learning deployments. Founded in 2022 and headquartered in San Francisco, California, the company was built to address the growing challenge enterprises face in understanding and managing the security risks associated with their expanding AI portfolios. Cranium AI focuses on giving security teams and AI governance leaders a centralized dashboard to monitor and manage AI-related risks across the organization.\n\nThe platform's core capabilities center on AI asset discovery and inventory management. Cranium AI automatically discovers and catalogs AI models, datasets, pipelines, and associated infrastructure across an organization's environment, creating a comprehensive inventory that serves as the foundation for risk management. Each discovered AI asset is assessed against a multi-dimensional risk scoring framework that evaluates factors including data sensitivity, model vulnerability, deployment exposure, regulatory implications, and operational criticality.\n\nCranium AI's AISPM dashboard provides security teams with a real-time view of their organization's AI risk posture, highlighting high-risk assets, tracking risk trends over time, and prioritizing remediation actions. The platform maps risks to recognized frameworks such as the NIST AI Risk Management Framework and the EU AI Act, enabling organizations to demonstrate compliance with emerging AI regulations. Automated alerting and workflow integrations allow security teams to respond quickly to newly identified risks or policy violations.\n\nThe platform integrates with enterprise cloud environments, MLOps platforms, and security information and event management (SIEM) systems to provide a unified view of AI security within existing security operations workflows. Cranium AI targets large enterprise customers who are deploying AI at scale and need to manage the security implications across hundreds or thousands of models. While the company is still very new and building out its customer base, its focused AISPM approach addresses a real and growing need in the enterprise security market. The platform is best suited for organizations with mature AI programs that need centralized visibility and governance over their AI model portfolio.",
+      "shortDescription": "AI Security Posture Management platform providing enterprise visibility and risk scoring for AI deployments.",
+      "websiteUrl": "https://www.cranium.ai",
+      "category": "SECURITY_POSTURE",
+      "pricingModel": "ENTERPRISE_ONLY",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["NIST AI RMF", "EU AI Act", "MITRE ATLAS", "ISO 42001"],
+      "deploymentsSupported": ["Cloud"],
+      "integrationsSupported": ["AWS", "Azure", "Google Cloud", "Splunk", "ServiceNow"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": false,
+      "iso27001Certified": false,
+      "overallScore": 7.3,
+      "easeOfUse": 7.5,
+      "featureRichness": 7.5,
+      "valueForMoney": 7.0,
+      "customerSupport": 7.0,
+      "prosConsList": {
+        "pros": [
+          "Dedicated AISPM dashboard with centralized AI model inventory and risk visibility",
+          "Automated AI asset discovery and multi-dimensional risk scoring framework",
+          "Maps findings to NIST AI RMF and EU AI Act for compliance alignment"
+        ],
+        "cons": [
+          "Very new company with a limited customer base and case study portfolio",
+          "Product still maturing and may lack depth in certain enterprise features"
+        ]
+      },
+      "companySize": "Enterprise",
+      "foundedYear": 2022,
+      "headquarters": "San Francisco, CA",
+      "employeeCount": "11-50",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Nightfall AI",
+      "slug": "nightfall-ai",
+      "description": "Nightfall AI is a cloud-native data loss prevention (DLP) platform powered by artificial intelligence that helps organizations detect, classify, and protect sensitive data across their cloud applications and AI systems. Founded in 2019 and headquartered in San Francisco, California, Nightfall has built a modern approach to data security that leverages machine learning detection engines rather than traditional regex-based rules, resulting in significantly higher accuracy in identifying sensitive information such as PII, PHI, financial data, credentials, and secrets across diverse data formats and contexts.\n\nThe platform integrates directly with popular SaaS and developer tools including Slack, Microsoft Teams, GitHub, GitLab, Confluence, Jira, Google Drive, and many others, providing real-time monitoring and automated remediation of sensitive data exposure. Nightfall's detection engine analyzes text, images, and files to identify over 150 types of sensitive data with high precision and low false positive rates. When sensitive data is detected, the platform can automatically redact, quarantine, alert, or notify based on configurable policies, enabling organizations to enforce data protection standards without disrupting workflows.\n\nNightfall AI is particularly relevant to the AI security space because of its ability to protect against data leakage in AI and LLM-powered applications. As organizations increasingly integrate generative AI tools into their workflows, the risk of employees inadvertently sharing sensitive data through AI chatbots, copilots, and other LLM interfaces has become a critical concern. Nightfall provides monitoring and protection for these AI interaction channels, ensuring that confidential information is not exposed through prompts or shared with third-party AI providers.\n\nThe platform offers a freemium pricing model with a free tier for individuals and small teams, making it accessible for evaluation and smaller deployments. Enterprise tiers provide advanced features including custom detectors, automated workflows, API access, and compliance reporting. Nightfall is SOC 2 Type II certified and aligns with GDPR, HIPAA, CCPA, and PCI-DSS requirements. While Nightfall's primary focus is on data security rather than AI-specific security threats like adversarial attacks or model tampering, its AI-powered DLP capabilities are highly relevant for organizations looking to secure the data flowing through their AI applications and prevent sensitive information leakage.",
+      "shortDescription": "AI-powered cloud DLP platform detecting and protecting sensitive data across SaaS apps and AI systems.",
+      "websiteUrl": "https://www.nightfall.ai",
+      "category": "SECURITY_POSTURE",
+      "pricingModel": "FREEMIUM",
+      "pricingStartsAt": "Free tier available",
+      "hasFreeTrialOrTier": true,
+      "frameworksSupported": ["NIST AI RMF", "GDPR", "HIPAA", "CCPA", "PCI-DSS"],
+      "deploymentsSupported": ["Cloud"],
+      "integrationsSupported": ["Slack", "GitHub", "GitLab", "Google Drive", "Microsoft Teams", "Confluence", "Jira", "AWS", "Azure"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": false,
+      "overallScore": 7.8,
+      "easeOfUse": 8.5,
+      "featureRichness": 8.0,
+      "valueForMoney": 8.0,
+      "customerSupport": 7.5,
+      "prosConsList": {
+        "pros": [
+          "AI-powered DLP with high accuracy detection across 150+ sensitive data types",
+          "Extensive SaaS integrations including Slack, GitHub, Teams, and Google Drive",
+          "Easy setup with freemium model for evaluation and small team adoption",
+          "SOC 2 Type II certified with strong compliance alignment"
+        ],
+        "cons": [
+          "More focused on data security than AI-specific security threats like adversarial attacks",
+          "May overlap with existing enterprise DLP solutions rather than replacing them"
+        ]
+      },
+      "companySize": "Mid-Market",
+      "foundedYear": 2019,
+      "headquarters": "San Francisco, CA",
+      "employeeCount": "51-200",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Lasso Security",
+      "slug": "lasso-security",
+      "description": "Lasso Security is an LLM security and governance startup that focuses on protecting organizations from the emerging risks associated with large language model adoption, including shadow AI usage, data exfiltration, and unauthorized LLM interactions. Founded in 2023 and headquartered in Tel Aviv, Israel, Lasso Security addresses the growing enterprise concern that employees are using generative AI tools in uncontrolled and potentially risky ways, creating security blind spots that traditional security tools cannot detect.\n\nThe platform's core capability is shadow AI detection and monitoring, which identifies and catalogs all LLM and generative AI tools being used across an organization, whether sanctioned or not. This includes tracking interactions with public AI services like ChatGPT, Claude, Gemini, and other generative AI platforms, as well as monitoring usage of internally deployed LLM applications. By providing visibility into how AI tools are being used across the organization, Lasso Security enables security teams to understand their AI exposure and enforce appropriate usage policies.\n\nBeyond discovery, Lasso Security provides real-time monitoring and policy enforcement for LLM interactions. The platform can detect and prevent sensitive data from being shared with external AI services, block prompts that violate organizational policies, and maintain audit logs of all AI interactions for compliance purposes. These capabilities are particularly important for organizations in regulated industries where data governance requirements extend to AI tool usage.\n\nLasso Security integrates with enterprise network and endpoint security infrastructure to provide comprehensive visibility without requiring changes to existing workflows. The platform supports policy-based controls that can be tailored to different user groups, departments, or data sensitivity levels. While Lasso Security is a very new startup still in the early stages of building its product and customer base, it addresses a timely and genuine security concern that many organizations face as generative AI adoption accelerates across their workforces. The company is best suited for mid-market organizations that are grappling with the challenge of enabling productive AI usage while maintaining security and compliance standards. As the market for LLM security matures, Lasso Security's early focus on shadow AI detection positions it to capture demand from organizations seeking to regain control over their AI landscape.",
+      "shortDescription": "LLM security startup specializing in shadow AI detection and governance for enterprise AI usage.",
+      "websiteUrl": "https://www.lasso.security",
+      "category": "SECURITY_POSTURE",
+      "pricingModel": "CONTACT_SALES",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["NIST AI RMF", "EU AI Act", "OWASP LLM Top 10"],
+      "deploymentsSupported": ["Cloud"],
+      "integrationsSupported": ["AWS", "Azure", "Google Cloud", "Okta"],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": false,
+      "iso27001Certified": false,
+      "overallScore": 7.0,
+      "easeOfUse": 7.5,
+      "featureRichness": 7.0,
+      "valueForMoney": 7.0,
+      "customerSupport": 6.5,
+      "prosConsList": {
+        "pros": [
+          "Focused LLM security with strong shadow AI detection and monitoring capabilities",
+          "Addresses the timely enterprise concern of uncontrolled generative AI usage",
+          "Real-time policy enforcement and comprehensive audit logging for compliance"
+        ],
+        "cons": [
+          "Very new startup founded in 2023 with limited track record and customer base",
+          "Product still maturing and may lack depth compared to more established competitors"
+        ]
+      },
+      "companySize": "Mid-Market",
+      "foundedYear": 2023,
+      "headquarters": "Tel Aviv, Israel",
+      "employeeCount": "11-50",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "KPMG AI Assurance",
+      "slug": "kpmg-ai-assurance",
+      "description": "KPMG AI Assurance is the artificial intelligence audit and governance practice of KPMG, one of the Big Four professional services firms. With a global network spanning over 140 countries and territories, KPMG brings unmatched scale and regulatory expertise to the AI governance and assurance market. The firm's AI assurance services help organizations evaluate, validate, and provide independent assurance over their AI systems, ensuring they meet regulatory requirements, ethical standards, and organizational risk tolerances across the full AI lifecycle.\n\nKPMG's AI assurance methodology encompasses multiple dimensions of AI risk including model accuracy and performance, fairness and bias assessment, transparency and explainability, data governance, privacy compliance, security, and operational resilience. The firm has developed proprietary frameworks and assessment tools that draw on its deep experience in financial audit, IT audit, and risk advisory, adapting these established disciplines to the unique challenges of AI systems. KPMG's Trusted AI framework provides a structured approach to evaluating AI systems across key dimensions of trustworthiness, offering organizations a comprehensive and defensible assessment methodology.\n\nThe firm's AI assurance engagements range from pre-deployment model validation and algorithmic impact assessments to ongoing monitoring and periodic audit programs. KPMG works closely with boards, C-suite executives, and regulatory bodies, providing the level of independent assurance that stakeholders require for high-stakes AI decisions. The firm's regulatory connections and deep understanding of evolving AI legislation worldwide, including the EU AI Act, NIST AI RMF, and sector-specific requirements in financial services and healthcare, make it a natural partner for organizations navigating complex AI compliance landscapes.\n\nKPMG's AI assurance services target large enterprise and global organizations, typically those with significant AI portfolios and regulatory exposure. Engagements are consulting-led rather than software-driven, which means the depth of insight and customization is high but the cost is correspondingly premium. Organizations should expect long engagement cycles and significant investment, making KPMG's services best suited for enterprises where the regulatory, reputational, and financial stakes of AI deployment justify Big Four assurance. The firm's established trust, brand recognition, and global delivery capability make it one of the most credible options for independent AI assurance in the market.",
+      "shortDescription": "Big Four professional services firm providing comprehensive AI audit, governance, and independent assurance services.",
+      "websiteUrl": "https://www.kpmg.com",
+      "category": "AUDIT_ASSURANCE",
+      "pricingModel": "CONTACT_SALES",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["EU AI Act", "NIST AI RMF", "ISO 42001", "GDPR", "SOC 2", "ISO 27001"],
+      "deploymentsSupported": ["Cloud", "On-Premise"],
+      "integrationsSupported": [],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": true,
+      "overallScore": 8.5,
+      "easeOfUse": 7.0,
+      "featureRichness": 9.0,
+      "valueForMoney": 6.5,
+      "customerSupport": 9.0,
+      "prosConsList": {
+        "pros": [
+          "Global reach across 140+ countries with deep regulatory expertise",
+          "Trusted brand with established credibility for independent assurance",
+          "Comprehensive audit methodology covering fairness, transparency, security, and performance",
+          "Strong relationships with regulators and standard-setting bodies worldwide"
+        ],
+        "cons": [
+          "Extremely expensive consulting-led engagements with premium Big Four pricing",
+          "Not a software product; relies on human-led consulting with longer engagement timelines"
+        ]
+      },
+      "companySize": "Enterprise",
+      "foundedYear": 1987,
+      "headquarters": "Amstelveen, Netherlands",
+      "employeeCount": "10000+",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Deloitte AI Institute",
+      "slug": "deloitte-ai-institute",
+      "description": "Deloitte AI Institute represents the AI governance, audit, and advisory capabilities of Deloitte, one of the Big Four professional services organizations and the largest professional services network in the world by revenue. With over 450,000 professionals across more than 150 countries, Deloitte brings massive scale, deep industry expertise, and extensive research capabilities to the challenge of AI governance and assurance. The AI Institute serves as Deloitte's hub for AI thought leadership, research, and the development of frameworks and methodologies that underpin the firm's AI advisory and audit services.\n\nDeloitte's AI governance and assurance services cover the full spectrum of AI risk management, from strategic AI governance program design and board-level advisory to technical model validation, algorithmic auditing, and ongoing compliance monitoring. The firm's Trustworthy AI framework provides a structured approach to evaluating AI systems across six key dimensions: fair and impartial, transparent and explainable, responsible and accountable, safe and secure, respectful of privacy, and robust and reliable. This framework is used as the foundation for Deloitte's AI audit engagements and helps organizations align their AI programs with emerging regulatory expectations.\n\nThe firm has invested heavily in building AI-specific audit capabilities, training thousands of professionals in AI risk assessment and developing proprietary tools and accelerators that support AI audit engagements. Deloitte's deep industry expertise spans financial services, healthcare, government, technology, and manufacturing, allowing the firm to provide AI assurance services that are tailored to sector-specific regulatory requirements and risk profiles. The firm also publishes extensively on AI governance topics through the AI Institute, providing thought leadership that shapes industry standards and regulatory approaches.\n\nDeloitte's AI assurance services target the largest global enterprises and government organizations, with engagements that are comprehensive but correspondingly expensive and time-intensive. The firm's consulting-led approach means that engagements are highly customized but lack the scalability and self-service capabilities of software-based solutions. Organizations that engage Deloitte for AI assurance benefit from the firm's vast resources, industry relationships, and regulatory connections, but should expect significant investment in terms of both cost and organizational time commitment. Deloitte is best suited for organizations where the scale and complexity of their AI programs demand the depth and breadth that only a Big Four firm can provide.",
+      "shortDescription": "Big Four professional services firm offering AI governance, audit, and trustworthy AI advisory services globally.",
+      "websiteUrl": "https://www.deloitte.com",
+      "category": "AUDIT_ASSURANCE",
+      "pricingModel": "CONTACT_SALES",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["EU AI Act", "NIST AI RMF", "ISO 42001", "GDPR", "SOC 2", "ISO 27001"],
+      "deploymentsSupported": ["Cloud", "On-Premise"],
+      "integrationsSupported": [],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": true,
+      "overallScore": 8.5,
+      "easeOfUse": 7.0,
+      "featureRichness": 9.5,
+      "valueForMoney": 6.5,
+      "customerSupport": 9.0,
+      "prosConsList": {
+        "pros": [
+          "Massive resources and the largest professional services network globally",
+          "Deep industry expertise across financial services, healthcare, government, and technology",
+          "Extensive AI thought leadership and research through the AI Institute",
+          "Comprehensive Trustworthy AI framework covering all dimensions of AI risk"
+        ],
+        "cons": [
+          "Very expensive engagements with lengthy timelines typical of Big Four consulting",
+          "Slow engagement model that may not keep pace with rapid AI deployment cycles"
+        ]
+      },
+      "companySize": "Enterprise",
+      "foundedYear": 1845,
+      "headquarters": "London, United Kingdom",
+      "employeeCount": "10000+",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "PwC Responsible AI",
+      "slug": "pwc-responsible-ai",
+      "description": "PwC Responsible AI encompasses the artificial intelligence governance, ethics, and assurance services offered by PricewaterhouseCoopers, one of the Big Four professional services firms. With a global network of over 360,000 people across 152 countries, PwC has built a comprehensive Responsible AI practice that helps organizations design, implement, and audit AI governance programs that meet regulatory requirements and stakeholder expectations. The firm's approach integrates technical expertise with deep regulatory knowledge to provide end-to-end AI assurance services.\n\nPwC's Responsible AI Toolkit is a centerpiece of the firm's offering, providing a structured methodology and set of tools for assessing AI systems across key dimensions including fairness, explainability, robustness, privacy, safety, and accountability. The toolkit is used by PwC engagement teams to conduct systematic evaluations of AI systems, producing detailed assessments that identify risks, gaps, and recommendations aligned with applicable regulatory frameworks. This approach allows PwC to deliver consistent, high-quality AI assurance across its global network while adapting assessments to local regulatory requirements.\n\nThe firm provides a wide range of AI governance services including AI strategy and governance program design, algorithmic impact assessments, model validation and audit, bias testing, regulatory compliance readiness, and board advisory services. PwC's strong connections with regulators worldwide, combined with its active participation in AI governance standard-setting initiatives, give the firm unique insight into regulatory direction and expectations. The firm has been particularly active in helping organizations prepare for the EU AI Act, developing compliance frameworks and readiness assessments that address the regulation's requirements for high-risk AI systems.\n\nPwC's Responsible AI services target large enterprise and multinational organizations, particularly those in heavily regulated sectors such as financial services, healthcare, and government. Like other Big Four firms, PwC's engagements are consulting-led and carry premium pricing, with longer timelines than software-based solutions. However, the firm's Responsible AI Toolkit provides more structure and repeatability than purely bespoke consulting engagements. PwC is best suited for organizations that need credible, independent AI assurance backed by a globally recognized brand, particularly those navigating complex multi-jurisdictional regulatory requirements where PwC's worldwide regulatory relationships provide significant value.",
+      "shortDescription": "Big Four firm providing responsible AI governance, audit, and regulatory compliance services with a global toolkit.",
+      "websiteUrl": "https://www.pwc.com",
+      "category": "AUDIT_ASSURANCE",
+      "pricingModel": "CONTACT_SALES",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["EU AI Act", "NIST AI RMF", "ISO 42001", "GDPR", "SOC 2", "ISO 27001"],
+      "deploymentsSupported": ["Cloud", "On-Premise"],
+      "integrationsSupported": [],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": true,
+      "overallScore": 8.3,
+      "easeOfUse": 7.0,
+      "featureRichness": 8.5,
+      "valueForMoney": 6.5,
+      "customerSupport": 8.5,
+      "prosConsList": {
+        "pros": [
+          "Strong Responsible AI Toolkit providing structured and repeatable assessment methodology",
+          "Global teams across 152 countries with deep regulatory connections",
+          "Active participation in AI governance standard-setting initiatives worldwide",
+          "Particularly strong EU AI Act compliance readiness and advisory capabilities"
+        ],
+        "cons": [
+          "Premium consulting pricing typical of Big Four professional services firms",
+          "Long engagement timelines that may not match the pace of AI development"
+        ]
+      },
+      "companySize": "Enterprise",
+      "foundedYear": 1998,
+      "headquarters": "London, United Kingdom",
+      "employeeCount": "10000+",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "EY AI Confidence",
+      "slug": "ey-ai-confidence",
+      "description": "EY AI Confidence represents the artificial intelligence assurance and governance practice of Ernst & Young, one of the Big Four professional services organizations. With a global presence in over 150 countries and more than 390,000 professionals, EY has developed a comprehensive AI assurance methodology centered on its AI Confidence framework, which is designed to help organizations build trust in their AI systems while managing risks and meeting regulatory obligations. The firm has also invested significantly in its EY.ai platform, a proprietary technology ecosystem that combines AI tools, industry knowledge, and advisory capabilities.\n\nEY's AI Confidence framework provides a structured approach to evaluating and assuring AI systems across their lifecycle. The framework addresses key dimensions of AI trustworthiness including accuracy and performance, fairness and bias, transparency and explainability, privacy and security, reliability and robustness, and governance and accountability. EY's audit teams use this framework to conduct independent assessments of AI systems, providing organizations and their stakeholders with credible assurance that AI deployments meet regulatory and ethical standards.\n\nThe firm has a particularly strong focus on financial services, where AI governance and model risk management requirements are most mature and demanding. EY's experience with financial model validation and regulatory compliance in banking, insurance, and capital markets gives it a natural advantage in extending these capabilities to AI-specific assurance. The firm also provides AI governance services to healthcare, government, and technology sectors, with engagements tailored to sector-specific regulatory environments and risk profiles.\n\nEY's AI assurance services include AI governance program design, algorithmic impact assessments, model validation and audit, regulatory compliance readiness, board-level advisory, and third-party AI due diligence. The firm integrates its AI assurance capabilities with broader technology risk, cybersecurity, and data privacy services, providing a holistic view of technology-related risks. EY's AI assurance services target large enterprise and global organizations, with engagements that are consulting-led and carry premium pricing. The firm is best suited for organizations in regulated industries, particularly financial services, where independent AI assurance is increasingly expected by regulators, boards, and external stakeholders. EY's combination of deep financial services expertise, the EY.ai technology platform, and global delivery capabilities positions it as a strong choice for enterprise AI assurance.",
+      "shortDescription": "Big Four firm delivering AI assurance and governance services with a strong financial services focus and EY.ai platform.",
+      "websiteUrl": "https://www.ey.com",
+      "category": "AUDIT_ASSURANCE",
+      "pricingModel": "CONTACT_SALES",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["EU AI Act", "NIST AI RMF", "ISO 42001", "GDPR", "SOC 2", "ISO 27001"],
+      "deploymentsSupported": ["Cloud", "On-Premise"],
+      "integrationsSupported": [],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": true,
+      "overallScore": 8.3,
+      "easeOfUse": 7.0,
+      "featureRichness": 8.5,
+      "valueForMoney": 6.5,
+      "customerSupport": 8.5,
+      "prosConsList": {
+        "pros": [
+          "EY.ai platform combining technology tools with advisory capabilities",
+          "Particularly strong financial services focus with deep model risk management expertise",
+          "Comprehensive AI Confidence framework covering all dimensions of AI trustworthiness",
+          "Ability to integrate AI assurance with broader technology risk and cybersecurity services"
+        ],
+        "cons": [
+          "Expensive enterprise-only engagements with Big Four pricing structure",
+          "Consulting-heavy model may lack the agility of software-based solutions"
+        ]
+      },
+      "companySize": "Enterprise",
+      "foundedYear": 1989,
+      "headquarters": "London, United Kingdom",
+      "employeeCount": "10000+",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "BDO AI Assurance",
+      "slug": "bdo-ai-assurance",
+      "description": "BDO AI Assurance represents the artificial intelligence audit and advisory practice of BDO, one of the world's largest mid-tier professional services networks. With member firms in over 160 countries and more than 115,000 professionals globally, BDO offers a compelling alternative to the Big Four for organizations seeking AI governance and assurance services at a more accessible price point. The firm has been steadily building its AI audit capabilities, leveraging its established strengths in IT audit, internal audit, and risk advisory to address the emerging demands of AI governance.\n\nBDO's AI assurance services cover core areas including AI governance program assessments, model validation and audit, algorithmic bias testing, regulatory compliance readiness, and data governance reviews. The firm's methodology draws on international auditing standards and established risk management frameworks, adapting them to the specific challenges posed by AI systems. BDO's approach emphasizes practical, actionable recommendations that organizations can implement within realistic timelines and budgets, making their services particularly suitable for mid-market organizations that may lack the resources for extensive Big Four engagements.\n\nThe firm has been investing in developing AI-specific expertise across its global network, training audit and advisory professionals in AI risk assessment, machine learning fundamentals, and regulatory requirements such as the EU AI Act and NIST AI RMF. BDO's sector expertise spans financial services, healthcare, manufacturing, and technology, with a growing focus on the unique AI governance challenges in each sector. The firm also provides third-party AI due diligence services for mergers and acquisitions, helping organizations assess the AI-related risks and opportunities in potential transactions.\n\nBDO's AI assurance services target mid-market to large enterprise organizations that need credible, independent AI assurance without the premium pricing and long timelines associated with the Big Four. The firm's growing AI practice offers good methodology and practical expertise, though it currently has less AI-specific thought leadership and fewer specialized AI audit professionals than the largest firms. BDO is best suited for organizations seeking a more affordable and pragmatic approach to AI assurance, particularly mid-market companies in regulated industries that need to demonstrate AI governance to regulators and stakeholders.",
+      "shortDescription": "Mid-tier professional services firm offering practical AI audit and governance services at more accessible pricing.",
+      "websiteUrl": "https://www.bdo.com",
+      "category": "AUDIT_ASSURANCE",
+      "pricingModel": "CONTACT_SALES",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["EU AI Act", "NIST AI RMF", "ISO 42001", "GDPR", "SOC 2"],
+      "deploymentsSupported": ["Cloud", "On-Premise"],
+      "integrationsSupported": [],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": true,
+      "overallScore": 7.5,
+      "easeOfUse": 7.5,
+      "featureRichness": 7.0,
+      "valueForMoney": 8.0,
+      "customerSupport": 7.5,
+      "prosConsList": {
+        "pros": [
+          "More affordable than Big Four firms with practical and actionable approach",
+          "Good audit methodology adapted from established IT and financial audit practices",
+          "Growing AI practice with investment in AI-specific training and capabilities",
+          "Global reach across 160+ countries through BDO member firms"
+        ],
+        "cons": [
+          "Less AI-specific expertise and thought leadership compared to the Big Four",
+          "Smaller dedicated AI audit team with fewer specialized professionals"
+        ]
+      },
+      "companySize": "Enterprise",
+      "foundedYear": 1963,
+      "headquarters": "Brussels, Belgium",
+      "employeeCount": "10000+",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Grant Thornton AI Advisory",
+      "slug": "grant-thornton-ai-advisory",
+      "description": "Grant Thornton AI Advisory represents the artificial intelligence governance and advisory practice of Grant Thornton, one of the world's leading mid-tier professional services organizations. With member firms in over 140 countries and more than 73,000 professionals, Grant Thornton provides a practical and mid-market-focused approach to AI governance and assurance that balances rigor with accessibility. The firm has been developing its AI advisory capabilities to meet the growing demand from mid-market organizations that recognize the need for AI governance but may find Big Four engagements prohibitively expensive or disproportionate to their needs.\n\nGrant Thornton's AI advisory services cover AI governance framework design, risk assessment and mitigation, regulatory compliance readiness, algorithmic audit and validation, ethical AI program development, and ongoing monitoring and reporting. The firm takes a practical, outcomes-focused approach that emphasizes helping organizations build sustainable AI governance capabilities rather than creating dependency on external consultants. This philosophy aligns well with the needs of mid-market organizations that need to develop internal AI governance competencies alongside external assurance.\n\nThe firm's sector expertise includes financial services, healthcare, not-for-profit, government, and technology, with advisory services tailored to the specific regulatory and operational context of each sector. Grant Thornton leverages its established capabilities in technology risk, internal audit, and regulatory advisory to provide AI governance services that are grounded in proven audit methodologies while addressing the unique challenges of AI systems. The firm also provides AI-related advisory in the context of digital transformation engagements, helping organizations build governance into their AI adoption strategies from the outset.\n\nGrant Thornton's AI advisory services target mid-market to upper-mid-market organizations, providing a more affordable and pragmatic alternative to Big Four AI assurance engagements. The firm's approach is well-suited to organizations that are in the earlier stages of AI adoption and need practical guidance on building governance foundations. While Grant Thornton has a smaller AI-specialized team and less AI-specific thought leadership than the Big Four, its mid-market focus, practical approach, and more accessible pricing make it a strong option for organizations seeking credible AI governance advisory without the overhead of a Big Four engagement.",
+      "shortDescription": "Mid-tier professional services firm providing practical AI governance advisory focused on the mid-market.",
+      "websiteUrl": "https://www.grantthornton.com",
+      "category": "AUDIT_ASSURANCE",
+      "pricingModel": "CONTACT_SALES",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["EU AI Act", "NIST AI RMF", "ISO 42001", "GDPR"],
+      "deploymentsSupported": ["Cloud", "On-Premise"],
+      "integrationsSupported": [],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": true,
+      "overallScore": 7.3,
+      "easeOfUse": 7.5,
+      "featureRichness": 7.0,
+      "valueForMoney": 8.0,
+      "customerSupport": 7.5,
+      "prosConsList": {
+        "pros": [
+          "Mid-market focus with practical and outcomes-oriented advisory approach",
+          "More affordable than Big Four firms with faster engagement timelines",
+          "Emphasis on building internal AI governance capabilities rather than consultant dependency",
+          "Strong sector expertise in financial services, healthcare, and government"
+        ],
+        "cons": [
+          "Smaller AI-specialized team with less dedicated AI governance thought leadership",
+          "Less global scale and brand recognition compared to Big Four competitors"
+        ]
+      },
+      "companySize": "Enterprise",
+      "foundedYear": 1924,
+      "headquarters": "Chicago, IL",
+      "employeeCount": "10000+",
+      "isPublished": true,
+      "isFeatured": false
+    },
+    {
+      "name": "Schellman",
+      "slug": "schellman",
+      "description": "Schellman is a specialized IT audit and compliance firm that has built a strong reputation for delivering high-quality SOC 2, ISO 27001, FedRAMP, PCI-DSS, and HITRUST assessments, and has expanded its practice to include AI-specific audit and assurance services. Founded in 2003 and headquartered in Tampa, Florida, Schellman distinguishes itself from the large professional services firms through its exclusive focus on IT audit and attestation, bringing deep technical expertise and operational efficiency to every engagement. The firm's decision to specialize solely in compliance assessment rather than offering a broad range of consulting services means that clients benefit from assessors who are deeply experienced in audit methodology and technical evaluation.\n\nSchellman's AI audit capabilities build on the firm's established expertise in evaluating complex technology systems against defined criteria and controls frameworks. The firm provides AI system assessments that evaluate governance, risk management, data practices, model development processes, fairness and bias controls, security, and operational monitoring. Schellman's AI auditors combine knowledge of established IT audit frameworks with emerging AI-specific standards and guidelines, including the NIST AI Risk Management Framework, ISO 42001, and requirements arising from the EU AI Act.\n\nThe firm's approach to AI audit emphasizes technical depth and efficiency. Schellman's assessors are trained to understand the technical underpinnings of AI systems, including data pipelines, model training processes, feature engineering, and deployment architectures. This technical proficiency allows Schellman to conduct thorough evaluations that go beyond checklist compliance to assess the genuine effectiveness of AI governance controls. The firm's focused business model also allows for more efficient engagements with shorter timelines and more predictable costs compared to large consulting firms.\n\nSchellman targets mid-market to enterprise organizations, with particular strength in technology companies, SaaS providers, and cloud service providers that need to demonstrate compliance to their customers and regulators. While the firm is primarily US-focused and has less global reach than the Big Four or larger mid-tier firms, its deep technical audit expertise, efficient engagement model, and specialist focus make it an excellent choice for organizations seeking rigorous AI audit and assurance from assessors who understand the technology at a fundamental level.",
+      "shortDescription": "Specialist IT audit firm providing SOC 2, ISO 27001, and AI-specific audit and assurance services.",
+      "websiteUrl": "https://www.schellman.com",
+      "category": "AUDIT_ASSURANCE",
+      "pricingModel": "CONTACT_SALES",
+      "pricingStartsAt": "Contact sales",
+      "hasFreeTrialOrTier": false,
+      "frameworksSupported": ["NIST AI RMF", "ISO 42001", "SOC 2", "ISO 27001", "FedRAMP", "HITRUST", "PCI-DSS"],
+      "deploymentsSupported": ["Cloud", "On-Premise"],
+      "integrationsSupported": [],
+      "hasDPA": true,
+      "gdprCompliant": true,
+      "soc2Certified": true,
+      "iso27001Certified": true,
+      "overallScore": 7.8,
+      "easeOfUse": 8.0,
+      "featureRichness": 7.5,
+      "valueForMoney": 8.5,
+      "customerSupport": 8.0,
+      "prosConsList": {
+        "pros": [
+          "Specialist IT auditor with deep technical expertise in compliance assessments",
+          "Efficient engagement model with shorter timelines and more predictable costs",
+          "Broad framework coverage including SOC 2, ISO 27001, FedRAMP, and AI-specific audits",
+          "Technical assessors who understand AI systems at a fundamental architecture level"
+        ],
+        "cons": [
+          "Primarily US-focused with less global reach than multinational firms",
+          "Smaller firm with fewer resources for very large-scale or multi-country engagements"
+        ]
+      },
+      "companySize": "Mid-Market to Enterprise",
+      "foundedYear": 2003,
+      "headquarters": "Tampa, FL",
+      "employeeCount": "201-500",
+      "isPublished": true,
+      "isFeatured": false
+    }
+  ]
+}

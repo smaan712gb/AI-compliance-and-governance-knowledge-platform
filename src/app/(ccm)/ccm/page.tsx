@@ -73,12 +73,14 @@ const connectorTypes = [
   { name: "SAP S/4HANA Cloud", status: "Available" },
   { name: "SAP S/4HANA On-Premise", status: "Available" },
   { name: "SAP ECC 6.0", status: "Available" },
+  { name: "Microsoft Dynamics 365 F&O", status: "Available" },
+  { name: "Workday Financial Management", status: "Available" },
+  { name: "Oracle ERP Cloud (Fusion)", status: "Available" },
+  { name: "Oracle NetSuite", status: "Available" },
   { name: "Mock / Demo Connector", status: "Available" },
-  { name: "Oracle ERP Cloud", status: "Q3 2026" },
-  { name: "Workday Financial", status: "Q3 2026" },
-  { name: "SAP Concur", status: "Q4 2026" },
-  { name: "Microsoft Dynamics 365", status: "Q1 2027" },
-  { name: "Oracle NetSuite", status: "Q2 2027" },
+  { name: "SAP Concur", status: "Q3 2026" },
+  { name: "SAP SuccessFactors", status: "Q4 2026" },
+  { name: "Microsoft Dynamics GP", status: "Q1 2027" },
 ];
 
 const comparison = [
@@ -112,7 +114,7 @@ export default function CCMLandingPage() {
             <span className="text-primary">Any Enterprise ERP</span>
           </h1>
           <p className="mt-6 text-xl text-muted-foreground max-w-2xl mx-auto">
-            Connect SAP, Oracle, Workday, and more. Continuously monitor SOX, PCI, AML, and GDPR controls.
+            Connect SAP, Dynamics 365, Oracle, Workday, NetSuite, and more. Continuously monitor SOX, PCI, AML, and GDPR controls.
             Detect violations with AI. Generate remediation plans in seconds — not days.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
