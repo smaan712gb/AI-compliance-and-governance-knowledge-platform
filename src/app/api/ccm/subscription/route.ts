@@ -123,6 +123,27 @@ export async function POST(req: NextRequest) {
     const user = await db.user.findUnique({ where: { id: session.user.id } });
     let customerId = user?.stripeCustomerId;
 
+    // Verify the stored customer exists in the current Stripe account/mode.
+    // If the key switched between test/live (or account changed), the old
+    // customer ID will be stale — we must create a new one.
+    if (customerId) {
+      try {
+        await stripe.customers.retrieve(customerId);
+      } catch (err) {
+        const stripeErr = err as { code?: string };
+        if (stripeErr?.code === "resource_missing") {
+          // Stale customer ID — clear it and create a fresh customer below
+          customerId = undefined;
+          await db.user.update({
+            where: { id: session.user.id },
+            data: { stripeCustomerId: null },
+          });
+        } else {
+          throw err;
+        }
+      }
+    }
+
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: user?.email || undefined,
