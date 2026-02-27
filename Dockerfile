@@ -12,6 +12,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npx prisma generate
 ENV NEXT_TELEMETRY_DISABLED=1
+# Increase Node memory limit to prevent OOM on large Next.js builds
+ENV NODE_OPTIONS="--max_old_space_size=4096"
 RUN npm run build
 
 # ── Stage 3: Production runner ──
@@ -39,6 +41,8 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 COPY --from=builder /app/node_modules/effect ./node_modules/effect
+# fast-check is required by effect (used by @prisma/config) at runtime
+COPY --from=builder /app/node_modules/fast-check ./node_modules/fast-check
 
 USER nextjs
 EXPOSE 3000
