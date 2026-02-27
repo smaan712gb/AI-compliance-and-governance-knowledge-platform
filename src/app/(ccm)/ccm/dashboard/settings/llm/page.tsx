@@ -38,18 +38,16 @@ interface LLMConfig {
 
 const PROVIDERS = [
   { value: "OPENAI", label: "OpenAI" },
-  { value: "ANTHROPIC", label: "Anthropic" },
   { value: "DEEPSEEK", label: "DeepSeek" },
   { value: "AZURE_OPENAI", label: "Azure OpenAI" },
-  { value: "GOOGLE_VERTEX", label: "Google Vertex AI" },
+  { value: "GOOGLE_GEMINI", label: "Google Gemini" },
 ];
 
 const PROVIDER_MODELS: Record<string, { id: string; name: string }[]> = {
   OPENAI: [{ id: "gpt-4o", name: "GPT-4o" }, { id: "gpt-4o-mini", name: "GPT-4o Mini" }],
-  ANTHROPIC: [{ id: "claude-sonnet-4-20250514", name: "Claude Sonnet 4" }, { id: "claude-haiku-4-5-20251001", name: "Claude Haiku 4.5" }],
   DEEPSEEK: [{ id: "deepseek-chat", name: "DeepSeek V3" }, { id: "deepseek-reasoner", name: "DeepSeek R1" }],
   AZURE_OPENAI: [{ id: "gpt-4o", name: "GPT-4o (Azure)" }],
-  GOOGLE_VERTEX: [{ id: "gemini-2.0-flash", name: "Gemini 2.0 Flash" }, { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro" }],
+  GOOGLE_GEMINI: [{ id: "gemini-2.0-flash", name: "Gemini 2.0 Flash" }, { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro" }],
 };
 
 export default function LLMConfigPage() {
@@ -183,7 +181,7 @@ export default function LLMConfigPage() {
                 <Label>API Key</Label>
                 <Input type="password" placeholder="sk-..." value={form.apiKey} onChange={(e) => setForm((p) => ({ ...p, apiKey: e.target.value }))} />
               </div>
-              {(form.provider === "AZURE_OPENAI" || form.provider === "GOOGLE_VERTEX") && (
+              {form.provider === "AZURE_OPENAI" && (
                 <div className="space-y-2">
                   <Label>Base URL / Endpoint</Label>
                   <Input placeholder="https://your-resource.openai.azure.com/..." value={form.baseUrl} onChange={(e) => setForm((p) => ({ ...p, baseUrl: e.target.value }))} />

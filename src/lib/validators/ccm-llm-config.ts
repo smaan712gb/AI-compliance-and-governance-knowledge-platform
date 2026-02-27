@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const createLLMConfigSchema = z.object({
-  provider: z.enum(["OPENAI", "ANTHROPIC", "DEEPSEEK", "AZURE_OPENAI", "GOOGLE_VERTEX"]),
+  provider: z.enum(["OPENAI", "DEEPSEEK", "AZURE_OPENAI", "GOOGLE_GEMINI"]),
   modelId: z.string().min(1, "Model ID is required"),
   displayName: z.string().min(1, "Display name is required").max(100),
   apiKey: z.string().min(1, "API key is required"),
@@ -28,13 +28,6 @@ export const LLM_PROVIDER_MODELS: Record<string, { label: string; models: { id: 
       { id: "o1-mini", name: "o1 Mini" },
     ],
   },
-  ANTHROPIC: {
-    label: "Anthropic",
-    models: [
-      { id: "claude-sonnet-4-20250514", name: "Claude Sonnet 4" },
-      { id: "claude-haiku-4-5-20251001", name: "Claude Haiku 4.5" },
-    ],
-  },
   DEEPSEEK: {
     label: "DeepSeek",
     models: [
@@ -49,8 +42,8 @@ export const LLM_PROVIDER_MODELS: Record<string, { label: string; models: { id: 
       { id: "gpt-4o-mini", name: "GPT-4o Mini (Azure)" },
     ],
   },
-  GOOGLE_VERTEX: {
-    label: "Google Vertex AI",
+  GOOGLE_GEMINI: {
+    label: "Google Gemini",
     models: [
       { id: "gemini-2.0-flash", name: "Gemini 2.0 Flash" },
       { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro" },

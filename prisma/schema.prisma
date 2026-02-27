@@ -1367,6 +1367,7 @@ enum LLMProvider {
   DEEPSEEK
   AZURE_OPENAI
   GOOGLE_VERTEX
+  GOOGLE_GEMINI
 }
 
 enum ERPType {

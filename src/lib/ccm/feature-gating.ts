@@ -51,7 +51,7 @@ const CCM_TIER_LIMITS: Record<CCMTier, CCMTierLimits> = {
     evidenceStorageMb: 10240,
     auditRetentionDays: 365,
     // Supported: DEEPSEEK (platform default), OPENAI, AZURE_OPENAI
-    // Coming soon: ANTHROPIC, GOOGLE_VERTEX (require native SDK, not OpenAI-compatible)
+    // Supported: DEEPSEEK, OPENAI, AZURE_OPENAI, GOOGLE_GEMINI (all OpenAI-compatible)
     byokProviders: ["DEEPSEEK", "OPENAI", "AZURE_OPENAI", "GOOGLE_GEMINI"],
   },
   enterprise: {
