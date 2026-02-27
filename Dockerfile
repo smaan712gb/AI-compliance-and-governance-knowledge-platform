@@ -43,8 +43,14 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 # Install the Prisma CLI with ALL its transitive deps (effect, empathic, c12…).
 # We must NOT pre-copy @prisma here — npm needs to install @prisma/config
 # and its deps itself, otherwise it skips them (sees @prisma already present).
+# No --ignore-scripts: postinstall must run to download the engine binaries
+# (schema-engine used by db push) during build when we still have root access.
 COPY --from=builder /app/package.json ./package.json
-RUN npm install --ignore-scripts --no-audit --no-fund prisma && rm package.json
+RUN npm install --no-audit --no-fund prisma && rm package.json
+
+# Fix ownership: the npm install above ran as root, but CMD runs as nextjs.
+# Prisma needs write access to @prisma/engines for binary verification.
+RUN chown -R nextjs:nodejs /app/node_modules
 
 USER nextjs
 EXPOSE 3000
