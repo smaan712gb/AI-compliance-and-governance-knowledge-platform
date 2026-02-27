@@ -50,7 +50,9 @@ const CCM_TIER_LIMITS: Record<CCMTier, CCMTierLimits> = {
     syncFrequencyHours: 4,
     evidenceStorageMb: 10240,
     auditRetentionDays: 365,
-    byokProviders: ["DEEPSEEK", "OPENAI", "ANTHROPIC", "AZURE_OPENAI", "GOOGLE_VERTEX"],
+    // Supported: DEEPSEEK (platform default), OPENAI, AZURE_OPENAI
+    // Coming soon: ANTHROPIC, GOOGLE_VERTEX (require native SDK, not OpenAI-compatible)
+    byokProviders: ["DEEPSEEK", "OPENAI", "AZURE_OPENAI", "GOOGLE_GEMINI"],
   },
   enterprise: {
     connectors: -1,
@@ -61,7 +63,7 @@ const CCM_TIER_LIMITS: Record<CCMTier, CCMTierLimits> = {
     syncFrequencyHours: 1,
     evidenceStorageMb: 102400,
     auditRetentionDays: 2555, // ~7 years
-    byokProviders: ["DEEPSEEK", "OPENAI", "ANTHROPIC", "AZURE_OPENAI", "GOOGLE_VERTEX"],
+    byokProviders: ["DEEPSEEK", "OPENAI", "AZURE_OPENAI", "GOOGLE_GEMINI"],
   },
 };
 

@@ -6,18 +6,21 @@ export class SAPODataClient {
   private authHeader: string;
   private requestsPerMinute: number;
   private timeoutMs: number;
+  private sapClient: string;
   private requestTimestamps: number[] = [];
 
   constructor(
     baseUrl: string,
     authHeader: string,
     requestsPerMinute: number,
-    timeoutMs: number
+    timeoutMs: number,
+    sapClient: string = "100"
   ) {
     this.baseUrl = baseUrl.replace(/\/$/, "");
     this.authHeader = authHeader;
     this.requestsPerMinute = requestsPerMinute;
     this.timeoutMs = timeoutMs;
+    this.sapClient = sapClient;
   }
 
   /**
@@ -70,7 +73,7 @@ export class SAPODataClient {
         headers: {
           Authorization: this.authHeader,
           Accept: "application/json",
-          "sap-client": "100",
+          "sap-client": this.sapClient,
         },
         signal: controller.signal,
       });
@@ -133,7 +136,7 @@ export class SAPODataClient {
           Authorization: this.authHeader,
           Accept: "application/json",
           "Content-Type": "application/json",
-          "sap-client": "100",
+          "sap-client": this.sapClient,
         },
         body: JSON.stringify(body),
         signal: controller.signal,

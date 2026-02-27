@@ -188,6 +188,7 @@ async function runSync(
       data: { lastSyncAt: new Date(), lastError: null },
     });
   } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
     await db.connectorSyncJob.update({
       where: { id: syncJobId },
       data: {
@@ -195,8 +196,13 @@ async function runSync(
         completedAt: new Date(),
         recordsPulled: totalPulled,
         recordsFailed: totalFailed,
-        errorLog: { error: err instanceof Error ? err.message : String(err) },
+        errorLog: { error: errorMessage },
       },
     });
+    // Also surface the error on the connector so the UI shows a warning
+    await db.eRPConnector.update({
+      where: { id: connectorRecord.id },
+      data: { lastError: errorMessage },
+    }).catch(() => { /* non-fatal */ });
   }
 }

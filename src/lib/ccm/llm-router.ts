@@ -52,10 +52,12 @@ function createProviderClient(
     OPENAI: "https://api.openai.com/v1",
     DEEPSEEK: "https://api.deepseek.com",
     AZURE_OPENAI: baseUrl || "https://api.openai.com/v1",
+    // Gemini exposes an OpenAI-compatible endpoint — API key passed as Bearer token
+    GOOGLE_GEMINI: "https://generativelanguage.googleapis.com/v1beta/openai",
   };
 
-  // Anthropic and Google Vertex need special handling
-  // For now, we use OpenAI-compatible endpoints where available
+  // Supported providers use OpenAI-compatible REST APIs.
+  // ANTHROPIC requires a native SDK — not yet supported.
   const resolvedBaseUrl = baseUrl || providerBaseUrls[provider] || "https://api.openai.com/v1";
 
   return new OpenAI({

@@ -78,11 +78,13 @@ export class SAPConnector implements ERPConnector {
   async connect(): Promise<boolean> {
     try {
       const authHeader = await getSAPAuth(this.config);
+      const cfg = this.config as SAPConfig & { sapClient?: string };
       this.odataClient = new SAPODataClient(
         this.getBaseUrl(),
         authHeader,
         this.config.requestsPerMinute ?? 60,
-        this.config.timeoutMs ?? 30000
+        this.config.timeoutMs ?? 30000,
+        cfg.sapClient ?? "100"
       );
       this.connected = true;
       return true;
