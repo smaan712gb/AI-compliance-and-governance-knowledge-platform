@@ -153,6 +153,22 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Validation error" }, { status: 400 });
     }
 
+    // Prevent downgrading the last OWNER — org would become unmanageable
+    const targetMember = await db.cCMOrganizationMember.findFirst({
+      where: { id: memberId, organizationId: orgId },
+    });
+    if (targetMember?.role === "OWNER" && parsed.data.role !== "OWNER") {
+      const ownerCount = await db.cCMOrganizationMember.count({
+        where: { organizationId: orgId, role: "OWNER", isActive: true },
+      });
+      if (ownerCount <= 1) {
+        return NextResponse.json(
+          { error: "Cannot change the role of the last owner. Promote another member to Owner first." },
+          { status: 409 }
+        );
+      }
+    }
+
     const updated = await db.cCMOrganizationMember.update({
       where: { id: memberId },
       data: { role: parsed.data.role },

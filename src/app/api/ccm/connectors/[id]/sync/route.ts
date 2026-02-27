@@ -5,6 +5,7 @@ import { triggerSyncSchema } from "@/lib/validators/ccm-connector";
 import { checkCCMPermission, getUserOrganization } from "@/lib/ccm/rbac";
 import { decryptConfig } from "@/lib/ccm/crypto";
 import { createConnector } from "@/lib/connectors/registry";
+import { connectorConfigSchema } from "@/lib/connectors/config-schema";
 import { logAuditEvent, extractRequestMeta } from "@/lib/ccm/audit-logger";
 import type { SyncDomain } from "@prisma/client";
 
@@ -97,8 +98,13 @@ async function runSync(
   let totalFailed = 0;
 
   try {
-    const config = decryptConfig<Record<string, unknown>>(connectorRecord.configEncrypted, orgId);
-    const connector = createConnector(connectorRecord.erpType as any, config as any);
+    const rawConfig = decryptConfig<Record<string, unknown>>(connectorRecord.configEncrypted, orgId);
+    // Re-validate decrypted config to catch corrupted data before use
+    const configParsed = connectorConfigSchema.safeParse(rawConfig);
+    if (!configParsed.success) {
+      throw new Error(`Connector config validation failed: ${configParsed.error.message}`);
+    }
+    const connector = createConnector(connectorRecord.erpType as any, configParsed.data);
     await connector.connect();
 
     const pullParams = {
