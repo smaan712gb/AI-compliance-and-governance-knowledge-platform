@@ -35,18 +35,20 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy Prisma schema + engine for db push on startup
+# Copy Prisma schema + generated client (needed by the app at runtime)
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/effect ./node_modules/effect
-# fast-check is required by effect (used by @prisma/config) at runtime
-COPY --from=builder /app/node_modules/fast-check ./node_modules/fast-check
+
+# Install the Prisma CLI with all its transitive deps for db push.
+# node:20-alpine includes npm, so we can do a clean targeted install.
+# --ignore-scripts prevents postinstall hooks from running.
+COPY --from=builder /app/package.json ./package.json
+RUN npm install --ignore-scripts --no-audit --no-fund prisma && rm package.json
 
 USER nextjs
 EXPOSE 3000
 
-# Sync DB schema then start server
-# Use ; not && so server starts even if db push fails (e.g. first deploy)
-CMD ["sh", "-c", "echo 'Running prisma db push...' && node node_modules/prisma/build/index.js db push --skip-generate 2>&1 || echo 'WARNING: prisma db push failed, starting server anyway'; exec node server.js"]
+# Sync DB schema then start server.
+# Uses the freshly installed prisma CLI (with all deps) so db push works.
+CMD ["sh", "-c", "echo 'Running prisma db push...' && npx prisma db push --skip-generate 2>&1 || echo 'WARNING: prisma db push failed, starting server anyway'; exec node server.js"]
