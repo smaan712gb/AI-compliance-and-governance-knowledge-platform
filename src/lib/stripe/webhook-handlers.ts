@@ -178,6 +178,18 @@ export async function handlePaymentFailed(invoice: Stripe.Invoice) {
   const subscriptionId =
     typeof subscriptionRef === "string" ? subscriptionRef : subscriptionRef.id;
 
+  // Update CCM subscription if applicable
+  const ccmSub = await db.cCMSubscription.findUnique({
+    where: { stripeSubscriptionId: subscriptionId },
+  });
+  if (ccmSub) {
+    await db.cCMSubscription.update({
+      where: { id: ccmSub.id },
+      data: { status: "PAST_DUE" },
+    });
+    return;
+  }
+
   const sub = await db.subscription.findUnique({
     where: { stripeSubscriptionId: subscriptionId },
   });

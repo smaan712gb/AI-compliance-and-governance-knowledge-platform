@@ -70,10 +70,10 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 2. Run monitoring rules for all organizations with active subscriptions
+    // 2. Run monitoring rules for all organizations with active or trialing subscriptions
     const organizations = await db.cCMOrganization.findMany({
       where: {
-        subscription: { status: "ACTIVE" },
+        subscription: { status: { in: ["ACTIVE", "TRIALING"] } },
         members: { some: { isActive: true } },
       },
       select: { id: true },
