@@ -186,7 +186,7 @@ export default function TeamPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium truncate">{member.user.name || "Unnamed"}</h3>
-                  <p className="text-sm text-muted-foreground truncate">{member.user.email}</p>
+                  <p className="text-sm text-muted-foreground truncate">{member.user.email || "—"}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   {member.role === "OWNER" ? (

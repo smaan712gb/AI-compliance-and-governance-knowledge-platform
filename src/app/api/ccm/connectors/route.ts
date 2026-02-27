@@ -43,11 +43,27 @@ export async function GET() {
         isActive: true,
         createdAt: true,
         // configEncrypted is NOT selected — never send to frontend
+        syncJobs: {
+          orderBy: { startedAt: "desc" },
+          take: 1,
+          select: {
+            status: true,
+            recordsPulled: true,
+            recordsFailed: true,
+            completedAt: true,
+          },
+        },
       },
       orderBy: { createdAt: "asc" },
     });
 
-    return NextResponse.json({ data: connectors });
+    return NextResponse.json({
+      data: connectors.map((c) => ({
+        ...c,
+        lastSyncJob: c.syncJobs[0] ?? null,
+        syncJobs: undefined,
+      })),
+    });
   } catch (error) {
     console.error("[CCM Connectors] GET error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
