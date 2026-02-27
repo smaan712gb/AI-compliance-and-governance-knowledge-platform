@@ -15,7 +15,15 @@ function getMasterKey(): Buffer {
         "Generate one with: node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\""
     );
   }
-  return Buffer.from(hex, "hex");
+  const key = Buffer.from(hex, "hex");
+  // Buffer.from with 'hex' silently truncates invalid chars — verify output length
+  if (key.length !== 32) {
+    throw new Error(
+      "CCM_ENCRYPTION_KEY contains invalid hex characters. " +
+        "Must be exactly 64 valid hex characters (0-9, a-f)."
+    );
+  }
+  return key;
 }
 
 /**

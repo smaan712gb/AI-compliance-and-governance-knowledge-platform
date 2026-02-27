@@ -82,6 +82,9 @@ function evaluateThreshold(
   }
 }
 
+// Maximum field string length to prevent ReDoS on pathological regexes
+const MAX_PATTERN_FIELD_LENGTH = 2000;
+
 function evaluatePattern(
   data: Record<string, unknown>,
   conditions: Record<string, unknown>
@@ -91,8 +94,14 @@ function evaluatePattern(
   const negate = conditions.negate as boolean;
 
   if (!field || !pattern) return false;
+  // Guard against ReDoS: reject overly complex patterns and truncate input
+  if (pattern.length > 500) return false;
 
-  const fieldValue = String(getNestedValue(data, field) || "");
+  const rawValue = String(getNestedValue(data, field) || "");
+  const fieldValue = rawValue.length > MAX_PATTERN_FIELD_LENGTH
+    ? rawValue.slice(0, MAX_PATTERN_FIELD_LENGTH)
+    : rawValue;
+
   try {
     const regex = new RegExp(pattern, "i");
     const matches = regex.test(fieldValue);

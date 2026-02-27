@@ -156,6 +156,8 @@ export async function routeLLMRequestStream(
             { role: "user", content: request.userPrompt },
           ],
           stream: true,
+          // Request token usage in the final stream chunk (OpenAI-compatible providers)
+          stream_options: { include_usage: true },
           temperature: request.temperature ?? 0.3,
           max_tokens: request.maxTokens ?? 4000,
         });

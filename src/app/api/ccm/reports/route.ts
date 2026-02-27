@@ -155,6 +155,14 @@ export async function POST(req: NextRequest) {
       sync: { jobsInPeriod: syncJobs.length, totalRecordsSynced },
     };
 
+    // Build a representative findings list: prioritise critical/high, top 20 total
+    const findingsByPriority = [
+      ...findings.filter((f) => f.severity === "CRITICAL"),
+      ...findings.filter((f) => f.severity === "HIGH"),
+      ...findings.filter((f) => f.severity === "MEDIUM"),
+      ...findings.filter((f) => f.severity === "LOW"),
+    ].slice(0, 20);
+
     // Generate AI narrative
     const llmResponse = await routeLLMRequest(orgId, {
       systemPrompt: `You are a compliance reporting expert generating a ${parsed.data.reportType} report.
@@ -167,11 +175,10 @@ Period: ${dateFrom.toLocaleDateString()} to ${dateTo.toLocaleDateString()}
 Data Summary:
 ${JSON.stringify(reportData, null, 2)}
 
-Top Findings:
-${findings
-  .slice(0, 10)
-  .map((f) => `- [${f.severity}] ${f.title} (${f.rule?.framework} / ${f.rule?.controlId || "N/A"}) - ${f.status}`)
-  .join("\n")}`,
+Top Findings (${findingsByPriority.length} shown, prioritised by severity):
+${findingsByPriority
+  .map((f) => `- [${f.severity}] ${f.title} (${f.rule?.framework ?? f.framework ?? "N/A"} / ${f.rule?.controlId ?? f.controlId ?? "N/A"}) - ${f.status}`)
+  .join("\n")}${findings.length > 20 ? `\n... and ${findings.length - 20} additional findings (see Data Summary for counts)` : ""}`,
       maxTokens: 4000,
       temperature: 0.3,
     });
