@@ -48,54 +48,47 @@ function getLimiters() {
   return _limiters;
 }
 
+const BYPASS = { success: true, remaining: 999, reset: 0 };
+
 export async function checkAIRateLimit(
   identifier: string,
   isAuthenticated: boolean,
   isAdmin?: boolean,
 ): Promise<{ success: boolean; remaining: number; reset: number }> {
-  // Admin bypass: no rate limits for ADMIN/SUPER_ADMIN
-  if (isAdmin) {
-    return { success: true, remaining: 999, reset: 0 };
+  if (isAdmin) return BYPASS;
+  if (!isRedisConfigured()) return BYPASS;
+  try {
+    const limiters = getLimiters();
+    const limiter = isAuthenticated ? limiters.aiAuthenticated : limiters.ai;
+    const result = await limiter.limit(identifier);
+    return { success: result.success, remaining: result.remaining, reset: result.reset };
+  } catch {
+    return BYPASS;
   }
-  if (!isRedisConfigured()) {
-    return { success: true, remaining: 999, reset: 0 };
-  }
-  const limiters = getLimiters();
-  const limiter = isAuthenticated ? limiters.aiAuthenticated : limiters.ai;
-  const result = await limiter.limit(identifier);
-  return {
-    success: result.success,
-    remaining: result.remaining,
-    reset: result.reset,
-  };
 }
 
 export async function checkAPIRateLimit(
   identifier: string,
 ): Promise<{ success: boolean; remaining: number; reset: number }> {
-  if (!isRedisConfigured()) {
-    return { success: true, remaining: 999, reset: 0 };
+  if (!isRedisConfigured()) return BYPASS;
+  try {
+    const limiters = getLimiters();
+    const result = await limiters.api.limit(identifier);
+    return { success: result.success, remaining: result.remaining, reset: result.reset };
+  } catch {
+    return BYPASS;
   }
-  const limiters = getLimiters();
-  const result = await limiters.api.limit(identifier);
-  return {
-    success: result.success,
-    remaining: result.remaining,
-    reset: result.reset,
-  };
 }
 
 export async function checkSubscribeRateLimit(
   identifier: string,
 ): Promise<{ success: boolean; remaining: number; reset: number }> {
-  if (!isRedisConfigured()) {
-    return { success: true, remaining: 999, reset: 0 };
+  if (!isRedisConfigured()) return BYPASS;
+  try {
+    const limiters = getLimiters();
+    const result = await limiters.subscribe.limit(identifier);
+    return { success: result.success, remaining: result.remaining, reset: result.reset };
+  } catch {
+    return BYPASS;
   }
-  const limiters = getLimiters();
-  const result = await limiters.subscribe.limit(identifier);
-  return {
-    success: result.success,
-    remaining: result.remaining,
-    reset: result.reset,
-  };
 }
