@@ -28,10 +28,20 @@ export async function POST(req: NextRequest) {
     });
 
     if (running) {
-      return NextResponse.json(
-        { error: "Pipeline already running", runId: running.id },
-        { status: 409 },
-      );
+      // If the run has been stuck for more than 30 minutes it crashed —
+      // mark it failed and allow a new run to proceed
+      const staleThreshold = new Date(Date.now() - 30 * 60 * 1000);
+      if (running.startedAt < staleThreshold) {
+        await db.agentRun.update({
+          where: { id: running.id },
+          data: { status: "FAILED", completedAt: new Date() },
+        });
+      } else {
+        return NextResponse.json(
+          { error: "Pipeline already running", runId: running.id },
+          { status: 409 },
+        );
+      }
     }
 
     // Fire-and-forget: start pipeline in background so we respond within
