@@ -1945,10 +1945,11 @@ model IntelligenceEvent {
   processedAt     DateTime      @default(now())
   createdAt       DateTime      @default(now())
 
-  watchlistMatches WatchlistMatch[]
-  reasoningHistory ReasoningHistory[]
-  entityLinks      EventEntityLink[]
-  triageRuns       SentinelTriageRun[]
+  watchlistMatches  WatchlistMatch[]
+  reasoningHistory  ReasoningHistory[]
+  entityLinks       EventEntityLink[]
+  triageRuns        SentinelTriageRun[]
+  supplyChainAlerts SupplyChainAlert[]
 
   @@index([category, severity])
   @@index([countryCode, createdAt])
@@ -2311,11 +2312,12 @@ model SentinelOrganization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  members   SentinelOrgMember[]
-  auditLogs SentinelAuditLog[]
-  webhooks  SentinelWebhook[]
+  members    SentinelOrgMember[]
+  auditLogs  SentinelAuditLog[]
+  webhooks   SentinelWebhook[]
   llmConfigs SentinelLLMConfig[]
   triageRuns SentinelTriageRun[]
+  suppliers  SentinelSupplier[]
 
   @@map("sentinel_organizations")
 }
@@ -2502,4 +2504,63 @@ model SentinelTriageRun {
   @@index([organizationId, createdAt])
   @@index([status])
   @@map("sentinel_triage_runs")
+}
+
+// ---- Supply Chain Intelligence ----
+
+model SentinelSupplier {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  countryCode    String
+  sector         String
+  tier           Int      @default(1) // 1 = direct, 2 = sub-tier, etc.
+  criticality    String   @default("medium") // critical, high, medium, low
+  description    String?
+
+  // Live risk tracking (auto-updated by ingestion pipeline)
+  currentRiskScore Int     @default(0)
+  riskLevel        String  @default("low") // critical, high, medium, low
+  lastAssessedAt   DateTime?
+
+  // Upstream dependencies
+  dependsOnCountries String[] // ISO-2 codes of upstream countries
+  shippingRoutes     String[] // route identifiers (e.g., "hormuz", "suez", "malacca")
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization SentinelOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  alerts       SupplyChainAlert[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId, isActive])
+  @@index([countryCode])
+  @@map("sentinel_suppliers")
+}
+
+model SupplyChainAlert {
+  id         String   @id @default(cuid())
+  supplierId String
+  eventId    String
+  alertType  String   // "country_impact", "route_disruption", "sector_disruption", "cascade_risk"
+
+  // Impact assessment (AI-generated)
+  previousRiskScore Int
+  newRiskScore      Int
+  riskChange        Int      // positive = risk increased
+  impactSummary     String   // AI-generated: "Strait of Hormuz closure blocks your shipping route..."
+  mitigations       Json     // Array of mitigation recommendations
+  aiTokensUsed      Int      @default(0)
+
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  supplier SentinelSupplier  @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  event    IntelligenceEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([supplierId, createdAt])
+  @@index([eventId])
+  @@map("sentinel_supply_chain_alerts")
 }

@@ -23,6 +23,7 @@ import {
   buildKeywordSpikeAlert,
   buildCrisisEscalationAlert,
 } from "./webhook-alerts";
+import { assessSupplyChainImpact } from "./supply-chain-monitor";
 
 export interface FeedItem {
   title: string;
@@ -51,6 +52,7 @@ export interface IngestionResult {
     graphEntitiesLinked: number;
     reasoningTriggered: number;
     triageTriggered: number;
+    supplyChainAlerts: number;
   };
 }
 
@@ -462,6 +464,7 @@ export async function runIngestionPipeline(
       graphEntitiesLinked: 0,
       reasoningTriggered: 0,
       triageTriggered: 0,
+      supplyChainAlerts: 0,
     },
   };
 
@@ -694,10 +697,8 @@ export async function runIngestionPipeline(
         }
 
         // 5. Triage Agent — fire-and-forget for high-severity events
-        // Also considers AI-upgraded events (riskScore may increase after reasoning)
         if (shouldTriggerTriage({ severity: dbSeverity, riskScore })) {
           result.automation.triageTriggered++;
-          // Find an active org to assign cases/briefings to
           db.sentinelOrgMember.findFirst({
             where: { role: "ADMIN", isActive: true },
             select: { organizationId: true },
@@ -705,6 +706,23 @@ export async function runIngestionPipeline(
             return runTriageAgent(newEvent.id, admin?.organizationId || undefined);
           }).catch((err) => {
             console.error(`[Ingestion] Triage agent failed for ${newEvent.id}:`, err);
+          });
+        }
+
+        // 6. Supply Chain Impact — auto-assess when CRITICAL/HIGH events hit supplier countries
+        if (dbSeverity === "SENTINEL_CRITICAL" || dbSeverity === "SENTINEL_HIGH") {
+          assessSupplyChainImpact(
+            newEvent.id,
+            item.title,
+            item.description,
+            countryCode,
+            dbSeverity,
+            category,
+            riskScore,
+          ).then((scResult) => {
+            result.automation.supplyChainAlerts += scResult.alertsCreated;
+          }).catch((err) => {
+            console.error(`[Ingestion] Supply chain impact failed for ${newEvent.id}:`, err);
           });
         }
       }
