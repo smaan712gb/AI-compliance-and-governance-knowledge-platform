@@ -32,6 +32,20 @@ model User {
   companyProfile   CompanyProfile?
   ccmMemberships   CCMOrganizationMember[]
 
+  // Sentinel relations
+  sentinelSubscription  SentinelSubscription?
+  sentinelApiKeys       SentinelApiKey[]
+  screeningResults      ScreeningResult[]
+  supplyChainAssessments SupplyChainAssessment[]
+  // Sentinel enterprise features
+  watchlists             SentinelWatchlist[]
+  reasoningHistory       ReasoningHistory[]
+  sentinelCases          SentinelCase[]       @relation("CaseCreator")
+  assignedCases          SentinelCase[]       @relation("CaseAssignee")
+  caseNotes              SentinelCaseNote[]
+  briefings              SentinelBriefing[]
+  sentinelOrgMemberships SentinelOrgMember[]
+
   @@map("users")
 }
 
@@ -1814,4 +1828,678 @@ model CCMReport {
 
   @@index([organizationId, reportType])
   @@map("ccm_reports")
+}
+
+// ============================================
+// SENTINEL — GEOPOLITICAL INTELLIGENCE PLATFORM
+// ============================================
+
+enum SentinelTier {
+  FREE
+  PRO
+  EXPERT
+  STRATEGIC
+}
+
+enum EventCategory {
+  CONFLICT
+  TERRORISM
+  CYBER
+  ECONOMIC
+  POLITICAL
+  DISASTER
+  SANCTIONS
+  OTHER
+}
+
+enum EventSeverity {
+  SENTINEL_CRITICAL
+  SENTINEL_HIGH
+  SENTINEL_MEDIUM
+  SENTINEL_LOW
+  INFO
+}
+
+enum CrisisLevel {
+  CRISIS_CRITICAL
+  SEVERE
+  ELEVATED
+  GUARDED
+  CRISIS_LOW
+}
+
+enum CrisisTrend {
+  ESCALATING
+  STABLE
+  IMPROVING
+}
+
+enum ScreeningRecommendation {
+  BLOCK
+  ENHANCED_DUE_DILIGENCE
+  STANDARD
+  CLEAR
+}
+
+// ---- Sentinel Subscriptions ----
+
+model SentinelSubscription {
+  id                       String             @id @default(cuid())
+  userId                   String             @unique
+  tier                     SentinelTier       @default(FREE)
+  stripeSubscriptionId     String?            @unique
+  stripePriceId            String?
+  stripeCurrentPeriodStart DateTime?
+  stripeCurrentPeriodEnd   DateTime?
+  status                   SubscriptionStatus @default(ACTIVE)
+  cancelAtPeriodEnd        Boolean            @default(false)
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sentinel_subscriptions")
+}
+
+// ---- Sentinel API Keys ----
+
+model SentinelApiKey {
+  id        String    @id @default(cuid())
+  userId    String
+  name      String
+  keyHash   String    @unique
+  prefix    String
+  tier      SentinelTier @default(FREE)
+  isActive  Boolean   @default(true)
+  expiresAt DateTime?
+  lastUsedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user  User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  usage SentinelApiUsage[]
+
+  @@index([userId, isActive])
+  @@map("sentinel_api_keys")
+}
+
+// ---- Intelligence Events ----
+
+model IntelligenceEvent {
+  id              String        @id @default(cuid())
+  headline        String
+  summary         String        @db.Text
+  source          String
+  sourceUrl       String?
+  category        EventCategory
+  severity        EventSeverity
+  countryCode     String?
+  countryName     String?
+  latitude        Float?
+  longitude       Float?
+  riskScore       Int           @default(0)
+  reasoningResult Json?
+  biasAudit       Json?
+  entities        String[]
+  tags            String[]
+  publishedAt     DateTime?
+  processedAt     DateTime      @default(now())
+  createdAt       DateTime      @default(now())
+
+  watchlistMatches WatchlistMatch[]
+  reasoningHistory ReasoningHistory[]
+  entityLinks      EventEntityLink[]
+  triageRuns       SentinelTriageRun[]
+
+  @@index([category, severity])
+  @@index([countryCode, createdAt])
+  @@index([processedAt])
+  @@map("sentinel_intelligence_events")
+}
+
+// ---- Financial Crime Screening ----
+
+model ScreeningResult {
+  id                  String                   @id @default(cuid())
+  userId              String
+  entityName          String
+  entityType          String
+  countryCode         String?
+  sanctionsScore      Float                    @default(0)
+  pepScore            Float                    @default(0)
+  adverseMediaScore   Float                    @default(0)
+  geographicRiskScore Float                    @default(0)
+  compositeScore      Float                    @default(0)
+  recommendation      ScreeningRecommendation
+  sanctionsMatches    Json?
+  pepMatches          Json?
+  adverseMediaHits    Json?
+  details             Json?
+  createdAt           DateTime                 @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([entityName])
+  @@map("sentinel_screening_results")
+}
+
+// ---- Crisis Index Snapshots ----
+
+model CrisisIndexSnapshot {
+  id          String      @id @default(cuid())
+  countryCode String
+  countryName String
+  score       Float
+  level       CrisisLevel
+  trend       CrisisTrend
+  components  Json
+  indicators  Json
+  createdAt   DateTime    @default(now())
+
+  @@index([countryCode, createdAt])
+  @@map("sentinel_crisis_index_snapshots")
+}
+
+// ---- Supply Chain Assessments ----
+
+model SupplyChainAssessment {
+  id                String   @id @default(cuid())
+  userId            String
+  supplierName      String
+  countryCode       String
+  tier              Int      @default(1)
+  criticality       String   @default("medium")
+  countryRiskScore  Float    @default(0)
+  proximityRisk     Float    @default(0)
+  cascadeRisk       Float    @default(0)
+  compositeRisk     Float    @default(0)
+  mitigations       Json?
+  portfolioAnalysis Json?
+  createdAt         DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("sentinel_supply_chain_assessments")
+}
+
+// ---- Sentinel API Usage Tracking ----
+
+model SentinelApiUsage {
+  id        String   @id @default(cuid())
+  apiKeyId  String
+  endpoint  String
+  method    String
+  status    Int
+  tokens    Int      @default(0)
+  latencyMs Int      @default(0)
+  createdAt DateTime @default(now())
+
+  apiKey SentinelApiKey @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+
+  @@index([apiKeyId, createdAt])
+  @@index([endpoint, createdAt])
+  @@map("sentinel_api_usage")
+}
+
+// ============================================
+// SENTINEL — WATCHLISTS & CUSTOMER INTELLIGENCE
+// ============================================
+
+enum WatchlistType {
+  COUNTRY
+  ENTITY
+  KEYWORD
+  SUPPLIER
+  SECTOR
+  ROUTE
+}
+
+model SentinelWatchlist {
+  id          String        @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  type        WatchlistType
+  items       Json          // Array of watched items with metadata
+  isActive    Boolean       @default(true)
+  alertOnMatch Boolean      @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matches WatchlistMatch[]
+
+  @@index([userId, isActive])
+  @@index([type])
+  @@map("sentinel_watchlists")
+}
+
+model WatchlistMatch {
+  id          String   @id @default(cuid())
+  watchlistId String
+  eventId     String
+  matchedItem String   // Which watchlist item was matched
+  matchScore  Float    @default(1.0)
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  watchlist SentinelWatchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+  event     IntelligenceEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([watchlistId, isRead])
+  @@index([eventId])
+  @@map("sentinel_watchlist_matches")
+}
+
+// ============================================
+// SENTINEL — HISTORICAL REASONING MEMORY
+// ============================================
+
+model ReasoningHistory {
+  id               String   @id @default(cuid())
+  userId           String
+  eventId          String?
+  headline         String
+  countryCode      String?
+  category         EventCategory
+  inputContext      String   @db.Text
+  reasoningChain   String   @db.Text  // Full chain-of-thought
+  classification   Json     // category, severity, riskScore
+  predictedOutcome String?  @db.Text  // What the model predicted would happen
+  actualOutcome    String?  @db.Text  // What actually happened (filled later)
+  forecastAccuracy Float?             // 0-1 accuracy score (filled later)
+  biasAudit        Json?
+  tokens           Int      @default(0)
+  latencyMs        Int      @default(0)
+  createdAt        DateTime @default(now())
+
+  user  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event IntelligenceEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([countryCode, category])
+  @@index([eventId])
+  @@map("sentinel_reasoning_history")
+}
+
+// ============================================
+// SENTINEL — WORKFLOW ENGINE
+// ============================================
+
+enum CaseStatus {
+  OPEN
+  IN_PROGRESS
+  PENDING_REVIEW
+  ESCALATED
+  RESOLVED
+  CLOSED
+}
+
+enum CasePriority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+model SentinelCase {
+  id          String       @id @default(cuid())
+  title       String
+  description String?      @db.Text
+  status      CaseStatus   @default(OPEN)
+  priority    CasePriority @default(MEDIUM)
+  createdById String
+  assigneeId  String?
+  eventIds    String[]     // Related intelligence event IDs
+  tags        String[]
+  dueDate     DateTime?
+  resolvedAt  DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  createdBy User              @relation("CaseCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  assignee  User?             @relation("CaseAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  notes     SentinelCaseNote[]
+
+  @@index([status, priority])
+  @@index([createdById])
+  @@index([assigneeId])
+  @@map("sentinel_cases")
+}
+
+model SentinelCaseNote {
+  id      String   @id @default(cuid())
+  caseId  String
+  userId  String
+  content String   @db.Text
+  isInternal Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  case SentinelCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  user User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([caseId, createdAt])
+  @@map("sentinel_case_notes")
+}
+
+model SentinelBriefing {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  content     String   @db.Text
+  eventIds    String[] // Events included in briefing
+  format      String   @default("markdown") // markdown, pdf, html
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("sentinel_briefings")
+}
+
+// ============================================
+// SENTINEL — EVENT GRAPH / ONTOLOGY
+// ============================================
+
+enum EntityType {
+  PERSON
+  ORGANIZATION
+  COUNTRY
+  CITY
+  INFRASTRUCTURE
+  ROUTE
+  SECTOR
+  COMMODITY
+  WEAPON_SYSTEM
+}
+
+enum RelationType {
+  OPERATES_IN    // org → country
+  ALLY_OF        // country → country
+  RIVAL_OF       // country → country
+  SUPPLIES       // org → org (supply chain)
+  SANCTIONS      // country → country/org
+  CONTROLS       // org/person → infrastructure
+  TRADES         // country → commodity
+  LOCATED_IN     // infra → country/city
+  LEADS          // person → org
+  MEMBER_OF      // country → org (NATO, EU, etc)
+  CAUSED_BY      // event → actor
+  AFFECTS        // event → entity
+}
+
+model GraphEntity {
+  id          String     @id @default(cuid())
+  name        String
+  type        EntityType
+  countryCode String?
+  metadata    Json?      // Flexible additional data
+  aliases     String[]   // Alternative names
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  outgoingRelations GraphRelation[] @relation("FromEntity")
+  incomingRelations GraphRelation[] @relation("ToEntity")
+  eventLinks        EventEntityLink[]
+
+  @@unique([name, type])
+  @@index([type])
+  @@index([countryCode])
+  @@map("sentinel_graph_entities")
+}
+
+model GraphRelation {
+  id         String       @id @default(cuid())
+  fromId     String
+  toId       String
+  type       RelationType
+  weight     Float        @default(1.0)  // Strength of relationship
+  confidence Float        @default(0.8)  // How sure we are
+  source     String?      // Where this relationship was learned
+  metadata   Json?
+  validFrom  DateTime?
+  validTo    DateTime?
+  createdAt  DateTime     @default(now())
+
+  from GraphEntity @relation("FromEntity", fields: [fromId], references: [id], onDelete: Cascade)
+  to   GraphEntity @relation("ToEntity", fields: [toId], references: [id], onDelete: Cascade)
+
+  @@index([fromId, type])
+  @@index([toId, type])
+  @@index([type])
+  @@map("sentinel_graph_relations")
+}
+
+model EventEntityLink {
+  id       String   @id @default(cuid())
+  eventId  String
+  entityId String
+  role     String   // "actor", "target", "location", "affected"
+  createdAt DateTime @default(now())
+
+  event  IntelligenceEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  entity GraphEntity       @relation(fields: [entityId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, entityId, role])
+  @@index([eventId])
+  @@index([entityId])
+  @@map("sentinel_event_entity_links")
+}
+
+// ============================================
+// SENTINEL — ENTERPRISE FEATURES
+// ============================================
+
+// ---- Organization & Multi-Tenancy ----
+
+enum SentinelOrgRole {
+  VIEWER
+  ANALYST
+  MANAGER
+  ADMIN
+}
+
+model SentinelOrganization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  industry  String?
+  maxSeats  Int      @default(10)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members   SentinelOrgMember[]
+  auditLogs SentinelAuditLog[]
+  webhooks  SentinelWebhook[]
+  llmConfigs SentinelLLMConfig[]
+  triageRuns SentinelTriageRun[]
+
+  @@map("sentinel_organizations")
+}
+
+model SentinelOrgMember {
+  id             String          @id @default(cuid())
+  organizationId String
+  userId         String
+  role           SentinelOrgRole @default(ANALYST)
+  invitedBy      String?
+  isActive       Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  organization SentinelOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@map("sentinel_org_members")
+}
+
+// ---- Audit Trail (SOC 2) ----
+
+enum SentinelAuditAction {
+  API_KEY_CREATED
+  API_KEY_REVOKED
+  API_KEY_USED
+  EVENT_VIEWED
+  REASONING_REQUESTED
+  SCREENING_PERFORMED
+  SUPPLY_CHAIN_ASSESSED
+  WATCHLIST_CREATED
+  WATCHLIST_UPDATED
+  WATCHLIST_DELETED
+  CASE_CREATED
+  CASE_UPDATED
+  CASE_ASSIGNED
+  CASE_ESCALATED
+  CASE_RESOLVED
+  NOTE_ADDED
+  BRIEFING_CREATED
+  BRIEFING_PUBLISHED
+  ORG_CREATED
+  MEMBER_INVITED
+  MEMBER_REMOVED
+  MEMBER_ROLE_CHANGED
+  WEBHOOK_CREATED
+  WEBHOOK_UPDATED
+  WEBHOOK_DELETED
+  LLM_CONFIG_CREATED
+  LLM_CONFIG_UPDATED
+  SETTINGS_CHANGED
+  TRIAGE_AGENT_TRIGGERED
+  TRIAGE_AGENT_COMPLETED
+}
+
+model SentinelAuditLog {
+  id             String              @id @default(cuid())
+  organizationId String?
+  userId         String
+  action         SentinelAuditAction
+  resourceType   String?
+  resourceId     String?
+  ipAddress      String?
+  userAgent      String?
+  params         Json?
+  result         String?
+  timestamp      DateTime            @default(now())
+
+  organization SentinelOrganization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, timestamp])
+  @@index([userId, timestamp])
+  @@index([action, timestamp])
+  @@index([resourceType, resourceId])
+  @@map("sentinel_audit_logs")
+}
+
+// ---- Webhook Delivery System ----
+
+model SentinelWebhook {
+  id             String   @id @default(cuid())
+  organizationId String?
+  userId         String
+  url            String
+  secret         String?  @db.Text
+  description    String?
+  events         String[]
+  minSeverity    String   @default("high")
+  isActive       Boolean  @default(true)
+  failureCount   Int      @default(0)
+  lastDeliveryAt DateTime?
+  lastError      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization SentinelOrganization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  deliveries   SentinelWebhookDelivery[]
+
+  @@index([userId, isActive])
+  @@index([organizationId, isActive])
+  @@map("sentinel_webhooks")
+}
+
+model SentinelWebhookDelivery {
+  id         String   @id @default(cuid())
+  webhookId  String
+  eventType  String
+  payload    Json
+  statusCode Int?
+  success    Boolean
+  error      String?
+  latencyMs  Int      @default(0)
+  attempt    Int      @default(1)
+  createdAt  DateTime @default(now())
+
+  webhook SentinelWebhook @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+
+  @@index([webhookId, createdAt])
+  @@index([success, createdAt])
+  @@map("sentinel_webhook_deliveries")
+}
+
+// ---- LLM Provider Configuration (BYOK) ----
+
+model SentinelLLMConfig {
+  id              String      @id @default(cuid())
+  organizationId  String?
+  userId          String?
+  provider        LLMProvider
+  modelId         String
+  displayName     String
+  apiKeyEncrypted String      @db.Text
+  baseUrl         String?
+  isDefault       Boolean     @default(false)
+  isActive        Boolean     @default(true)
+  lastTestedAt    DateTime?
+  lastError       String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  organization SentinelOrganization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, isActive])
+  @@index([userId, isActive])
+  @@map("sentinel_llm_configs")
+}
+
+// ---- Autonomous Triage Agent ----
+
+enum TriageStatus {
+  PENDING
+  SCREENING
+  SCORING
+  BRIEFING
+  NOTIFYING
+  COMPLETED
+  FAILED
+}
+
+model SentinelTriageRun {
+  id             String       @id @default(cuid())
+  eventId        String
+  organizationId String?
+  status         TriageStatus @default(PENDING)
+  triggeredBy    String       @default("auto")
+  screeningIds   String[]
+  crisisScore    Float?
+  crisisLevel    String?
+  briefingId     String?
+  caseId         String?
+  webhooksSent   Int          @default(0)
+  stagesCompleted String[]
+  error          String?
+  durationMs     Int          @default(0)
+  createdAt      DateTime     @default(now())
+  completedAt    DateTime?
+
+  event        IntelligenceEvent     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  organization SentinelOrganization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+
+  @@index([eventId])
+  @@index([organizationId, createdAt])
+  @@index([status])
+  @@map("sentinel_triage_runs")
 }

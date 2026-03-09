@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
+import { getTierFromPriceId } from "@/lib/sentinel/feature-gating";
 import type Stripe from "stripe";
 
 export async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
@@ -79,6 +80,29 @@ export async function handleCheckoutCompleted(session: Stripe.Checkout.Session) 
           },
         });
       }
+    } else if (session.metadata?.product === "sentinel") {
+      // Route Sentinel subscriptions to SentinelSubscription table
+      const sentinelTier = getTierFromPriceId(stripePriceId);
+      await db.sentinelSubscription.upsert({
+        where: { userId },
+        create: {
+          userId,
+          tier: sentinelTier,
+          status: "ACTIVE",
+          stripeSubscriptionId: subscriptionId,
+          stripePriceId,
+          stripeCurrentPeriodStart: periodStart,
+          stripeCurrentPeriodEnd: periodEnd,
+        },
+        update: {
+          tier: sentinelTier,
+          status: "ACTIVE",
+          stripeSubscriptionId: subscriptionId,
+          stripePriceId,
+          stripeCurrentPeriodStart: periodStart,
+          stripeCurrentPeriodEnd: periodEnd,
+        },
+      });
     } else {
       await db.subscription.upsert({
         where: { userId },
@@ -125,6 +149,27 @@ export async function handleSubscriptionUpdated(subscription: Stripe.Subscriptio
     }
   }
 
+  // Check if this is a Sentinel subscription
+  if (subscription.metadata?.product === "sentinel") {
+    const sentinelSub = await db.sentinelSubscription.findUnique({
+      where: { stripeSubscriptionId: subscription.id },
+    });
+    if (sentinelSub) {
+      const newTier = firstItem ? getTierFromPriceId(firstItem.price.id) : sentinelSub.tier;
+      await db.sentinelSubscription.update({
+        where: { id: sentinelSub.id },
+        data: {
+          tier: newTier,
+          status: mappedStatus,
+          stripeCurrentPeriodStart: firstItem ? new Date(firstItem.current_period_start * 1000) : undefined,
+          stripeCurrentPeriodEnd: firstItem ? new Date(firstItem.current_period_end * 1000) : undefined,
+          cancelAtPeriodEnd: subscription.cancel_at_period_end,
+        },
+      });
+      return;
+    }
+  }
+
   const sub = await db.subscription.findUnique({
     where: { stripeSubscriptionId: subscription.id },
   });
@@ -160,6 +205,20 @@ export async function handleSubscriptionDeleted(subscription: Stripe.Subscriptio
     }
   }
 
+  // Check if this is a Sentinel subscription
+  if (subscription.metadata?.product === "sentinel") {
+    const sentinelSub = await db.sentinelSubscription.findUnique({
+      where: { stripeSubscriptionId: subscription.id },
+    });
+    if (sentinelSub) {
+      await db.sentinelSubscription.update({
+        where: { id: sentinelSub.id },
+        data: { status: "CANCELED", tier: "FREE" },
+      });
+      return;
+    }
+  }
+
   const sub = await db.subscription.findUnique({
     where: { stripeSubscriptionId: subscription.id },
   });
@@ -185,6 +244,18 @@ export async function handlePaymentFailed(invoice: Stripe.Invoice) {
   if (ccmSub) {
     await db.cCMSubscription.update({
       where: { id: ccmSub.id },
+      data: { status: "PAST_DUE" },
+    });
+    return;
+  }
+
+  // Update Sentinel subscription if applicable
+  const sentinelSub = await db.sentinelSubscription.findUnique({
+    where: { stripeSubscriptionId: subscriptionId },
+  });
+  if (sentinelSub) {
+    await db.sentinelSubscription.update({
+      where: { id: sentinelSub.id },
       data: { status: "PAST_DUE" },
     });
     return;
