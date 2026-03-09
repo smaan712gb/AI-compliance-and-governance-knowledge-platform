@@ -44,49 +44,75 @@ const xmlParser = new XMLParser({
 
 const CATEGORY_KEYWORDS: Record<EventCategory, string[]> = {
   CONFLICT: [
+    // Direct combat
     "war", "military", "troops", "airstrike", "bombing", "combat",
     "invasion", "offensive", "ceasefire", "weapons", "artillery",
     "drone strike", "missile", "casualties", "frontline", "battlefield",
     "evacuation", "armed forces", "naval", "airspace", "blockade",
     "escalation", "retaliation", "strike", "shelling", "tank",
+    // Geopolitical tension
+    "tension", "provocation", "threat", "confrontation", "standoff",
+    "incursion", "border clash", "territorial", "disputed",
+    "arms deal", "defense pact", "military aid", "troop deployment",
+    "no-fly zone", "carrier group", "nuclear threat", "deterrence",
   ],
   TERRORISM: [
     "terrorist", "terrorism", "extremist", "jihad", "insurgent",
     "car bomb", "suicide bomb", "hostage", "isis", "al-qaeda",
-    "militant", "radicalization", "lone wolf",
+    "militant", "radicalization", "lone wolf", "ied",
+    "hezbollah", "hamas", "boko haram", "al-shabaab",
   ],
   CYBER: [
     "cyber attack", "hack", "data breach", "ransomware", "malware",
     "phishing", "vulnerability", "zero-day", "apt", "cyber espionage",
     "ddos", "critical infrastructure hack", "scada",
+    "state-sponsored", "cyber warfare", "backdoor", "spyware",
     // High-impact AI safety/governance signals
     "agi", "artificial general intelligence", "superintelligence",
     "ai safety", "ai regulation", "ai governance", "ai ban",
     "deepfake", "autonomous weapons", "ai arms race",
   ],
   ECONOMIC: [
+    // Trade & sanctions
     "sanctions", "tariff", "trade war", "embargo", "economic crisis",
-    "currency", "inflation", "recession", "supply chain", "energy crisis",
-    "oil price", "commodity", "trade deal", "debt crisis",
+    "trade deal", "debt crisis", "export ban", "import ban",
+    // Monetary policy & central banks
+    "rate cut", "rate hike", "interest rate", "federal reserve", "the fed",
+    "central bank", "monetary policy", "quantitative easing", "tightening",
+    "ecb", "bank of england", "bank of japan", "pboc",
+    // Markets & commodities
+    "oil", "gas price", "energy price", "fuel price", "commodity",
+    "opec", "production cut", "supply chain", "energy crisis",
+    "currency", "inflation", "recession", "stagflation", "deflation",
+    "market crash", "stock crash", "bear market", "financial crisis",
+    "default", "bailout", "austerity", "gdp", "unemployment",
+    "food price", "grain", "wheat", "rare earth", "lithium",
     // High-impact AI/tech economic signals
     "chip shortage", "semiconductor", "data center", "power grid",
-    "gpu shortage", "compute crisis", "export ban", "chip war",
+    "gpu shortage", "compute crisis", "chip war",
     "nvidia", "tsmc", "ai investment", "billion", "trillion",
   ],
   POLITICAL: [
     "election", "coup", "protest", "revolution", "political crisis",
     "referendum", "impeachment", "diplomatic", "summit", "treaty",
     "political unrest", "government collapse", "regime change",
+    "assassination", "exile", "authoritarian", "democracy",
+    "opposition", "parliament", "legislation", "executive order",
+    "alliance", "nato", "g7", "g20", "un security council",
+    "veto", "resolution", "bilateral", "multilateral",
   ],
   DISASTER: [
     "earthquake", "tsunami", "hurricane", "cyclone", "flood",
     "wildfire", "volcanic", "drought", "famine", "pandemic",
-    "epidemic", "landslide", "tornado",
+    "epidemic", "landslide", "tornado", "typhoon",
+    "humanitarian crisis", "displacement", "refugee",
+    "food insecurity", "water crisis", "climate disaster",
   ],
   SANCTIONS: [
     "sanctions", "ofac", "sdn list", "blacklist", "asset freeze",
     "travel ban", "export control", "sanctions evasion",
     "designated", "specially designated",
+    "restricted entity", "blocked property", "sanctions regime",
   ],
   OTHER: [],
 };
