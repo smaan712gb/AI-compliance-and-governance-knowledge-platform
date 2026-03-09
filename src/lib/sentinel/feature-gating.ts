@@ -7,6 +7,16 @@ import type { SentinelTier, TierLimits } from "./types";
 import { SENTINEL_TIER_LIMITS } from "./types";
 
 export async function getUserSentinelTier(userId: string): Promise<SentinelTier> {
+  // Platform admins get full STRATEGIC access without subscription
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+
+  if (user?.role === "ADMIN" || user?.role === "SUPER_ADMIN") {
+    return "STRATEGIC";
+  }
+
   const sub = await db.sentinelSubscription.findUnique({
     where: { userId },
     select: { tier: true, status: true },
