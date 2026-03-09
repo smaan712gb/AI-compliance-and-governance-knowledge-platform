@@ -72,7 +72,7 @@ export interface MacroMarketReport {
 export const GEOPOLITICAL_COMMODITIES: Record<string, string> = {
   CLUSD: "Energy supply disruption indicator — spikes during Gulf tensions, sanctions",
   GCUSD: "Safe-haven demand — rises during geopolitical uncertainty",
-  WTUSD: "Food security indicator — disrupted by Black Sea conflicts",
+  WHEATUSD: "Food security indicator — disrupted by Black Sea conflicts",
   NGUSD: "European energy security — sensitive to Russia-EU tensions",
   SIUSD: "Industrial/safe-haven hybrid — tracks manufacturing + uncertainty",
   HGUSD: "Global industrial activity proxy — drops signal economic slowdown",
@@ -163,7 +163,7 @@ interface FmpQuote {
   name: string;
   price: number;
   change: number;
-  changesPercentage: number;
+  changePercentage: number;   // FMP stable API field name (no 's')
   dayHigh: number;
   dayLow: number;
 }
@@ -217,7 +217,7 @@ export async function fetchCommodities(): Promise<CommoditySnapshot[]> {
     symbol: q.symbol,
     name: q.name,
     price: q.price,
-    changesPercentage: q.changesPercentage,
+    changesPercentage: q.changePercentage,
     dayHigh: q.dayHigh,
     dayLow: q.dayLow,
     geopoliticalRelevance:
@@ -231,7 +231,7 @@ export async function fetchForex(): Promise<ForexSnapshot[]> {
   const quotes = await fetchQuotes(pairs);
 
   return quotes.map((q) => {
-    const absChange = Math.abs(q.changesPercentage);
+    const absChange = Math.abs(q.changePercentage);
     let stabilitySignal: ForexSnapshot["stabilitySignal"];
     if (absChange > 3) {
       stabilitySignal = "crisis";
@@ -245,7 +245,7 @@ export async function fetchForex(): Promise<ForexSnapshot[]> {
       pair: q.symbol,
       price: q.price,
       change: q.change,
-      changesPercentage: q.changesPercentage,
+      changesPercentage: q.changePercentage,
       stabilitySignal,
     };
   });
@@ -281,7 +281,7 @@ export async function fetchSectorPerformance(): Promise<SectorPerformance[]> {
     const etfInfo = SECTOR_ETFS[q.symbol];
     return {
       sector: etfInfo?.sector ?? q.symbol,
-      changesPercentage: q.changesPercentage,
+      changesPercentage: q.changePercentage,
       geopoliticalExposure: etfInfo?.exposure ?? "medium",
     };
   });
@@ -313,7 +313,7 @@ export function generateMarketSignals(
   for (const c of commodities) {
     const absChange = Math.abs(c.changesPercentage);
 
-    if ((c.symbol === "CLUSD" || c.symbol === "WTUSD") && absChange > 5) {
+    if ((c.symbol === "CLUSD" || c.symbol === "WHEATUSD") && absChange > 5) {
       signals.push({
         indicator: `${c.name} (${c.symbol})`,
         value: c.price,
@@ -347,7 +347,7 @@ export function generateMarketSignals(
       });
     }
 
-    if (c.symbol === "WTUSD" && absChange > 5) {
+    if (c.symbol === "WHEATUSD" && absChange > 5) {
       signals.push({
         indicator: `Wheat (${c.symbol})`,
         value: c.price,

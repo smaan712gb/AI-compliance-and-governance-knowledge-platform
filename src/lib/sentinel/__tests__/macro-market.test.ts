@@ -77,7 +77,7 @@ describe("GEOPOLITICAL_COMMODITIES", () => {
   it("contains entries for key commodity symbols", () => {
     expect(GEOPOLITICAL_COMMODITIES).toHaveProperty("CLUSD");
     expect(GEOPOLITICAL_COMMODITIES).toHaveProperty("GCUSD");
-    expect(GEOPOLITICAL_COMMODITIES).toHaveProperty("WTUSD");
+    expect(GEOPOLITICAL_COMMODITIES).toHaveProperty("WHEATUSD");
   });
 
   it("each entry is a non-empty relevance string", () => {
