@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
     const category = searchParams.get("category");
     const severity = searchParams.get("severity");
     const countryCode = searchParams.get("countryCode");
-    const limit = Math.min(100, Number(searchParams.get("limit")) || 25);
+    const limit = Math.min(500, Number(searchParams.get("limit")) || 25);
     const offset = Math.max(0, Number(searchParams.get("offset")) || 0);
 
     const where: Record<string, unknown> = {};
