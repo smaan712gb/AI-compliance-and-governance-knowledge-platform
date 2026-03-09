@@ -33,7 +33,7 @@ const tiers: PricingTier[] = [
   {
     name: "Pro",
     slug: "pro",
-    price: "$299",
+    price: "$99",
     period: "/month",
     description: "For analysts and small teams needing daily intelligence",
     features: [
@@ -56,7 +56,7 @@ const tiers: PricingTier[] = [
   {
     name: "Expert",
     slug: "expert",
-    price: "$999",
+    price: "$299",
     period: "/month",
     description: "For intelligence teams with supply chain oversight",
     features: [
@@ -81,7 +81,7 @@ const tiers: PricingTier[] = [
   {
     name: "Strategic",
     slug: "strategic",
-    price: "$4,999",
+    price: "$999",
     period: "/month",
     description: "For enterprises with global risk management needs",
     features: [

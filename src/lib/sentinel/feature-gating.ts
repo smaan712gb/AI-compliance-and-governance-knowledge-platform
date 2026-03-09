@@ -49,9 +49,9 @@ export function checkFeatureAccess(
 }
 
 export const SENTINEL_PRICE_MAP: Record<string, string> = {
-  pro: process.env.STRIPE_PRICE_SENTINEL_PRO || "",
-  expert: process.env.STRIPE_PRICE_SENTINEL_EXPERT || "",
-  strategic: process.env.STRIPE_PRICE_SENTINEL_STRATEGIC || "",
+  pro: (process.env.STRIPE_PRICE_SENTINEL_PRO || "").trim(),
+  expert: (process.env.STRIPE_PRICE_SENTINEL_EXPERT || "").trim(),
+  strategic: (process.env.STRIPE_PRICE_SENTINEL_STRATEGIC || "").trim(),
 };
 
 export function getPriceIdForTier(
