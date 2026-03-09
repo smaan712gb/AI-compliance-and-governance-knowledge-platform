@@ -25,6 +25,11 @@ import {
   FolderOpen,
   FileText,
   Network,
+  Building2,
+  Webhook,
+  Cpu,
+  Zap,
+  ScrollText,
 } from "lucide-react";
 
 const SENTINEL_NAV = [
@@ -40,7 +45,12 @@ const SENTINEL_NAV = [
   { title: "Reasoning History", href: "/sentinel/dashboard/reasoning-history", icon: Brain },
   { title: "Watchlists", href: "/sentinel/dashboard/watchlists", icon: Eye },
   { title: "Knowledge Graph", href: "/sentinel/dashboard/graph", icon: Network },
+  { title: "Triage Agent", href: "/sentinel/dashboard/triage", icon: Zap },
   { title: "Alerts & Health", href: "/sentinel/dashboard/alerts", icon: Bell },
+  { title: "Organizations", href: "/sentinel/dashboard/organizations", icon: Building2 },
+  { title: "Webhooks", href: "/sentinel/dashboard/webhooks", icon: Webhook },
+  { title: "LLM Configs", href: "/sentinel/dashboard/llm-configs", icon: Cpu },
+  { title: "Audit Logs", href: "/sentinel/dashboard/audit-logs", icon: ScrollText },
   { title: "API Keys", href: "/sentinel/dashboard/api-keys", icon: Key },
   { title: "Settings", href: "/sentinel/dashboard/settings", icon: Settings },
 ];
