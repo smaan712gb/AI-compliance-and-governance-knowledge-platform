@@ -1,220 +1,362 @@
-# AIGovHub — Regulatory Compliance Intelligence Platform
+# AIGovHub — Enterprise Regulatory Compliance & Intelligence Platform
 
 **Website:** [www.aigovhub.io](https://www.aigovhub.io)
 
-AIGovHub is an AI-powered platform that helps businesses stay on top of regulatory compliance across multiple domains. Think of it as a **Bloomberg terminal for compliance** — it monitors regulations worldwide, assesses vendor risk, analyzes ERP gaps, and publishes expert compliance content, all autonomously.
+AIGovHub is an AI-powered platform that helps businesses navigate regulatory compliance across multiple domains. It combines **autonomous intelligence gathering**, **continuous compliance monitoring**, **geopolitical risk analysis**, and **AI-driven content generation** into a single platform — replacing expensive consultants with intelligent automation.
 
 ---
 
-## What Problem Does This Solve?
+## Platform Modules
 
-Businesses today face an overwhelming number of regulations — from AI governance laws (EU AI Act) to e-invoicing mandates (Poland's KSeF), cybersecurity standards (NIS2, SOC 2), data privacy rules (GDPR, CCPA), and ESG reporting requirements (CSRD). Each country has its own rules, deadlines, and penalties.
+AIGovHub consists of **three major modules** plus a suite of interactive compliance tools:
 
-Most organizations rely on expensive consultants or manual tracking to stay compliant. AIGovHub automates this by:
-
-- **Monitoring 130+ regulatory sources** across 47 countries
-- **Alerting companies** when a regulation affects them specifically
-- **Assessing vendor risk** using AI-driven due diligence
-- **Analyzing ERP systems** to identify compliance gaps
-- **Publishing daily compliance intelligence** so teams stay informed without reading 100-page legal documents
+| Module | What It Does | URL |
+|--------|-------------|-----|
+| **Core Platform** | Compliance blog, vendor marketplace, regulatory alerts, interactive tools | [aigovhub.io](https://www.aigovhub.io) |
+| **SENTINEL** | Geopolitical intelligence, financial crime screening, supply chain risk, crisis monitoring | [aigovhub.io/sentinel](https://www.aigovhub.io/sentinel) |
+| **CCM** | Continuous compliance monitoring with ERP connectors, rule engines, and automated findings | [aigovhub.io/ccm](https://www.aigovhub.io/ccm) |
 
 ---
 
-## Platform Features
+## Module 1: Core Platform
 
-### 1. Compliance Blog & Intelligence Feed
+### Autonomous Content Pipeline
 
-The platform runs an **autonomous content pipeline** that publishes 4-6 compliance articles daily across 8 domains:
+An AI agent pipeline publishes 4-6 compliance articles daily across **8 regulatory domains**:
 
-| Domain | What It Covers |
-|--------|---------------|
-| **AI Governance** | EU AI Act, risk classification, conformity assessments, AI ethics frameworks |
-| **E-Invoicing & Tax** | Country-specific mandates (KSeF, CFDI, SDI, Peppol), SAF-T reporting, ViDA |
-| **Cybersecurity** | SOC 2, ISO 27001, NIS2, NIST frameworks, incident response |
-| **Data Privacy** | GDPR, CCPA/CPRA, LGPD, cross-border data transfers, DPAs |
-| **ESG & Sustainability** | CSRD reporting, carbon accounting, EU Taxonomy, double materiality |
-| **Fintech & AML** | MiCA, anti-money laundering, KYC automation, PSD2/PSD3 |
-| **HR & Employment** | Pay transparency, AI hiring bias audits, remote work compliance |
-| **Tax Compliance** | OECD Pillar 2, global minimum tax, digital tax reporting |
+| Domain | Coverage |
+|--------|----------|
+| **AI Governance** | EU AI Act, risk classification, conformity assessments, AI ethics |
+| **E-Invoicing & Tax** | KSeF, CFDI, SDI, Peppol, SAF-T, ViDA mandates |
+| **Cybersecurity** | SOC 2, ISO 27001, NIS2, NIST CSF, DORA, incident response |
+| **Data Privacy** | GDPR, CCPA/CPRA, LGPD, cross-border transfers, DPAs |
+| **ESG & Sustainability** | CSRD, ESRS, ISSB, carbon accounting, EU Taxonomy |
+| **Fintech & AML** | MiCA, anti-money laundering, KYC, PSD2/PSD3 |
+| **HR & Employment** | Pay transparency, AI hiring bias, remote work compliance |
+| **Tax Compliance** | OECD Pillar 2, global minimum tax, digital reporting |
 
-**How it works:** AI agents scan RSS feeds and regulatory sources every hour, identify newsworthy developments, write SEO-optimized articles, run quality checks (scoring across 8 dimensions), and publish automatically. No human intervention needed.
+**How it works:** 5 AI agents (Research → Planner → Writer → QA → Publisher) scan 98 RSS feeds hourly, identify newsworthy developments, write quality-scored articles, and publish automatically.
 
-**URL:** [www.aigovhub.io/blog](https://www.aigovhub.io/blog)
+### Vendor Marketplace
 
----
+A database of **137+ compliance vendors** across 31 categories with AI-powered due diligence:
 
-### 2. Regulatory Jurisdiction Tracker
+- Vendor profiles with pricing, frameworks, certifications, and scores
+- AI assessment across 5 dimensions (security, privacy, compliance breadth, financial stability, product fit)
+- Categories: GRC, AI governance, cybersecurity, data privacy, e-invoicing, ESG, fintech, AML, HR compliance
 
-A living map of **47 jurisdictions** with their active regulations, upcoming deadlines, and enforcement actions. Users can see at a glance which countries have new rules coming and what industries are affected.
+### Regulatory Alerts
 
-**Example:** A company operating in Poland, Germany, and Saudi Arabia can instantly see:
-- Poland's KSeF e-invoicing mandate (deadline, requirements, penalties)
-- Germany's XRechnung B2B rules (timeline, XML schema)
-- Saudi Arabia's FATOORA Phase 2 requirements (ZATCA integration)
+Automated regulatory change detection matched to company profiles:
 
-**URL:** [www.aigovhub.io/jurisdictions](https://www.aigovhub.io/jurisdictions)
+- Alert pipeline scans evidence every 4 hours
+- Matches by country, industry, and compliance domain
+- Classified by urgency (Critical/High/Medium/Low) and type (new regulation, amendment, deadline, enforcement)
 
----
+### Interactive Compliance Tools (14 Tools)
 
-### 3. Company Profile & Onboarding
+**Free Tools:**
+- **AI Act Checker** — EU AI Act risk classification wizard with downloadable PDF report
+- **Vendor Risk Questionnaire Generator** — Framework-specific questionnaires (SOC 2, ISO 27001, GDPR, HIPAA)
 
-Subscribers create a **Company Profile** that tells the platform about their business:
+**Enterprise Tools (subscription required):**
+- **Policy Mapper** — Map controls to NIST CSF, ISO 27001, SOC 2, PCI DSS, DORA
+- **Incident Assessment** — SEC 8-K materiality analysis, GDPR breach notification
+- **Board Report Generator** — Board-ready cyber/compliance reports
+- **ERP Gap Analysis** — Cross-reference ERP capabilities against applicable regulations
+- **Privacy Ops Suite** — DPA review, DSAR generation, ROPA documentation
+- **HR Compliance Checker** — AI hiring bias, pay transparency, labor law
+- **Financial Compliance Checker** — AML/KYC, SOX, sanctions screening
+- **HIPAA Compliance Checker** — PHI safeguards, breach notification
+- **PCI Compliance Checker** — Payment card security, SAQ determination
 
-- **Industry** (financial services, healthcare, technology, manufacturing, etc.)
-- **Company size** (1-50, 51-250, 251-1,000, 1,001-5,000, 5,000+)
-- **Headquarters & operating countries** (select all countries where you do business)
-- **ERP system** (SAP, Oracle, NetSuite, Dynamics 365, etc.)
-- **Compliance domains of interest** (select which areas matter to your business)
+### Digital Products
 
-The platform uses this profile to **personalize everything** — regulatory alerts, vendor recommendations, and ERP gap analysis are all tailored to your specific situation.
+| Product | Price | Contents |
+|---------|-------|----------|
+| AI Act Starter Toolkit | $49 | Essential checklists and templates |
+| AI Act Professional Toolkit | $199 | Comprehensive compliance package with FRIA, QMS |
+| Questionnaire Basic Pack | $99 | SOC 2 and ISO 27001 mappings |
+| Questionnaire Enterprise Pack | $499 | All frameworks, 1,000+ pre-written answers |
 
-**URL:** [www.aigovhub.io/dashboard/company](https://www.aigovhub.io/dashboard/company) (requires login)
+### Jurisdiction Tracker
 
----
-
-### 4. Regulatory Alerts
-
-Once a company profile is set up, the platform automatically matches new regulatory developments to your business. Alerts are classified by:
-
-- **Urgency:** Critical, High, Medium, Low
-- **Type:** New regulation, Amendment, Deadline approaching, Enforcement action
-- **Domain:** AI governance, e-invoicing, cybersecurity, privacy, ESG, fintech, HR, tax
-
-**How it works:** An alert pipeline runs every 4 hours. AI agents scan recently collected evidence (news, regulatory updates, policy changes), determine if they represent a regulatory change, extract structured data (regulation name, jurisdiction, urgency, affected industries), and match them to company profiles based on country, industry, and compliance domains.
-
-**Example alert:** *"CRITICAL: Poland KSeF e-invoicing mandate takes effect February 2026. Your company operates in Poland. Action required: Ensure your ERP system supports SAF-T XML invoice submission to the national KSeF system."*
-
-**URL:** [www.aigovhub.io/dashboard/alerts](https://www.aigovhub.io/dashboard/alerts) (requires Starter+ subscription)
-
----
-
-### 5. Vendor Tracker & Due Diligence
-
-A database of **137 compliance vendors** across 27 categories, covering:
-
-| Category | Examples |
-|----------|---------|
-| GRC Platforms | ServiceNow, Diligent, LogicGate, Archer |
-| AI Governance | Holistic AI, Credo AI, ValidMind, Monitaur |
-| Cybersecurity | CrowdStrike, Palo Alto, Wiz, Snyk, Vanta |
-| Data Privacy | OneTrust, BigID, Transcend, Securiti |
-| E-Invoicing & Tax | Sovos, Avalara, Pagero, Comarch, Vertex |
-| ESG & Sustainability | Workiva, Persefoni, Watershed, EcoVadis |
-| Fintech & AML | ComplyAdvantage, Chainalysis, Alloy, Sumsub |
-| HR Compliance | BambooHR, Deel, Rippling, Gusto, Papaya Global |
-
-Each vendor profile includes: description, pricing model, frameworks supported, deployment options, certifications (SOC 2, ISO 27001, GDPR), and an overall score.
-
-**AI-Powered Vendor Assessment:** Subscribers can trigger an AI due diligence assessment on any vendor. The AI evaluates 5 dimensions (security posture, privacy compliance, compliance breadth, financial stability, product fit), scores each 0-100, and generates a detailed findings report with recommendations.
-
-**URL:** [www.aigovhub.io/vendors](https://www.aigovhub.io/vendors)
+Living map of **47+ jurisdictions** with active regulations, upcoming deadlines, and enforcement actions.
 
 ---
 
-### 6. ERP Compliance Gap Analysis
+## Module 2: SENTINEL — Geopolitical Intelligence & Risk Platform
 
-An interactive tool that analyzes whether your ERP system (SAP, Oracle, NetSuite, Dynamics 365, etc.) natively handles the regulations that apply to your business — or whether you need third-party solutions.
+SENTINEL is an autonomous intelligence platform that monitors global events, analyzes geopolitical risks, screens for financial crime, and protects supply chains — all powered by AI reasoning.
 
-**How it works:**
-1. Select your ERP system
-2. Select the countries where you operate
-3. Select your industry
-4. The AI cross-references your ERP's capabilities against applicable regulations
-5. You get: a list of applicable regulations, gap analysis (what's covered vs. what's missing), vendor recommendations for each gap, and a prioritized action plan
+### Intelligence Command Center (Dashboard)
 
-**Example output:** *"Your ERP (SAP S/4HANA) supports Poland's KSeF via the SAP Document Compliance add-on (included in license). Action: Enable KSeF integration in SAP DRC. No third-party tool needed. Estimated setup: 2-4 weeks."*
+A real-time command center showing:
+- **Hero metrics** — Critical/high alerts, events processed (24h), AI analyses completed, open cases, supply chain alerts
+- **Top Threats** — 8 highest-risk events from last 24 hours ranked by AI risk score
+- **AI Predictions** — DeepSeek R1 chain-of-thought reasoning with "what happens next" predictions
+- **Supply Chain Alerts** — Unread impact alerts with supplier names and risk changes
+- **Category Breakdown** — Visual distribution across 8 event categories
+- **Country Hotspots** — 7-day geographic concentration of high-severity events
+- **Auto-Triage Activity** — Recent autonomous triage runs with crisis scores
 
-**URL:** [www.aigovhub.io/erp-analysis](https://www.aigovhub.io/erp-analysis) (requires Professional+ subscription)
+### Intelligence Feed (435+ Sources)
+
+Automated ingestion from 435+ global intelligence sources:
+- **Sources:** Reuters, BBC, Bloomberg, AP, Al Jazeera, GDELT, government feeds, sanctions lists, conflict trackers
+- **Categories:** Conflict, Terrorism, Cyber, Economic, Political, Disaster, Sanctions, Other
+- **Severity:** AI-scored with keyword detection + DeepSeek R1 reasoning write-back
+- **Noise filtering:** Regex-based routine publication filter removes non-actionable content
+- **Processing:** Events classified, deduplicated, scored, and stored in real-time
+
+### AI Reasoning Engine (DeepSeek R1)
+
+Every significant event undergoes chain-of-thought analysis:
+- **What happened** — Factual summary
+- **Why it matters** — Geopolitical significance and impact assessment
+- **What happens next** — Predictive analysis of likely outcomes
+- **Who is affected** — Stakeholder impact mapping
+- **Actionable insights** — Specific recommendations
+- **Bias audit** — Optional Llama-3 powered bias detection (omission, framing, emphasis, attribution)
+- **Severity write-back** — AI can upgrade event severity when keyword scoring underestimates impact
+
+### Financial Crime & Sanctions Screening
+
+Enterprise-grade screening against **27+ sanctions lists**:
+- **Lists:** OFAC SDN, EU Consolidated, UN Security Council, UK HMT, Canada SEMA, Australia DFAT, and more
+- **Capabilities:** Fuzzy name matching, PEP detection, adverse media scoring, geographic risk, beneficial ownership (50% rule)
+- **Entity types:** Persons, organizations, vessels, aircraft
+- **Output:** Composite risk score with recommendation (BLOCK / ENHANCED_DUE_DILIGENCE / STANDARD / CLEAR)
+- **Expanded coverage:** 50+ financial crime keywords (money laundering, fraud, FCPA, FATF, terrorist financing, etc.)
+
+### Global Crisis Index
+
+Real-time instability scores for **200+ countries** across 6 composite indicators:
+- Deadliness, civilian danger, diffusion, fragmentation, trend acceleration, baseline risk
+- Conflict zone proximity detection
+- Crisis levels: Critical → Severe → Elevated → Guarded → Low
+- Historical tracking and escalation alerts
+
+### Supply Chain Risk Engine
+
+**Automated event-driven supply chain monitoring:**
+- Register persistent supplier profiles (country, sector, tier, criticality, shipping routes, upstream dependencies)
+- **6 strategic shipping routes tracked:** Strait of Hormuz, Suez Canal, Strait of Malacca, Bosphorus, Panama Canal, Bab el-Mandeb
+- When a CRITICAL/HIGH intelligence event hits a country or route, all affected suppliers are automatically re-scored
+- AI generates impact assessments and actionable mitigations for significant risk changes
+- Webhook notifications sent to organization members
+- Portfolio analysis: concentration risks, single points of failure, geographic exposure
+
+### Macro Market Radar
+
+Geopolitical significance of market signals:
+- **Commodities:** Oil (Brent/WTI), gold, natural gas, copper, wheat
+- **Forex:** Major currency pairs with geopolitical context
+- **Sectors:** S&P 500 sector performance with risk implications
+- **Treasury yields:** Interest rate signals and economic outlook
+- Requires FMP API key
+
+### Regulatory Radar
+
+Tracks regulatory and policy events across jurisdictions:
+- Jurisdiction filtering (Americas, Europe, Asia-Pacific, MENA, Africa, Latin America)
+- Category breakdown with event counts
+- Expanded keyword detection for AI Act, GDPR, SEC, Basel, FATF, and 40+ regulatory signals
+
+### Case Management
+
+Full investigative workflow:
+- **Statuses:** OPEN → IN_PROGRESS → PENDING_REVIEW → ESCALATED → RESOLVED → CLOSED
+- **Priorities:** CRITICAL, HIGH, MEDIUM, LOW
+- Internal and external analyst notes
+- Related events linking
+- Auto-case creation from triage agent on high-severity events
+
+### Auto-Triage Agent
+
+Autonomous 7-stage pipeline triggered on CRITICAL/HIGH events (risk score >= 70):
+1. Pattern Detection — Keyword spikes and geographic convergences
+2. Watchlist Matching — Custom watchlist checks
+3. Knowledge Graph — Entity relationship mapping
+4. AI Reasoning — DeepSeek R1 chain-of-thought analysis
+5. Triage Scoring — Multi-factor crisis assessment
+6. Supply Chain Impact — Automatic supplier re-scoring
+7. Alert Distribution — Webhook notifications to affected organizations
+
+### Watchlists
+
+Custom monitoring lists with automatic match detection:
+- **Types:** Country, Entity, Keyword, Supplier, Sector, Route
+- Matches tracked against incoming intelligence events
+- Alert triggering on matches
+
+### Knowledge Graph
+
+Entity relationship mapping:
+- **Entity types:** Actor, Region, Infrastructure, Company, Sector, Consequence
+- **Relationships:** Influences, causes, impacts, depends_on
+- Auto-linking from event content analysis
+
+### Webhooks & Notifications
+
+Enterprise alert delivery system:
+- **Alert types:** Intelligence event, keyword spike, crisis escalation, screening alert
+- Severity threshold filtering
+- Retry logic (3 retries, exponential backoff) with circuit breaker
+- Delivery recording and monitoring
+
+### 3D Globe Visualization
+
+Interactive globe (react-globe.gl) showing:
+- Real-time intelligence events with severity-based coloring
+- Crisis heatmap overlays
+- Event click handlers for drill-down
+
+### Organization & Access Control
+
+Multi-tenant architecture:
+- **Roles:** VIEWER, ANALYST, MANAGER, ADMIN
+- Organization-level LLM configurations (BYOK)
+- API key management (stl_* format)
+- Tiered rate limiting via Upstash Redis
+- SOC 2 compliant audit trail
+
+### SENTINEL Pricing
+
+| Tier | Price | Key Features |
+|------|-------|-------------|
+| **FREE** | $0/mo | Intelligence feed, 3 screenings/month, basic crisis index |
+| **PRO** | $99/mo | AI reasoning, bias audit, 50 screenings/month, webhooks |
+| **EXPERT** | $299/mo | Cases, supply chain module, unlimited screenings, full API |
+| **STRATEGIC** | Custom | Unlimited everything, dedicated support, custom integrations |
 
 ---
 
-### 7. AI Act Compliance Checker (Free Tool)
+## Module 3: CCM — Continuous Compliance Monitoring
 
-A step-by-step wizard that helps organizations determine their obligations under the EU AI Act:
+CCM is a SaaS platform that connects to enterprise ERP systems, continuously monitors transactions and controls, and uses AI to detect compliance violations in real-time.
 
-- Classifies your AI system's risk level (Unacceptable, High, Limited, Minimal)
-- Identifies specific compliance obligations based on your role (provider, deployer, importer)
-- Generates a compliance timeline with key deadlines
-- Produces a downloadable PDF report
+### ERP Connectors (7 Live)
 
-**URL:** [www.aigovhub.io/ai-act-checker](https://www.aigovhub.io/ai-act-checker)
+| ERP System | Auth Methods | Data Pulled |
+|-----------|-------------|-------------|
+| **SAP S/4HANA Cloud** | OAuth2, SAML, X.509, Principal Propagation | Journal entries, payments, user access, change docs, SoD violations |
+| **SAP S/4HANA On-Premise** | Basic, OAuth2, X.509 | Same as Cloud |
+| **SAP ECC** | Basic, OAuth2 | Same as Cloud |
+| **Microsoft Dynamics 365** | Azure AD OAuth2 | Journal entries, payments, user access, change logs |
+| **Workday** | OAuth2 | Financial transactions, user roles, change documents |
+| **Oracle ERP Cloud (Fusion)** | Basic, OAuth2/IDCS | Journal entries, payments, user access, audit trails |
+| **NetSuite** | OAuth 1.0a TBA (HMAC-SHA256) | SuiteQL queries, REST records, transactions, roles |
+
+All connectors pull data across 4 compliance domains:
+- **SOX Controls** — Journal entries, transaction records
+- **Access Control** — User roles, segregation of duties
+- **Audit Trail** — Change documents, modification logs
+- **AML/KYC** — High-value transactions, suspicious activity
+
+### Monitoring Rule Engine
+
+Continuous evaluation of compliance rules against ERP data:
+- **Rule types:** Threshold, pattern (regex), missing control, segregation of duties, access violations
+- **Frameworks:** SOX, PCI DSS, AML/BSA, GDPR, ISO 27001, NIST CSF, DORA, Custom
+- Built-in rule templates (seed per framework)
+- Custom rule creation with configurable severity and domain
+- ReDoS protection (patterns >500 chars rejected)
+- Automated finding creation with deduplication
+
+### AI-Powered Analysis
+
+BYOK LLM support for compliance analysis:
+- **Providers:** DeepSeek (default), OpenAI, Azure OpenAI, Google Gemini
+- **Analysis types:** Finding analysis, risk assessment, compliance summary, data review
+- Streaming responses with token counting
+- Batch analysis on unanalyzed findings (cron-driven)
+- AI-generated report narratives
+
+### Compliance Reports
+
+Automated report generation:
+- **Report types:** SOX Compliance, PCI DSS Compliance, AML/BSA Compliance, Access Review, Executive Summary, Custom
+- AI-generated narrative with data summaries
+- Exportable findings and evidence
+
+### Findings & Remediation
+
+- Severity tracking: CRITICAL, HIGH, MEDIUM, LOW
+- Status workflow: OPEN → IN_PROGRESS → REMEDIATED → CLOSED
+- Linked data points showing exact ERP records that triggered the finding
+- AI remediation plan generation
+- Assignee tracking
+
+### Evidence Library
+
+Audit evidence management:
+- All ERP data points stored with domain and type tags
+- Queryable with pagination
+- Linked to findings for audit trail
+
+### Team & Organization Management
+
+- **5 roles:** OWNER > ADMIN > ANALYST > AUDITOR > VIEWER
+- Granular permissions (create, read, update, delete, export across 8 resource types)
+- Member invitation by email
+- Last-owner protection (can't remove sole OWNER)
+
+### Security
+
+- **AES-256-GCM** encryption at rest with per-org derived keys (HMAC-SHA256)
+- TLS 1.3 in transit
+- Immutable audit trail with timestamp, IP, user-agent
+- API key masking on frontend
+- Config re-validation after decryption
+- 10 audit actions tracked (create connector, trigger sync, generate report, etc.)
+
+### CCM Pricing
+
+| Tier | Price | Connectors | Members | Rules | AI/Month | Frameworks |
+|------|-------|-----------|---------|-------|----------|-----------|
+| **Starter** | $99/mo | 1 | 5 | 25 | 100 | SOX only |
+| **Professional** | $499/mo | 3 | 15 | 100 | 500 | SOX, PCI, AML |
+| **Enterprise** | Custom | Unlimited | Unlimited | Unlimited | Unlimited | All 8 + Custom |
+
+All new organizations get a **14-day Professional trial** automatically.
 
 ---
 
-### 8. Vendor Risk Questionnaire Generator (Free Tool)
+## Architecture
 
-Generates customized vendor risk assessment questionnaires based on the frameworks you need:
-
-- Supports SOC 2, ISO 27001, GDPR, HIPAA, and more
-- Automatically identifies red flags in vendor responses
-- Maps questions to specific framework controls
-- Exports to PDF and DOCX formats
-
-**URL:** [www.aigovhub.io/vendor-risk-questionnaire](https://www.aigovhub.io/vendor-risk-questionnaire)
-
----
-
-### 9. Compliance Toolkits (Digital Products)
-
-Downloadable compliance packages for teams that want ready-made templates:
-
-| Product | Price | What's Included |
-|---------|-------|----------------|
-| AI Act Starter Toolkit | $49 | Essential checklists and templates for EU AI Act compliance |
-| AI Act Professional Toolkit | $199 | Comprehensive compliance package with detailed guidance |
-| Questionnaire Basic Pack | $99 | SOC 2 and ISO 27001 questionnaire mappings |
-| Questionnaire Enterprise Pack | $499 | All frameworks with 1,000+ pre-written answers |
-
-**URL:** [www.aigovhub.io/pricing](https://www.aigovhub.io/pricing)
-
----
-
-## Pricing
-
-| Tier | Price | Best For | Key Features |
-|------|-------|----------|-------------|
-| **Free** | $0/mo | Individual researchers | Blog access, 1 jurisdiction, vendor directory, 3 compliance checks/month |
-| **Starter** | $99/mo | Small compliance teams | 3 jurisdictions, regulatory alerts, 5 vendor assessments/month, unlimited compliance checks |
-| **Professional** | $499/mo | Mid-size organizations | 10 jurisdictions, ERP gap analysis, 25 vendor assessments/month, document generation |
-| **Enterprise** | $2,000+/mo | Large enterprises | Unlimited everything, API access (1,000 req/day), SSO/SAML, custom reports, dedicated support |
-
-**URL:** [www.aigovhub.io/pricing](https://www.aigovhub.io/pricing)
-
----
-
-## How the AI Pipeline Works
-
-The platform runs autonomously with minimal human intervention. Here's a simplified view:
+### AI Pipeline
 
 ```
-CONTENT PIPELINE (runs every hour):
-  Research Agent  →  Scans 130+ RSS feeds and regulatory sources
-  Planner Agent   →  Identifies content gaps, prioritizes topics across domains
+CONTENT PIPELINE (hourly):
+  Research Agent  →  Scans 98 RSS feeds across 8 compliance domains
+  Planner Agent   →  Identifies gaps, prioritizes topics, plans content briefs
   Writer Agent    →  Produces SEO-optimized compliance articles
-  QA Agent        →  Scores quality across 8 dimensions, rejects low-quality content
-  Publisher Agent →  Publishes approved articles with metadata and social drafts
+  QA Agent        →  Scores across 8 dimensions, rejects low quality (< 7.0)
+  Publisher Agent →  Publishes with metadata, generates social drafts
 
-ALERT PIPELINE (runs every 4 hours):
-  Alert Scanner   →  Analyzes recent evidence for regulatory changes
-  Alert Matcher   →  Matches alerts to company profiles by country, industry, domain
-  Alert Notifier  →  Delivers personalized alerts to user dashboards
+SENTINEL PIPELINE (hourly ingestion + event-driven):
+  RSS Ingestion   →  Fetches 435+ intelligence sources, classifies, scores
+  AI Reasoning    →  DeepSeek R1 chain-of-thought on CRITICAL/HIGH/MEDIUM events
+  Pattern Detect  →  Keyword spikes + geographic convergences
+  Watchlist Match →  Custom watchlist checks against new events
+  Auto-Triage     →  7-stage autonomous analysis on high-severity events
+  Supply Chain    →  Event-driven supplier re-scoring + AI impact assessment
+  Webhook Alerts  →  Enterprise notification delivery with retry + circuit breaker
 
-VENDOR ASSESSMENT (on-demand):
-  Admin triggers  →  AI Assessment Agent analyzes vendor across 5 dimensions
-  Scores + Report →  Generates findings, recommendations, and composite risk score
+CCM PIPELINE (scheduled + on-demand):
+  ERP Sync        →  Pull transactions, access logs, change docs from 7 ERP systems
+  Rule Engine     →  Evaluate monitoring rules against new data points
+  AI Analysis     →  Batch analysis on unanalyzed findings
+  Report Gen      →  AI-generated compliance reports with narratives
 
-ERP ANALYSIS (on-demand):
-  User submits    →  AI cross-references ERP capabilities with applicable regulations
-  Gap Analysis    →  Identifies gaps and recommends solutions from vendor database
+ALERT PIPELINE (every 4 hours):
+  Alert Scanner   →  Analyzes evidence for regulatory changes
+  Alert Matcher   →  Matches to company profiles by country/industry/domain
+  Alert Notifier  →  Delivers personalized alerts to dashboards
 ```
 
-**AI Model:** DeepSeek (chat model for content generation, reasoner model for complex analysis)
-**Daily output:** 4-6 articles across all compliance domains
-**Daily cost:** ~$12 in AI API usage
-
----
-
-## Tech Stack
+### Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
@@ -222,71 +364,95 @@ ERP ANALYSIS (on-demand):
 | **Database** | PostgreSQL via Prisma 6 ORM |
 | **Auth** | NextAuth v5 (credentials + OAuth) |
 | **Payments** | Stripe v20 (subscriptions + one-time purchases) |
-| **AI/LLM** | DeepSeek via OpenAI-compatible SDK |
-| **Email** | Resend + React Email templates |
-| **Rate Limiting** | Upstash Redis + Ratelimit |
-| **Styling** | Tailwind CSS v3 + shadcn/ui components |
-| **Hosting** | Railway (Docker-based deployment) |
-| **Cron** | cron-job.org (content pipeline hourly, alerts every 4h) |
+| **AI/LLM** | DeepSeek (default), OpenAI, Azure OpenAI, Google Gemini (BYOK) |
+| **Bias Detection** | Llama-3 via Groq API |
+| **Screening** | OpenSanctions API (27+ lists) |
+| **Market Data** | FMP API (commodities, forex, sectors, treasuries) |
+| **Email** | Resend + React Email |
+| **Rate Limiting** | Upstash Redis |
+| **Encryption** | AES-256-GCM (per-org keys) |
+| **Styling** | Tailwind CSS v3 + shadcn/ui |
+| **Globe** | react-globe.gl |
+| **Hosting** | Railway (Docker) |
+| **Cron** | cron-job.org |
 | **Language** | TypeScript 5.9 (strict mode) |
 
----
-
-## Project Structure
+### Project Structure
 
 ```
 aigovhub/
 ├── prisma/
-│   └── schema.prisma          # 34 database models
+│   └── schema.prisma              # 60+ database models
 ├── scripts/
-│   ├── seed-*.ts              # Database seeding scripts
+│   ├── seed-compliance-sources.ts  # 98 RSS source seeds
 │   └── sync-stripe-products.ts
 ├── src/
 │   ├── app/
-│   │   ├── (admin)/admin/     # Admin dashboard (agents, vendors, content, alerts, companies)
-│   │   ├── (content)/         # Blog, vendors, jurisdictions (public pages)
-│   │   ├── (dashboard)/       # User dashboard (company profile, alerts, purchases, settings)
-│   │   ├── (marketing)/       # Homepage, pricing, about, contact, legal pages
-│   │   ├── (tools)/           # AI Act checker, vendor risk questionnaire, ERP analysis
-│   │   └── api/               # REST API routes (auth, stripe, agents, alerts, AI tools, etc.)
+│   │   ├── (admin)/admin/         # Admin dashboard (agents, vendors, content, alerts)
+│   │   ├── (ccm)/ccm/            # CCM module (connectors, rules, findings, reports)
+│   │   ├── (content)/             # Blog, vendors, jurisdictions, guides
+│   │   ├── (dashboard)/           # User dashboard (company, alerts, purchases)
+│   │   ├── (marketing)/           # Homepage, pricing, about, contact, legal
+│   │   ├── (sentinel)/sentinel/   # SENTINEL module (26 dashboard pages)
+│   │   ├── (tools)/               # 14 interactive compliance tools
+│   │   └── api/
+│   │       ├── agents/            # Content pipeline API (runs, tasks, sources)
+│   │       ├── ai/                # AI tool endpoints (15 tools)
+│   │       ├── alerts/            # Regulatory alert API
+│   │       ├── ccm/               # CCM API (connectors, rules, findings, reports)
+│   │       ├── sentinel/          # SENTINEL API (27 endpoints)
+│   │       ├── stripe/            # Payment webhooks & checkout
+│   │       └── ...                # Auth, content, vendors, admin, etc.
 │   ├── components/
-│   │   ├── layout/            # Header, sidebar, footer, mobile nav
-│   │   ├── ui/                # shadcn/ui components (buttons, cards, badges, etc.)
-│   │   └── *.tsx              # Feature-specific components
+│   │   ├── ccm/                   # CCM sidebar & components
+│   │   ├── sentinel/              # SENTINEL sidebar, globe
+│   │   ├── layout/                # Header, sidebar, footer
+│   │   └── ui/                    # shadcn/ui components
 │   └── lib/
-│       ├── agents/            # AI agent pipeline (research, planner, writer, QA, publisher)
-│       │   ├── alert-*.ts     # Regulatory alert pipeline agents
-│       │   ├── vendor-*.ts    # Vendor assessment agent
-│       │   ├── erp-*.ts       # ERP analysis agent
-│       │   └── pipeline.ts    # Main content pipeline orchestrator
-│       ├── constants/         # Static data (company options, ERP capabilities, navigation)
-│       ├── stripe/            # Stripe helpers (checkout, webhooks, subscriptions)
-│       ├── seo/               # SEO metadata and sitemap generation
-│       └── feature-gating.ts  # Subscription tier limits and usage tracking
-├── Dockerfile                 # Production container definition
-├── railway.toml               # Railway deployment config
+│       ├── agents/                # 5-stage content pipeline + alert agents
+│       ├── ccm/                   # Rule engine, RBAC, crypto, audit, LLM router
+│       ├── connectors/            # 7 ERP connector implementations
+│       │   ├── sap/               # SAP S/4HANA Cloud/OnPrem/ECC
+│       │   ├── dynamics365/       # Microsoft Dynamics 365
+│       │   ├── workday/           # Workday Financial Management
+│       │   ├── oracle/            # Oracle ERP Cloud (Fusion)
+│       │   ├── netsuite/          # NetSuite (SuiteQL + REST)
+│       │   └── mock/              # Demo connector
+│       ├── sentinel/              # 42 files: reasoning, screening, crisis, supply chain
+│       ├── stripe/                # Stripe helpers
+│       └── seo/                   # SEO & sitemap
+├── docs/
+│   └── EXPANSION-PLAN.md          # Platform vision & roadmap
+├── Dockerfile
+├── railway.toml
 └── package.json
 ```
 
+### Database Models (60+)
+
+| Category | Models |
+|----------|--------|
+| **Auth** | User, Account, Session, VerificationToken |
+| **Commerce** | Subscription, Purchase, DigitalProduct |
+| **Content** | ContentPage, ContentVendorMention, ContentAffiliateLink |
+| **Vendors** | Vendor, VendorAssessment |
+| **Company** | CompanyProfile |
+| **Alerts** | RegulatoryAlert, CompanyAlert, AlertRun |
+| **Agents** | AgentSource, EvidenceCard, AgentTask, AgentRun, AgentSettings, SocialPostDraft |
+| **SENTINEL** | IntelligenceEvent, ReasoningHistory, ScreeningResult, CrisisSnapshot, SentinelCase, CaseNote, Briefing, SentinelTriageRun, WatchlistEntry, WatchlistMatch, GraphEntity, GraphEdge, SentinelOrganization, OrgMember, WebhookSubscription, WebhookDelivery, SentinelApiKey, SentinelSubscription, LLMConfig, AuditLog, SentinelSupplier, SupplyChainAlert |
+| **CCM** | CCMOrganization, CCMOrganizationMember, CCMSubscription, ERPConnector, ConnectorSyncJob, ERPDataPoint, MonitoringRule, MonitoringRun, Finding, FindingDataPoint, CCMReport, LLMConfiguration, CCMAuditLog |
+| **Email** | Subscriber, EmailSequence, EmailSequenceStep, SequenceProgress, EmailEvent |
+| **Affiliates** | AffiliateLink, AffiliateClick |
+
 ---
 
-## Admin Dashboard
+## Pricing Overview
 
-The admin panel (`/admin`) provides full control over the platform:
-
-| Section | What It Does |
-|---------|-------------|
-| **Agent Dashboard** | Monitor the AI content pipeline — runs, tasks, success rates, costs |
-| **Agent Sources** | Manage 130+ RSS feeds and regulatory sources |
-| **Agent Settings** | Configure daily targets, budgets, quality thresholds |
-| **Content** | Create, edit, and manage all published articles |
-| **Vendors** | Add, edit, and assess compliance vendors |
-| **Alerts** | View all generated regulatory alerts, filter by urgency and domain |
-| **Companies** | View all registered company profiles with industry and tier info |
-| **Products** | Manage digital products (toolkits) and pricing |
-| **Subscribers** | Manage email subscribers and sequences |
-| **Affiliates** | Track affiliate links and click performance |
-| **Analytics** | Platform usage analytics |
+| Module | Free | Starter | Professional | Enterprise |
+|--------|------|---------|-------------|-----------|
+| **Core Platform** | Blog, 1 jurisdiction, 3 checks/mo | $99/mo — 3 jurisdictions, alerts, 5 assessments | $499/mo — 10 jurisdictions, ERP analysis, 25 assessments | $2,000+/mo — Unlimited, API, SSO |
+| **SENTINEL** | Intelligence feed, 3 screenings/mo | $99/mo — AI reasoning, bias audit, 50 screenings | $299/mo — Cases, supply chain, unlimited screenings | Custom — Full enterprise package |
+| **CCM** | — | $99/mo — 1 connector, SOX only | $499/mo — 3 connectors, SOX/PCI/AML | Custom — Unlimited everything |
 
 ---
 
@@ -299,10 +465,9 @@ The admin panel (`/admin`) provides full control over the platform:
 - Stripe account (for payments)
 - DeepSeek API key (for AI features)
 - Resend API key (for email)
+- Upstash Redis (for rate limiting)
 
 ### Environment Variables
-
-Create a `.env` file with:
 
 ```env
 # Database
@@ -312,7 +477,7 @@ DATABASE_URL="postgresql://user:password@host:5432/aigovhub"
 NEXTAUTH_SECRET="your-secret"
 NEXTAUTH_URL="http://localhost:3000"
 
-# Stripe
+# Stripe (Core Platform)
 STRIPE_SECRET_KEY="sk_..."
 STRIPE_WEBHOOK_SECRET="whsec_..."
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_..."
@@ -320,8 +485,20 @@ STRIPE_PRICE_SUB_STARTER="price_..."
 STRIPE_PRICE_SUB_PRO="price_..."
 STRIPE_PRICE_SUB_ENTERPRISE="price_..."
 
+# Stripe (CCM)
+STRIPE_PRICE_CCM_STARTER="price_..."
+STRIPE_PRICE_CCM_PRO="price_..."
+STRIPE_PRICE_CCM_ENTERPRISE="price_..."
+
 # AI
 DEEPSEEK_API_KEY="sk-..."
+GROQ_API_KEY="gsk_..."           # For bias detection (Llama-3)
+
+# Screening
+OPENSANCTIONS_API_KEY="..."       # For sanctions screening
+
+# Market Data
+FMP_API_KEY="..."                 # For macro market radar
 
 # Email
 RESEND_API_KEY="re_..."
@@ -329,6 +506,9 @@ RESEND_API_KEY="re_..."
 # Rate Limiting
 UPSTASH_REDIS_REST_URL="https://..."
 UPSTASH_REDIS_REST_TOKEN="..."
+
+# Encryption (CCM)
+CCM_MASTER_KEY="64-char-hex-string"
 
 # Cron
 CRON_SECRET="your-cron-secret"
@@ -340,58 +520,19 @@ ADMIN_EMAIL="admin@example.com"
 ### Installation
 
 ```bash
-# Install dependencies
 npm install
-
-# Generate Prisma client
 npx prisma generate
-
-# Push schema to database
 npx prisma db push
-
-# Seed initial data (vendors, sources, products)
 npx prisma db seed
-
-# Start development server
 npm run dev
 ```
 
-The app runs at `http://localhost:3000`.
-
-### Production Build
-
-```bash
-npm run build
-npm start
-```
-
-### Deployment (Railway)
-
-The project deploys via Docker on Railway:
+### Production Deployment (Railway)
 
 1. Push to `main` branch on GitHub
 2. Railway auto-builds using the `Dockerfile`
-3. On startup, `prisma db push --skip-generate` runs to sync schema
-4. `npm start` launches the Next.js production server
-
----
-
-## Database Models (34 Total)
-
-| Category | Models |
-|----------|--------|
-| **Auth** | User, Account, Session, VerificationToken |
-| **Commerce** | Subscription, Purchase, DigitalProduct |
-| **Content** | ContentPage, ContentVendorMention, ContentAffiliateLink |
-| **Vendors** | Vendor, VendorAssessment |
-| **Company** | CompanyProfile |
-| **Alerts** | RegulatoryAlert, CompanyAlert, AlertRun |
-| **ERP** | ERPAnalysis |
-| **Agents** | AgentSource, EvidenceCard, AgentTask, AgentTaskEvidence, AgentRun, AgentSettings, SocialPostDraft |
-| **Email** | Subscriber, EmailSequence, EmailSequenceStep, SequenceProgress, EmailEvent |
-| **Affiliates** | AffiliateLink, AffiliateClick |
-| **Analytics** | AnalyticsEvent, SavedComplianceResult |
-| **Usage** | UsageRecord |
+3. On startup, `prisma db push --skip-generate` syncs schema
+4. `npm start` launches the production server
 
 ---
 
@@ -402,12 +543,13 @@ The project deploys via Docker on Railway:
 | Homepage | [www.aigovhub.io](https://www.aigovhub.io) |
 | Blog | [www.aigovhub.io/blog](https://www.aigovhub.io/blog) |
 | Vendor Tracker | [www.aigovhub.io/vendors](https://www.aigovhub.io/vendors) |
-| Jurisdiction Tracker | [www.aigovhub.io/jurisdictions](https://www.aigovhub.io/jurisdictions) |
+| Jurisdictions | [www.aigovhub.io/jurisdictions](https://www.aigovhub.io/jurisdictions) |
 | AI Act Checker | [www.aigovhub.io/ai-act-checker](https://www.aigovhub.io/ai-act-checker) |
-| Vendor Risk Questionnaire | [www.aigovhub.io/vendor-risk-questionnaire](https://www.aigovhub.io/vendor-risk-questionnaire) |
-| ERP Gap Analysis | [www.aigovhub.io/erp-analysis](https://www.aigovhub.io/erp-analysis) |
+| SENTINEL Dashboard | [www.aigovhub.io/sentinel/dashboard](https://www.aigovhub.io/sentinel/dashboard) |
+| SENTINEL Screening | [www.aigovhub.io/sentinel/dashboard/screening](https://www.aigovhub.io/sentinel/dashboard/screening) |
+| CCM Dashboard | [www.aigovhub.io/ccm/dashboard](https://www.aigovhub.io/ccm/dashboard) |
+| CCM Connectors | [www.aigovhub.io/ccm/dashboard/connectors](https://www.aigovhub.io/ccm/dashboard/connectors) |
 | Pricing | [www.aigovhub.io/pricing](https://www.aigovhub.io/pricing) |
-| Dashboard | [www.aigovhub.io/dashboard](https://www.aigovhub.io/dashboard) |
 | Admin | [www.aigovhub.io/admin](https://www.aigovhub.io/admin) |
 
 ---
@@ -418,4 +560,4 @@ Proprietary. All rights reserved.
 
 ---
 
-Built by **Saad Muhayyodin Maan** — [smaan@aimadds.com](mailto:smaan@aimadds.com)
+Built by **Saad Muhayyodin Maan** — CEO & Founder, AIMADDS — [smaan@aimadds.com](mailto:smaan@aimadds.com)
