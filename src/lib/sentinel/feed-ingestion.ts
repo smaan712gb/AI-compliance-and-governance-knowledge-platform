@@ -5,7 +5,7 @@
 
 import { XMLParser } from "fast-xml-parser";
 import { db } from "@/lib/db";
-import { ALL_RSS_SOURCES, type RSSSource } from "./rss-sources";
+import { getIntelligenceSources, type RSSSource } from "./rss-sources";
 import type { EventCategory } from "./types";
 import { shouldTriggerTriage, runTriageAgent } from "./triage-agent";
 
@@ -47,6 +47,8 @@ const CATEGORY_KEYWORDS: Record<EventCategory, string[]> = {
     "war", "military", "troops", "airstrike", "bombing", "combat",
     "invasion", "offensive", "ceasefire", "weapons", "artillery",
     "drone strike", "missile", "casualties", "frontline", "battlefield",
+    "evacuation", "armed forces", "naval", "airspace", "blockade",
+    "escalation", "retaliation", "strike", "shelling", "tank",
   ],
   TERRORISM: [
     "terrorist", "terrorism", "extremist", "jihad", "insurgent",
@@ -57,11 +59,19 @@ const CATEGORY_KEYWORDS: Record<EventCategory, string[]> = {
     "cyber attack", "hack", "data breach", "ransomware", "malware",
     "phishing", "vulnerability", "zero-day", "apt", "cyber espionage",
     "ddos", "critical infrastructure hack", "scada",
+    // High-impact AI safety/governance signals
+    "agi", "artificial general intelligence", "superintelligence",
+    "ai safety", "ai regulation", "ai governance", "ai ban",
+    "deepfake", "autonomous weapons", "ai arms race",
   ],
   ECONOMIC: [
     "sanctions", "tariff", "trade war", "embargo", "economic crisis",
     "currency", "inflation", "recession", "supply chain", "energy crisis",
     "oil price", "commodity", "trade deal", "debt crisis",
+    // High-impact AI/tech economic signals
+    "chip shortage", "semiconductor", "data center", "power grid",
+    "gpu shortage", "compute crisis", "export ban", "chip war",
+    "nvidia", "tsmc", "ai investment", "billion", "trillion",
   ],
   POLITICAL: [
     "election", "coup", "protest", "revolution", "political crisis",
@@ -125,6 +135,12 @@ export function classifyEvent(title: string, description: string): {
     severity = "medium";
   } else if (bestScore === 0) {
     severity = "info";
+  }
+
+  // If no intelligence category matched, cap severity — generic "emergency"/"urgent"
+  // keywords in non-intelligence articles should not produce false CRITICAL events
+  if (bestCategory === "OTHER" && (severity === "critical" || severity === "high")) {
+    severity = "medium";
   }
 
   // Risk score based on category + severity
@@ -301,9 +317,10 @@ export async function runIngestionPipeline(
     durationMs: 0,
   };
 
+  const allIntelSources = getIntelligenceSources();
   const sources = maxSources
-    ? ALL_RSS_SOURCES.filter((s) => s.isActive).slice(0, maxSources)
-    : ALL_RSS_SOURCES.filter((s) => s.isActive);
+    ? allIntelSources.slice(0, maxSources)
+    : allIntelSources;
 
   // Process in batches of 10 to avoid overwhelming external servers
   const BATCH_SIZE = 10;
@@ -350,6 +367,16 @@ export async function runIngestionPipeline(
           item.title,
           item.description
         );
+
+        // Skip low-relevance items — no intelligence keywords matched
+        if (category === "OTHER" && severity === "info") {
+          continue;
+        }
+        // Skip anything with minimal risk score (noise from non-intel sources)
+        if (riskScore <= 10) {
+          continue;
+        }
+
         const countryCode = extractCountryCode(`${item.title} ${item.description}`);
         const entities = extractEntities(item.title);
 

@@ -92,7 +92,7 @@ const CYBER_SOURCES: RSSSource[] = [
 const DISASTER_SOURCES: RSSSource[] = [
   { id: "usgs-quakes", name: "USGS Earthquakes M4.5+", url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.atom", category: "disaster", region: "global", reliability: 0.98, fetchIntervalMinutes: 5, isActive: true },
   { id: "gdacs", name: "GDACS Alerts", url: "https://www.gdacs.org/xml/rss.xml", category: "disaster", region: "global", reliability: 0.95, fetchIntervalMinutes: 15, isActive: true },
-  { id: "nasa-eonet", name: "NASA EONET Events", url: "https://eonet.gsfc.nasa.gov/api/v3/events/rss", category: "disaster", region: "global", reliability: 0.95, fetchIntervalMinutes: 30, isActive: true },
+  { id: "nasa-eonet", name: "NASA EONET Events", url: "https://eonet.gsfc.nasa.gov/api/v3/events/rss", category: "disaster", region: "global", reliability: 0.95, fetchIntervalMinutes: 30, isActive: false }, // Disabled: generates thousands of low-impact individual natural events
   { id: "reliefweb", name: "ReliefWeb Disasters", url: "https://reliefweb.int/updates/rss.xml?primary_country=&list=disaster", category: "disaster", region: "global", reliability: 0.92, fetchIntervalMinutes: 30, isActive: true },
 ];
 
@@ -278,6 +278,37 @@ export const ALL_RSS_SOURCES: RSSSource[] = [
   ...POSITIVE_SCIENCE_SOURCES,
   ...POSITIVE_ENVIRONMENT_SOURCES,
 ];
+
+/**
+ * Source categories that produce intelligence-grade events.
+ * Other categories (tech_dev, positive_*, finance_crypto, etc.) are for
+ * the blog/content pipeline only — they should NOT create IntelligenceEvents.
+ */
+export const INTELLIGENCE_SOURCE_CATEGORIES: Set<SourceCategory> = new Set([
+  "wire_service",
+  "government",
+  "military",
+  "think_tank",
+  "cyber_threat",
+  "disaster",
+  "financial",
+  "regional",
+  "osint",
+  "sanctions",
+  "aviation",
+  "maritime",
+  "health",
+  "energy",
+  "finance_central_bank", // Fed/ECB/IMF produce policy intelligence
+  "commodity_energy",     // OPEC/EIA — energy security intelligence
+]);
+
+/** Only sources that produce intelligence-grade events */
+export function getIntelligenceSources(): RSSSource[] {
+  return ALL_RSS_SOURCES.filter(
+    (s) => s.isActive && INTELLIGENCE_SOURCE_CATEGORIES.has(s.category)
+  );
+}
 
 export function getSourcesByCategory(category: SourceCategory): RSSSource[] {
   return ALL_RSS_SOURCES.filter((s) => s.category === category && s.isActive);
