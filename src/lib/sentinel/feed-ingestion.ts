@@ -8,6 +8,20 @@ import { db } from "@/lib/db";
 import { getIntelligenceSources, type RSSSource } from "./rss-sources";
 import type { EventCategory } from "./types";
 import { shouldTriggerTriage, runTriageAgent } from "./triage-agent";
+import {
+  trackKeywords,
+  trackGeoEvent,
+  type KeywordSpike,
+  type GeographicConvergence,
+} from "./pattern-detection";
+import { checkEventAgainstWatchlists } from "./watchlists";
+import { autoExtractAndLink } from "./event-graph";
+import { analyzeEvent } from "./reasoning";
+import {
+  broadcastAlert,
+  buildKeywordSpikeAlert,
+  buildCrisisEscalationAlert,
+} from "./webhook-alerts";
 
 export interface FeedItem {
   title: string;
@@ -25,8 +39,18 @@ export interface IngestionResult {
   itemsFetched: number;
   itemsNew: number;
   itemsDuplicate: number;
+  itemsSkipped: number;
   errors: { sourceId: string; error: string }[];
   durationMs: number;
+  // Automation results
+  automation: {
+    keywordSpikes: KeywordSpike[];
+    geoConvergences: GeographicConvergence[];
+    watchlistMatches: number;
+    graphEntitiesLinked: number;
+    reasoningTriggered: number;
+    triageTriggered: number;
+  };
 }
 
 // Circuit breaker state per feed
@@ -339,8 +363,17 @@ export async function runIngestionPipeline(
     itemsFetched: 0,
     itemsNew: 0,
     itemsDuplicate: 0,
+    itemsSkipped: 0,
     errors: [],
     durationMs: 0,
+    automation: {
+      keywordSpikes: [],
+      geoConvergences: [],
+      watchlistMatches: 0,
+      graphEntitiesLinked: 0,
+      reasoningTriggered: 0,
+      triageTriggered: 0,
+    },
   };
 
   const allIntelSources = getIntelligenceSources();
@@ -396,10 +429,12 @@ export async function runIngestionPipeline(
 
         // Skip low-relevance items — no intelligence keywords matched
         if (category === "OTHER" && severity === "info") {
+          result.itemsSkipped++;
           continue;
         }
         // Skip anything with minimal risk score (noise from non-intel sources)
         if (riskScore <= 10) {
+          result.itemsSkipped++;
           continue;
         }
 
@@ -433,8 +468,98 @@ export async function runIngestionPipeline(
 
         result.itemsNew++;
 
-        // Fire-and-forget: trigger triage agent for high-severity events
-        if (shouldTriggerTriage({ severity: severityMap[severity], riskScore })) {
+        // ============================================================
+        // AUTOMATION HOOKS — Run on every new event
+        // ============================================================
+
+        const fullText = `${item.title} ${item.description}`;
+        const dbSeverity = severityMap[severity];
+
+        // 1. Pattern Detection — keyword spikes + geographic convergence
+        try {
+          const spikes = trackKeywords(fullText, source.name);
+          if (spikes.length > 0) {
+            result.automation.keywordSpikes.push(...spikes);
+          }
+          if (countryCode) {
+            const convergence = trackGeoEvent(countryCode, category);
+            if (convergence) {
+              result.automation.geoConvergences.push(convergence);
+            }
+          }
+        } catch (err) {
+          console.error(`[Ingestion] Pattern detection failed:`, err);
+        }
+
+        // 2. Watchlist Matching — ALL events, not just critical
+        try {
+          const watchResult = await checkEventAgainstWatchlists({
+            id: newEvent.id,
+            headline: item.title,
+            summary: item.description,
+            countryCode,
+            category,
+            entities,
+            tags: [source.category, source.region],
+          });
+          result.automation.watchlistMatches += watchResult.matchesCreated;
+        } catch (err) {
+          console.error(`[Ingestion] Watchlist matching failed:`, err);
+        }
+
+        // 3. Knowledge Graph — auto-extract entities and link
+        try {
+          const links = await autoExtractAndLink(
+            newEvent.id,
+            item.title,
+            item.description,
+            countryCode || undefined,
+          );
+          result.automation.graphEntitiesLinked += links.length;
+        } catch (err) {
+          console.error(`[Ingestion] Graph extraction failed:`, err);
+        }
+
+        // 4. Auto AI Reasoning — fire-and-forget for CRITICAL/HIGH events
+        if (dbSeverity === "SENTINEL_CRITICAL" || dbSeverity === "SENTINEL_HIGH") {
+          result.automation.reasoningTriggered++;
+          analyzeEvent({
+            headline: item.title,
+            content: item.description,
+            source: source.name,
+            countryCode: countryCode || undefined,
+          }).then(async (reasoning) => {
+            // Store reasoning result linked to event
+            try {
+              await db.reasoningHistory.create({
+                data: {
+                  userId: "system-auto-reasoning",
+                  eventId: newEvent.id,
+                  headline: item.title.slice(0, 500),
+                  countryCode: countryCode || null,
+                  category: reasoning.category as EventCategory,
+                  inputContext: item.description.slice(0, 2000),
+                  reasoningChain: JSON.stringify(reasoning.reasoning),
+                  classification: {
+                    category: reasoning.category,
+                    severity: reasoning.severity,
+                    riskScore: reasoning.riskScore,
+                  },
+                  predictedOutcome: reasoning.reasoning.whatHappensNext || null,
+                  tokens: reasoning.reasoningTokens,
+                },
+              });
+            } catch {
+              // Reasoning storage failure is non-fatal
+            }
+          }).catch((err) => {
+            console.error(`[Ingestion] Auto-reasoning failed for ${newEvent.id}:`, err);
+          });
+        }
+
+        // 5. Triage Agent — fire-and-forget for high-severity events
+        if (shouldTriggerTriage({ severity: dbSeverity, riskScore })) {
+          result.automation.triageTriggered++;
           runTriageAgent(newEvent.id).catch((err) => {
             console.error(`[Ingestion] Triage agent failed for ${newEvent.id}:`, err);
           });

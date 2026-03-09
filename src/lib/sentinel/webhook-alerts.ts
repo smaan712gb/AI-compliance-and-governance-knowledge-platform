@@ -229,6 +229,53 @@ export async function broadcastAlert(
   return results;
 }
 
+// ---- Broadcast to ALL active webhooks (system-level, e.g. pattern spikes) ----
+
+export async function broadcastAlertToAll(
+  payload: WebhookPayload,
+): Promise<number> {
+  const webhooks = await db.sentinelWebhook.findMany({
+    where: {
+      isActive: true,
+      events: { has: payload.eventType },
+    },
+    select: {
+      id: true,
+      url: true,
+      secret: true,
+      minSeverity: true,
+      userId: true,
+    },
+  });
+
+  if (webhooks.length === 0) return 0;
+
+  let delivered = 0;
+
+  for (const webhook of webhooks) {
+    if (webhook.minSeverity) {
+      const eventSev = payload.severity as EventSeverity;
+      const minSev = webhook.minSeverity as EventSeverity;
+      if (!shouldTriggerWebhook(eventSev, minSev)) continue;
+    }
+
+    const isHealthy = await checkCircuitBreaker(webhook.id);
+    if (!isHealthy) continue;
+
+    const result = await deliverWithRetry(
+      webhook.id,
+      webhook.url,
+      payload,
+      webhook.secret || undefined,
+    );
+
+    recordDelivery(webhook.id, result, payload).catch(() => {});
+    if (result.success) delivered++;
+  }
+
+  return delivered;
+}
+
 // ---- Alert Payload Builders ----
 
 export function buildIntelligenceAlert(event: {
@@ -255,16 +302,21 @@ export function buildIntelligenceAlert(event: {
 
 export function buildKeywordSpikeAlert(spike: {
   keyword: string;
+  currentCount: number;
+  baselineAvg: number;
   ratio: number;
   sources: string[];
-  severity: string;
+  severity?: string;
 }): WebhookPayload {
+  const severity = spike.ratio >= 10 ? "critical" : spike.ratio >= 5 ? "high" : "medium";
   return {
     eventType: "keyword_spike",
-    severity: spike.severity,
+    severity,
     timestamp: new Date().toISOString(),
     data: {
       keyword: spike.keyword,
+      currentCount: spike.currentCount,
+      baselineAvg: spike.baselineAvg,
       spikeRatio: spike.ratio,
       sourceCount: spike.sources.length,
       sources: spike.sources,
@@ -274,22 +326,30 @@ export function buildKeywordSpikeAlert(spike: {
 
 export function buildCrisisEscalationAlert(crisis: {
   countryCode: string;
-  countryName: string;
-  previousScore: number;
-  currentScore: number;
-  level: string;
+  previousLevel?: string;
+  newLevel?: string;
+  score?: number;
+  triggers?: string[];
+  countryName?: string;
+  previousScore?: number;
+  currentScore?: number;
+  level?: string;
 }): WebhookPayload {
+  const score = crisis.currentScore ?? crisis.score ?? 0;
+  const severity = score >= 80 ? "critical" : "high";
   return {
     eventType: "crisis_escalation",
-    severity: crisis.currentScore >= 80 ? "critical" : "high",
+    severity,
     timestamp: new Date().toISOString(),
     data: {
       countryCode: crisis.countryCode,
-      countryName: crisis.countryName,
+      countryName: crisis.countryName || crisis.countryCode,
+      previousLevel: crisis.previousLevel,
+      newLevel: crisis.newLevel || crisis.level,
+      score,
+      triggers: crisis.triggers || [],
       previousScore: crisis.previousScore,
       currentScore: crisis.currentScore,
-      level: crisis.level,
-      delta: crisis.currentScore - crisis.previousScore,
     },
   };
 }
