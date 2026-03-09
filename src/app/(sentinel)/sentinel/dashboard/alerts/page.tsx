@@ -90,7 +90,7 @@ export default function AlertsDashboardPage() {
   const fetchData = useCallback(async (isManual = false) => {
     if (isManual) setRefreshing(true);
     try {
-      const res = await fetch("/api/sentinel/ingest");
+      const res = await fetch("/api/sentinel/alerts");
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error || `Request failed (${res.status})`);

@@ -154,6 +154,18 @@ function SettingsContent() {
             <p className="font-mono text-xs text-muted-foreground mb-1">GET /api/sentinel/intelligence</p>
             <p>Intelligence event feed with filtering and pagination</p>
           </div>
+          <div className="rounded-md bg-muted/50 p-3">
+            <p className="font-mono text-xs text-muted-foreground mb-1">GET /api/sentinel/macro-market</p>
+            <p>Macro market radar — commodities, forex, treasury, sector heatmaps</p>
+          </div>
+          <div className="rounded-md bg-muted/50 p-3">
+            <p className="font-mono text-xs text-muted-foreground mb-1">GET /api/sentinel/alerts</p>
+            <p>Real-time intelligence alerts, source health, and keyword spike detection</p>
+          </div>
+          <div className="rounded-md bg-muted/50 p-3">
+            <p className="font-mono text-xs text-muted-foreground mb-1">GET /api/sentinel/watchlists</p>
+            <p>Manage entity and country watchlists for automated monitoring</p>
+          </div>
         </div>
         <p className="text-xs text-muted-foreground mt-4">
           All endpoints accept <code className="bg-muted px-1 rounded">Authorization: Bearer stl_...</code> header.

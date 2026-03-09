@@ -210,11 +210,9 @@ export default function MacroMarketPage() {
       };
       setData(report);
 
-      // detect tier limitation — if major sections are null/empty
-      if (
-        (!report.signals || report.signals.length === 0) &&
-        (!report.commodities || report.commodities.length === 0)
-      ) {
+      // detect tier limitation — check if API returned _restricted field
+      const restricted = raw._restricted;
+      if (Array.isArray(restricted) && restricted.length > 0) {
         setTierLimited(true);
       } else {
         setTierLimited(false);

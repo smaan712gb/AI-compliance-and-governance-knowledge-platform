@@ -30,6 +30,9 @@ import {
   Cpu,
   Zap,
   ScrollText,
+  Banknote,
+  Fingerprint,
+  Scale,
 } from "lucide-react";
 
 const SENTINEL_NAV = [
@@ -40,6 +43,9 @@ const SENTINEL_NAV = [
   { title: "Crisis Index", href: "/sentinel/dashboard/crisis-index", icon: BarChart3 },
   { title: "Supply Chain Risk", href: "/sentinel/dashboard/supply-chain", icon: Truck },
   { title: "Macro Market", href: "/sentinel/dashboard/macro-market", icon: LineChart },
+  { title: "Sanctions & AML", href: "/sentinel/dashboard/sanctions-aml", icon: Banknote },
+  { title: "Financial Crime", href: "/sentinel/dashboard/financial-crime", icon: Fingerprint },
+  { title: "Regulatory Radar", href: "/sentinel/dashboard/regulatory-radar", icon: Scale },
   { title: "Cases", href: "/sentinel/dashboard/cases", icon: FolderOpen },
   { title: "Briefings", href: "/sentinel/dashboard/briefings", icon: FileText },
   { title: "Reasoning History", href: "/sentinel/dashboard/reasoning-history", icon: Brain },
