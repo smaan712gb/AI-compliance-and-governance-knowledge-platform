@@ -69,13 +69,14 @@ export async function GET(req: NextRequest) {
     if (section === "all") {
       const report = await generateMacroMarketReport();
 
-      // For FREE tier, strip restricted sections
+      // For FREE tier, include structure but restrict detailed sections
       if (tier === "FREE") {
         return NextResponse.json({
           data: {
-            commodities: report.commodities,
-            sectors: report.sectors,
-            timestamp: report.timestamp,
+            ...report,
+            signals: [],
+            forex: [],
+            treasury: null,
             _restricted: ["forex", "treasury", "signals"],
           },
         });

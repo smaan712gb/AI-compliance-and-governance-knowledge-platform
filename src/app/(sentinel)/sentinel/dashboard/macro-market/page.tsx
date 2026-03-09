@@ -191,7 +191,23 @@ export default function MacroMarketPage() {
         throw new Error(body.error || `Request failed (${res.status})`);
       }
       const json = await res.json();
-      const report: MacroMarketReport = json.data ?? json;
+      const raw = json.data ?? json;
+      // Ensure all fields have safe defaults
+      const report: MacroMarketReport = {
+        timestamp: raw.timestamp || new Date().toISOString(),
+        overallRiskLevel: raw.overallRiskLevel || "low",
+        riskScore: raw.riskScore ?? 0,
+        signals: raw.signals || [],
+        commodities: raw.commodities || [],
+        forex: raw.forex || [],
+        sectors: raw.sectors || [],
+        treasury: raw.treasury || null,
+        fearGreedIndicators: {
+          vixLevel: raw.fearGreedIndicators?.vixLevel ?? null,
+          goldOilRatio: raw.fearGreedIndicators?.goldOilRatio ?? null,
+          yieldSpread: raw.fearGreedIndicators?.yieldSpread ?? null,
+        },
+      };
       setData(report);
 
       // detect tier limitation — if major sections are null/empty
