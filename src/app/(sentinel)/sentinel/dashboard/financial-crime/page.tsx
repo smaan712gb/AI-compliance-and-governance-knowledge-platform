@@ -28,8 +28,8 @@ type Severity = "critical" | "high" | "medium" | "low";
 
 interface IntelligenceEvent {
   id: string;
-  title: string;
-  description: string | null;
+  headline: string;
+  summary: string | null;
   category: string;
   severity: string;
   countryCode: string | null;
@@ -112,7 +112,7 @@ export default function FinancialCrimePage() {
 
     try {
       const [eventsRes, casesRes, screeningsRes] = await Promise.all([
-        fetch("/api/sentinel/intelligence?category=FINANCIAL_CRIME&limit=25").then((r) => r.json()).catch(() => ({ data: [] })),
+        fetch("/api/sentinel/intelligence?category=ECONOMIC&limit=25").then((r) => r.json()).catch(() => ({ data: [] })),
         fetch("/api/sentinel/cases?view=stats").then((r) => r.json()).catch(() => ({ data: null })),
         fetch("/api/sentinel/screening?limit=10").then((r) => r.json()).catch(() => ({ data: [] })),
       ]);
@@ -290,10 +290,10 @@ export default function FinancialCrimePage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-sm font-medium mt-1">{event.title}</p>
-                        {event.description && (
+                        <p className="text-sm font-medium mt-1">{event.headline}</p>
+                        {event.summary && (
                           <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                            {event.description}
+                            {event.summary}
                           </p>
                         )}
                       </div>

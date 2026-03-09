@@ -25,8 +25,8 @@ import {
 
 interface IntelligenceEvent {
   id: string;
-  title: string;
-  description: string | null;
+  headline: string;
+  summary: string | null;
   category: string;
   severity: string;
   countryCode: string | null;
@@ -94,10 +94,10 @@ export default function RegulatoryRadarPage() {
     setError("");
 
     try {
-      // Fetch regulatory and economic events
+      // Fetch political and economic events (closest to regulatory intelligence)
       const [regRes, econRes] = await Promise.all([
-        fetch("/api/sentinel/intelligence?category=REGULATORY&limit=50").then((r) => r.json()).catch(() => ({ data: [] })),
-        fetch("/api/sentinel/intelligence?category=ECONOMIC&limit=25").then((r) => r.json()).catch(() => ({ data: [] })),
+        fetch("/api/sentinel/intelligence?category=POLITICAL&limit=50").then((r) => r.json()).catch(() => ({ data: [] })),
+        fetch("/api/sentinel/intelligence?category=ECONOMIC&limit=50").then((r) => r.json()).catch(() => ({ data: [] })),
       ]);
 
       const allEvents = [
@@ -138,7 +138,7 @@ export default function RegulatoryRadarPage() {
     const sev = normalizeSeverity(e.severity);
     return sev === "critical" || sev === "high";
   }).length;
-  const regulatoryCount = events.filter((e) => e.category === "REGULATORY").length;
+  const regulatoryCount = events.filter((e) => e.category === "POLITICAL").length;
   const economicCount = events.filter((e) => e.category === "ECONOMIC").length;
 
   if (loading) {
@@ -208,7 +208,7 @@ export default function RegulatoryRadarPage() {
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
           { label: "Total Events", value: events.length, icon: FileText, color: "text-blue-500" },
-          { label: "Regulatory", value: regulatoryCount, icon: Scale, color: "text-indigo-500" },
+          { label: "Political", value: regulatoryCount, icon: Scale, color: "text-indigo-500" },
           { label: "Economic", value: economicCount, icon: TrendingUp, color: "text-emerald-500" },
           { label: "High Impact", value: highImpact, icon: AlertTriangle, color: "text-red-500" },
           { label: "Jurisdictions", value: jurisdictions.size, icon: Globe, color: "text-purple-500" },
@@ -301,10 +301,10 @@ export default function RegulatoryRadarPage() {
                           </span>
                         )}
                       </div>
-                      <p className="text-sm font-semibold">{event.title}</p>
-                      {event.description && (
+                      <p className="text-sm font-semibold">{event.headline}</p>
+                      {event.summary && (
                         <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                          {event.description}
+                          {event.summary}
                         </p>
                       )}
                       <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
