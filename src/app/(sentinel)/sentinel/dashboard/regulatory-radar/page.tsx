@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Radar,
   Calendar,
@@ -15,244 +15,60 @@ import {
   Building2,
   TrendingUp,
   Filter,
+  RefreshCw,
+  Loader2,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
 
-type Impact = "high" | "medium" | "low";
-type Jurisdiction = "US" | "EU" | "UK" | "APAC" | "Global";
-
-interface RegulatoryChange {
+interface IntelligenceEvent {
   id: string;
   title: string;
-  jurisdiction: Jurisdiction;
-  regulator: string;
-  impact: Impact;
+  description: string | null;
   category: string;
-  publishedDate: string;
-  effectiveDate: string;
-  summary: string;
+  severity: string;
+  countryCode: string | null;
+  source: string | null;
+  processedAt: string;
+  riskScore: number | null;
 }
-
-interface Deadline {
-  id: string;
-  title: string;
-  jurisdiction: Jurisdiction;
-  dueDate: string;
-  daysRemaining: number;
-  category: string;
-  status: "on-track" | "at-risk" | "overdue";
-}
-
-interface ComplianceGap {
-  area: string;
-  jurisdiction: Jurisdiction;
-  currentScore: number;
-  targetScore: number;
-  gap: number;
-  priority: Impact;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Mock data                                                          */
-/* ------------------------------------------------------------------ */
-
-const JURISDICTIONS: Jurisdiction[] = ["US", "EU", "UK", "APAC", "Global"];
-
-const REGULATORY_CHANGES: RegulatoryChange[] = [
-  {
-    id: "RC-2026-047",
-    title: "FinCEN Final Rule: Beneficial Ownership Reporting Updates",
-    jurisdiction: "US",
-    regulator: "FinCEN",
-    impact: "high",
-    category: "AML/CFT",
-    publishedDate: "2026-03-07",
-    effectiveDate: "2026-07-01",
-    summary:
-      "Expanded reporting requirements for beneficial ownership under the Corporate Transparency Act. New thresholds apply to entities with >$5M annual revenue.",
-  },
-  {
-    id: "RC-2026-046",
-    title: "EU AMLD6 Transposition Deadline & Member State Implementation",
-    jurisdiction: "EU",
-    regulator: "European Commission",
-    impact: "high",
-    category: "Anti-Money Laundering",
-    publishedDate: "2026-03-05",
-    effectiveDate: "2026-12-31",
-    summary:
-      "Sixth Anti-Money Laundering Directive mandates harmonized predicate offences, extended criminal liability, and enhanced cooperation between FIUs.",
-  },
-  {
-    id: "RC-2026-045",
-    title: "FCA Consumer Duty: Enhanced Outcomes Monitoring",
-    jurisdiction: "UK",
-    regulator: "FCA",
-    impact: "medium",
-    category: "Consumer Protection",
-    publishedDate: "2026-03-04",
-    effectiveDate: "2026-04-30",
-    summary:
-      "New reporting templates for firms to demonstrate consumer outcomes. Quarterly board attestation requirement introduced.",
-  },
-  {
-    id: "RC-2026-044",
-    title: "MAS Technology Risk Management Guidelines v3.0",
-    jurisdiction: "APAC",
-    regulator: "MAS Singapore",
-    impact: "high",
-    category: "Cybersecurity",
-    publishedDate: "2026-03-03",
-    effectiveDate: "2026-09-01",
-    summary:
-      "Updated TRM guidelines covering AI model risk, cloud concentration, and third-party API security requirements for financial institutions.",
-  },
-  {
-    id: "RC-2026-043",
-    title: "FATF Updated Guidance: Virtual Asset Service Providers",
-    jurisdiction: "Global",
-    regulator: "FATF",
-    impact: "high",
-    category: "Crypto Regulation",
-    publishedDate: "2026-03-01",
-    effectiveDate: "2026-06-01",
-    summary:
-      "Revised Travel Rule implementation standards for VASPs. Mandatory sunrise period for cross-border crypto transfers >$1,000.",
-  },
-  {
-    id: "RC-2026-042",
-    title: "SEC Climate Disclosure Rule: Phase 2 Large Accelerated Filers",
-    jurisdiction: "US",
-    regulator: "SEC",
-    impact: "medium",
-    category: "ESG / Climate",
-    publishedDate: "2026-02-28",
-    effectiveDate: "2026-06-15",
-    summary:
-      "Phase 2 requires Scope 1 & 2 emissions assurance for large accelerated filers. Material climate risk disclosure in 10-K filings.",
-  },
-  {
-    id: "RC-2026-041",
-    title: "EU AI Act: High-Risk Classification for Financial Services AI",
-    jurisdiction: "EU",
-    regulator: "European Parliament",
-    impact: "high",
-    category: "AI Governance",
-    publishedDate: "2026-02-25",
-    effectiveDate: "2026-08-01",
-    summary:
-      "Credit scoring, insurance pricing, and fraud detection AI systems classified as high-risk. Mandatory conformity assessments and human oversight.",
-  },
-  {
-    id: "RC-2026-040",
-    title: "APRA CPS 230 Operational Risk Management Standard",
-    jurisdiction: "APAC",
-    regulator: "APRA Australia",
-    impact: "medium",
-    category: "Operational Resilience",
-    publishedDate: "2026-02-20",
-    effectiveDate: "2026-07-01",
-    summary:
-      "New prudential standard for operational risk covering critical operations, material service providers, and business continuity requirements.",
-  },
-];
-
-const DEADLINES: Deadline[] = [
-  {
-    id: "DL-001",
-    title: "DORA ICT Risk Framework Compliance",
-    jurisdiction: "EU",
-    dueDate: "2026-03-17",
-    daysRemaining: 8,
-    category: "Operational Resilience",
-    status: "at-risk",
-  },
-  {
-    id: "DL-002",
-    title: "FinCEN BOI Report Filing (Updated Entities)",
-    jurisdiction: "US",
-    dueDate: "2026-03-31",
-    daysRemaining: 22,
-    category: "AML/CFT",
-    status: "on-track",
-  },
-  {
-    id: "DL-003",
-    title: "FCA Annual Financial Crime Return",
-    jurisdiction: "UK",
-    dueDate: "2026-04-15",
-    daysRemaining: 37,
-    category: "Financial Crime",
-    status: "on-track",
-  },
-  {
-    id: "DL-004",
-    title: "MAS CMIT Notification: Material Outsourcing",
-    jurisdiction: "APAC",
-    dueDate: "2026-04-01",
-    daysRemaining: 23,
-    category: "Third-Party Risk",
-    status: "on-track",
-  },
-  {
-    id: "DL-005",
-    title: "FCA Consumer Duty Board Report Submission",
-    jurisdiction: "UK",
-    dueDate: "2026-04-30",
-    daysRemaining: 52,
-    category: "Consumer Protection",
-    status: "on-track",
-  },
-  {
-    id: "DL-006",
-    title: "FATF Mutual Evaluation Preparation (Self-assessment)",
-    jurisdiction: "Global",
-    dueDate: "2026-03-15",
-    daysRemaining: 6,
-    category: "AML/CFT",
-    status: "at-risk",
-  },
-  {
-    id: "DL-007",
-    title: "SEC Climate Disclosure: Auditor Engagement Letter",
-    jurisdiction: "US",
-    dueDate: "2026-03-10",
-    daysRemaining: 1,
-    category: "ESG / Climate",
-    status: "at-risk",
-  },
-];
-
-const COMPLIANCE_GAPS: ComplianceGap[] = [
-  { area: "Beneficial Ownership Reporting", jurisdiction: "US",     currentScore: 62, targetScore: 95, gap: 33, priority: "high" },
-  { area: "AI Model Risk Management",       jurisdiction: "EU",     currentScore: 45, targetScore: 90, gap: 45, priority: "high" },
-  { area: "Travel Rule Implementation",     jurisdiction: "Global", currentScore: 70, targetScore: 95, gap: 25, priority: "high" },
-  { area: "Operational Resilience Testing",  jurisdiction: "UK",     currentScore: 78, targetScore: 95, gap: 17, priority: "medium" },
-  { area: "Third-Party Risk Assessments",    jurisdiction: "APAC",   currentScore: 72, targetScore: 90, gap: 18, priority: "medium" },
-  { area: "Consumer Outcomes Monitoring",    jurisdiction: "UK",     currentScore: 85, targetScore: 95, gap: 10, priority: "low" },
-  { area: "Climate Risk Disclosure",         jurisdiction: "US",     currentScore: 55, targetScore: 90, gap: 35, priority: "high" },
-];
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
-const IMPACT_STYLES: Record<Impact, string> = {
-  high: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
+const SEVERITY_STYLES: Record<string, string> = {
+  SENTINEL_CRITICAL: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
+  SENTINEL_HIGH: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300",
+  SENTINEL_MEDIUM: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
+  SENTINEL_LOW: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
+  critical: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
+  high: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300",
   medium: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
   low: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
 };
 
-const STATUS_STYLES: Record<string, string> = {
-  "on-track": "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300",
-  "at-risk": "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
-  overdue: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
-};
+// Map country codes to jurisdiction regions
+function getJurisdiction(cc: string | null): string {
+  if (!cc) return "Global";
+  const usRegion = ["US"];
+  const euRegion = ["DE", "FR", "IT", "ES", "NL", "BE", "AT", "IE", "PT", "GR", "FI", "SE", "DK", "PL", "CZ", "RO", "HU", "BG", "HR", "SK", "SI", "LT", "LV", "EE", "LU", "MT", "CY"];
+  const ukRegion = ["GB", "UK"];
+  const apacRegion = ["CN", "JP", "KR", "SG", "AU", "NZ", "IN", "HK", "TW", "MY", "TH", "ID", "PH", "VN"];
+  if (usRegion.includes(cc)) return "US";
+  if (euRegion.includes(cc)) return "EU";
+  if (ukRegion.includes(cc)) return "UK";
+  if (apacRegion.includes(cc)) return "APAC";
+  return "Global";
+}
 
-const JURISDICTION_COLORS: Record<Jurisdiction, string> = {
+function normalizeSeverity(s: string): string {
+  return s.replace("SENTINEL_", "").toLowerCase();
+}
+
+const JURISDICTION_COLORS: Record<string, string> = {
   US: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300",
   EU: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300",
   UK: "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
@@ -260,33 +76,79 @@ const JURISDICTION_COLORS: Record<Jurisdiction, string> = {
   Global: "bg-gray-100 text-gray-800 dark:bg-gray-700/40 dark:text-gray-300",
 };
 
-function gapBarColor(gap: number) {
-  if (gap >= 30) return "bg-red-500";
-  if (gap >= 15) return "bg-amber-500";
-  return "bg-emerald-500";
-}
-
 /* ------------------------------------------------------------------ */
-/*  Page component                                                     */
+/*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
 export default function RegulatoryRadarPage() {
-  const [jurisdictionFilter, setJurisdictionFilter] = useState<Jurisdiction | "all">("all");
-  const [impactFilter, setImpactFilter] = useState<Impact | "all">("all");
+  const [events, setEvents] = useState<IntelligenceEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState("");
+  const [jurisdictionFilter, setJurisdictionFilter] = useState<string>("all");
+  const [severityFilter, setSeverityFilter] = useState<string>("all");
 
-  const filteredChanges = REGULATORY_CHANGES.filter((c) => {
-    if (jurisdictionFilter !== "all" && c.jurisdiction !== jurisdictionFilter) return false;
-    if (impactFilter !== "all" && c.impact !== impactFilter) return false;
+  const fetchData = useCallback(async (isManual = false) => {
+    if (isManual) setRefreshing(true);
+    else setLoading(true);
+    setError("");
+
+    try {
+      // Fetch regulatory and economic events
+      const [regRes, econRes] = await Promise.all([
+        fetch("/api/sentinel/intelligence?category=REGULATORY&limit=50").then((r) => r.json()).catch(() => ({ data: [] })),
+        fetch("/api/sentinel/intelligence?category=ECONOMIC&limit=25").then((r) => r.json()).catch(() => ({ data: [] })),
+      ]);
+
+      const allEvents = [
+        ...(regRes.data || []),
+        ...(econRes.data || []),
+      ].sort((a: IntelligenceEvent, b: IntelligenceEvent) =>
+        new Date(b.processedAt).getTime() - new Date(a.processedAt).getTime()
+      );
+
+      setEvents(allEvents);
+    } catch {
+      setError("Failed to load regulatory data");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Derive jurisdiction for each event
+  const eventsWithJurisdiction = events.map((e) => ({
+    ...e,
+    jurisdiction: getJurisdiction(e.countryCode),
+  }));
+
+  const filtered = eventsWithJurisdiction.filter((e) => {
+    if (jurisdictionFilter !== "all" && e.jurisdiction !== jurisdictionFilter) return false;
+    if (severityFilter !== "all" && normalizeSeverity(e.severity) !== severityFilter) return false;
     return true;
   });
 
-  const filteredDeadlines = DEADLINES.filter(
-    (d) => jurisdictionFilter === "all" || d.jurisdiction === jurisdictionFilter
-  ).sort((a, b) => a.daysRemaining - b.daysRemaining);
+  // Stats
+  const jurisdictions = new Set(eventsWithJurisdiction.map((e) => e.jurisdiction));
+  const highImpact = events.filter((e) => {
+    const sev = normalizeSeverity(e.severity);
+    return sev === "critical" || sev === "high";
+  }).length;
+  const regulatoryCount = events.filter((e) => e.category === "REGULATORY").length;
+  const economicCount = events.filter((e) => e.category === "ECONOMIC").length;
 
-  const filteredGaps = COMPLIANCE_GAPS.filter(
-    (g) => jurisdictionFilter === "all" || g.jurisdiction === jurisdictionFilter
-  );
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+        <span className="ml-3 text-muted-foreground">Loading regulatory intelligence...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -298,47 +160,58 @@ export default function RegulatoryRadarPage() {
             Regulatory Radar
           </h1>
           <p className="text-muted-foreground">
-            Track regulatory changes, compliance deadlines, and jurisdiction-specific updates in
-            real time
+            Live regulatory changes, compliance events, and jurisdiction-specific intelligence
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-muted-foreground" />
           <select
             value={jurisdictionFilter}
-            onChange={(e) =>
-              setJurisdictionFilter(e.target.value as Jurisdiction | "all")
-            }
+            onChange={(e) => setJurisdictionFilter(e.target.value)}
             className="rounded-md border bg-background px-2 py-1.5 text-sm"
           >
             <option value="all">All Jurisdictions</option>
-            {JURISDICTIONS.map((j) => (
-              <option key={j} value={j}>
-                {j}
-              </option>
-            ))}
+            <option value="US">US</option>
+            <option value="EU">EU</option>
+            <option value="UK">UK</option>
+            <option value="APAC">APAC</option>
+            <option value="Global">Global</option>
           </select>
           <select
-            value={impactFilter}
-            onChange={(e) => setImpactFilter(e.target.value as Impact | "all")}
+            value={severityFilter}
+            onChange={(e) => setSeverityFilter(e.target.value)}
             className="rounded-md border bg-background px-2 py-1.5 text-sm"
           >
             <option value="all">All Impact</option>
-            <option value="high">High Impact</option>
-            <option value="medium">Medium Impact</option>
-            <option value="low">Low Impact</option>
+            <option value="critical">Critical</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
           </select>
+          <button
+            onClick={() => fetchData(true)}
+            disabled={refreshing}
+            className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-muted transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+          </button>
         </div>
       </div>
+
+      {error && (
+        <div className="rounded-lg border border-destructive bg-destructive/10 p-4 text-sm text-destructive">
+          {error}
+        </div>
+      )}
 
       {/* ---- Stats Row ---- */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
-          { label: "Tracked Regulations", value: "312", icon: FileText, color: "text-blue-500" },
-          { label: "Upcoming Deadlines", value: String(filteredDeadlines.length), icon: Calendar, color: "text-amber-500" },
-          { label: "High-Impact Changes", value: String(REGULATORY_CHANGES.filter((c) => c.impact === "high").length), icon: AlertTriangle, color: "text-red-500" },
-          { label: "Jurisdictions", value: "48", icon: Globe, color: "text-emerald-500" },
-          { label: "Compliance Gaps", value: String(filteredGaps.length), icon: Shield, color: "text-purple-500" },
+          { label: "Total Events", value: events.length, icon: FileText, color: "text-blue-500" },
+          { label: "Regulatory", value: regulatoryCount, icon: Scale, color: "text-indigo-500" },
+          { label: "Economic", value: economicCount, icon: TrendingUp, color: "text-emerald-500" },
+          { label: "High Impact", value: highImpact, icon: AlertTriangle, color: "text-red-500" },
+          { label: "Jurisdictions", value: jurisdictions.size, icon: Globe, color: "text-purple-500" },
         ].map((s) => (
           <div key={s.label} className="rounded-lg border bg-card p-4 text-center">
             <s.icon className={`h-5 w-5 mx-auto mb-2 ${s.color}`} />
@@ -348,211 +221,131 @@ export default function RegulatoryRadarPage() {
         ))}
       </div>
 
-      {/* ---- Upcoming Deadlines ---- */}
-      <div className="rounded-lg border bg-card">
-        <div className="p-5 border-b">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-amber-500" />
-            Upcoming Compliance Deadlines
+      {/* ---- Jurisdiction Breakdown ---- */}
+      {eventsWithJurisdiction.length > 0 && (
+        <div className="rounded-lg border bg-card p-6">
+          <h2 className="text-lg font-semibold flex items-center gap-2 mb-4">
+            <Globe className="h-5 w-5 text-blue-500" />
+            By Jurisdiction
           </h2>
-        </div>
-        <div className="divide-y">
-          {filteredDeadlines.map((d) => (
-            <div
-              key={d.id}
-              className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors"
-            >
-              <div className="flex items-start gap-3 min-w-0">
-                <div
-                  className={`mt-1 rounded-full p-1.5 ${
-                    d.daysRemaining <= 7
-                      ? "bg-red-100 dark:bg-red-900/40"
-                      : d.daysRemaining <= 30
-                      ? "bg-amber-100 dark:bg-amber-900/40"
-                      : "bg-emerald-100 dark:bg-emerald-900/40"
+          <div className="flex flex-wrap gap-3">
+            {["US", "EU", "UK", "APAC", "Global"].map((j) => {
+              const count = eventsWithJurisdiction.filter((e) => e.jurisdiction === j).length;
+              if (count === 0) return null;
+              return (
+                <button
+                  key={j}
+                  onClick={() => setJurisdictionFilter(jurisdictionFilter === j ? "all" : j)}
+                  className={`rounded-lg border px-4 py-3 text-center min-w-[100px] transition-colors ${
+                    jurisdictionFilter === j ? "ring-2 ring-emerald-500" : "hover:bg-muted/50"
                   }`}
                 >
-                  <Clock
-                    className={`h-4 w-4 ${
-                      d.daysRemaining <= 7
-                        ? "text-red-600 dark:text-red-400"
-                        : d.daysRemaining <= 30
-                        ? "text-amber-600 dark:text-amber-400"
-                        : "text-emerald-600 dark:text-emerald-400"
-                    }`}
-                  />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium">{d.title}</p>
-                  <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    <span
-                      className={`px-1.5 py-0.5 rounded text-xs font-medium ${
-                        JURISDICTION_COLORS[d.jurisdiction]
-                      }`}
-                    >
-                      {d.jurisdiction}
-                    </span>
-                    <span className="text-xs text-muted-foreground">{d.category}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 flex-shrink-0">
-                <div className="text-right">
-                  <p className="text-sm font-mono font-bold">
-                    {d.daysRemaining}d
-                  </p>
-                  <p className="text-xs text-muted-foreground">{d.dueDate}</p>
-                </div>
-                <span
-                  className={`px-2 py-0.5 rounded text-xs font-semibold ${
-                    STATUS_STYLES[d.status]
-                  }`}
-                >
-                  {d.status.replace("-", " ")}
-                </span>
-              </div>
-            </div>
-          ))}
-          {filteredDeadlines.length === 0 && (
-            <div className="p-8 text-center text-sm text-muted-foreground">
-              No upcoming deadlines for the selected jurisdiction.
-            </div>
-          )}
+                  <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium mb-1 ${JURISDICTION_COLORS[j] || ""}`}>
+                    {j}
+                  </span>
+                  <p className="text-xl font-bold font-mono">{count}</p>
+                  <p className="text-xs text-muted-foreground">events</p>
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* ---- Regulatory Changes Feed ---- */}
+      {/* ---- Event Feed ---- */}
       <div className="rounded-lg border bg-card">
         <div className="p-5 border-b">
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <Scale className="h-5 w-5 text-blue-500" />
-            Recent Regulatory Changes
+            Regulatory &amp; Economic Events
+            <span className="text-xs text-muted-foreground font-normal ml-2">
+              {filtered.length} event{filtered.length !== 1 ? "s" : ""}
+            </span>
           </h2>
         </div>
-        <div className="divide-y">
-          {filteredChanges.map((change) => (
-            <div
-              key={change.id}
-              className="p-4 hover:bg-muted/30 transition-colors"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <span className="text-xs font-mono text-muted-foreground">
-                      {change.id}
-                    </span>
-                    <span
-                      className={`px-1.5 py-0.5 rounded text-xs font-medium ${
-                        JURISDICTION_COLORS[change.jurisdiction]
-                      }`}
-                    >
-                      {change.jurisdiction}
-                    </span>
-                    <span
-                      className={`px-2 py-0.5 rounded text-xs font-semibold capitalize ${
-                        IMPACT_STYLES[change.impact]
-                      }`}
-                    >
-                      {change.impact} impact
-                    </span>
-                    <span className="px-2 py-0.5 rounded text-xs bg-muted text-muted-foreground">
-                      {change.category}
-                    </span>
-                  </div>
-                  <p className="text-sm font-semibold">{change.title}</p>
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                    {change.summary}
-                  </p>
-                  <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Building2 className="h-3 w-3" />
-                      {change.regulator}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      Published: {change.publishedDate}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <ArrowUpRight className="h-3 w-3" />
-                      Effective: {change.effectiveDate}
-                    </span>
+        {filtered.length === 0 ? (
+          <div className="p-8 text-center text-sm text-muted-foreground">
+            {events.length === 0
+              ? "No regulatory events yet. Events will appear as the intelligence feed processes data from regulatory sources."
+              : "No events match the selected filters."}
+          </div>
+        ) : (
+          <div className="divide-y">
+            {filtered.slice(0, 30).map((event) => {
+              const sev = normalizeSeverity(event.severity);
+              return (
+                <div key={event.id} className="p-4 hover:bg-muted/30 transition-colors">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span
+                          className={`px-1.5 py-0.5 rounded text-xs font-medium ${
+                            JURISDICTION_COLORS[event.jurisdiction] || JURISDICTION_COLORS.Global
+                          }`}
+                        >
+                          {event.jurisdiction}
+                        </span>
+                        <span
+                          className={`px-2 py-0.5 rounded text-xs font-semibold capitalize ${
+                            SEVERITY_STYLES[event.severity] || SEVERITY_STYLES.medium
+                          }`}
+                        >
+                          {sev}
+                        </span>
+                        <span className="px-2 py-0.5 rounded text-xs bg-muted text-muted-foreground">
+                          {event.category.replace(/_/g, " ")}
+                        </span>
+                        {event.countryCode && (
+                          <span className="text-xs font-mono text-muted-foreground">
+                            {event.countryCode}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm font-semibold">{event.title}</p>
+                      {event.description && (
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                          {event.description}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                        {event.source && (
+                          <span className="flex items-center gap-1">
+                            <Building2 className="h-3 w-3" />
+                            {event.source}
+                          </span>
+                        )}
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {new Date(event.processedAt).toLocaleDateString()}
+                        </span>
+                        {event.riskScore != null && (
+                          <span className="flex items-center gap-1">
+                            <Shield className="h-3 w-3" />
+                            Risk: {event.riskScore}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-1" />
                   </div>
                 </div>
-                <ChevronRight className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-1" />
-              </div>
-            </div>
-          ))}
-          {filteredChanges.length === 0 && (
-            <div className="p-8 text-center text-sm text-muted-foreground">
-              No regulatory changes match the selected filters.
-            </div>
-          )}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {/* ---- Compliance Gap Indicators ---- */}
-      <div className="rounded-lg border bg-card p-6 space-y-4">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-purple-500" />
-          Compliance Gap Analysis
-        </h2>
-        <div className="space-y-3">
-          {filteredGaps.map((gap) => (
-            <div key={gap.area} className="rounded-md border p-4">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">{gap.area}</span>
-                  <span
-                    className={`px-1.5 py-0.5 rounded text-xs font-medium ${
-                      JURISDICTION_COLORS[gap.jurisdiction]
-                    }`}
-                  >
-                    {gap.jurisdiction}
-                  </span>
-                </div>
-                <span
-                  className={`px-2 py-0.5 rounded text-xs font-semibold capitalize ${
-                    IMPACT_STYLES[gap.priority]
-                  }`}
-                >
-                  {gap.priority} priority
-                </span>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="flex-1">
-                  <div className="h-2 rounded-full bg-muted overflow-hidden">
-                    <div
-                      className={`h-full rounded-full ${gapBarColor(gap.gap)}`}
-                      style={{ width: `${gap.currentScore}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 text-xs flex-shrink-0">
-                  <span className="font-mono font-bold">{gap.currentScore}%</span>
-                  <span className="text-muted-foreground">/</span>
-                  <span className="font-mono text-muted-foreground">{gap.targetScore}%</span>
-                  <span
-                    className={`font-mono font-bold ${
-                      gap.gap >= 30
-                        ? "text-red-500"
-                        : gap.gap >= 15
-                        ? "text-amber-500"
-                        : "text-emerald-500"
-                    }`}
-                  >
-                    (-{gap.gap})
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
-          {filteredGaps.length === 0 && (
-            <div className="p-4 text-center text-sm text-muted-foreground">
-              No compliance gaps for the selected jurisdiction.
-            </div>
-          )}
+      {/* Empty state */}
+      {events.length === 0 && (
+        <div className="rounded-lg border bg-card p-12 text-center">
+          <Radar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-semibold mb-2">No Regulatory Intelligence Yet</h3>
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">
+            Regulatory events will populate as the Sentinel intelligence feed ingests data from
+            regulatory sources across jurisdictions. Run an ingestion cycle to start.
+          </p>
         </div>
-      </div>
+      )}
     </div>
   );
 }
