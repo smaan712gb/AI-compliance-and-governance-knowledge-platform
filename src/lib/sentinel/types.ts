@@ -110,6 +110,17 @@ export interface SanctionsMatch {
   entityId: string;
   sanctionPrograms: string[];
   listingDate?: string;
+  isOFAC?: boolean;
+  ownershipFlag?: boolean;          // True if blocked via 50% Rule
+  ownershipDetails?: OwnershipLink[];
+}
+
+export interface OwnershipLink {
+  ownerName: string;
+  ownerEntityId: string;
+  ownershipPercentage: number;
+  isSDN: boolean;
+  listName: string;
 }
 
 export interface PEPMatch {
