@@ -111,23 +111,16 @@ export default function FinancialCrimePage() {
     setError("");
 
     try {
-      const [eventsRes, casesRes, screeningsRes] = await Promise.all([
-        fetch("/api/sentinel/intelligence?category=ECONOMIC&limit=25").then((r) => r.json()).catch(() => ({ data: [] })),
+      const [sanctionsRes, casesRes, screeningsRes] = await Promise.all([
+        fetch("/api/sentinel/intelligence?category=SANCTIONS&limit=40").then((r) => r.json()).catch(() => ({ data: [] })),
         fetch("/api/sentinel/cases?view=stats").then((r) => r.json()).catch(() => ({ data: null })),
         fetch("/api/sentinel/screening?limit=10").then((r) => r.json()).catch(() => ({ data: [] })),
       ]);
 
-      // Also fetch sanctions-related events
-      const sanctionsRes = await fetch("/api/sentinel/intelligence?category=SANCTIONS&limit=15")
-        .then((r) => r.json())
-        .catch(() => ({ data: [] }));
-
-      const allEvents = [
-        ...(eventsRes.data || []),
-        ...(sanctionsRes.data || []),
-      ].sort((a: IntelligenceEvent, b: IntelligenceEvent) =>
-        new Date(b.processedAt).getTime() - new Date(a.processedAt).getTime()
-      );
+      const allEvents = (sanctionsRes.data || [])
+        .sort((a: IntelligenceEvent, b: IntelligenceEvent) =>
+          new Date(b.processedAt).getTime() - new Date(a.processedAt).getTime()
+        );
 
       setEvents(allEvents);
       setCaseStats(casesRes.data || null);

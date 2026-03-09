@@ -56,11 +56,17 @@ function getJurisdiction(cc: string | null): string {
   const usRegion = ["US"];
   const euRegion = ["DE", "FR", "IT", "ES", "NL", "BE", "AT", "IE", "PT", "GR", "FI", "SE", "DK", "PL", "CZ", "RO", "HU", "BG", "HR", "SK", "SI", "LT", "LV", "EE", "LU", "MT", "CY"];
   const ukRegion = ["GB", "UK"];
-  const apacRegion = ["CN", "JP", "KR", "SG", "AU", "NZ", "IN", "HK", "TW", "MY", "TH", "ID", "PH", "VN"];
+  const apacRegion = ["CN", "JP", "KR", "SG", "AU", "NZ", "IN", "HK", "TW", "MY", "TH", "ID", "PH", "VN", "BD", "PK", "MM"];
+  const meRegion = ["SA", "AE", "IR", "IQ", "IL", "PS", "SY", "YE", "LB", "JO", "KW", "QA", "BH", "OM", "TR", "EG"];
+  const africaRegion = ["NG", "ZA", "KE", "ET", "SD", "SS", "SO", "LY", "ML", "NE", "BF", "CD", "CF", "ZW", "MZ", "TZ"];
+  const latamRegion = ["BR", "MX", "AR", "CO", "CL", "PE", "VE", "CU", "EC", "HT"];
   if (usRegion.includes(cc)) return "US";
   if (euRegion.includes(cc)) return "EU";
   if (ukRegion.includes(cc)) return "UK";
   if (apacRegion.includes(cc)) return "APAC";
+  if (meRegion.includes(cc)) return "MENA";
+  if (africaRegion.includes(cc)) return "Africa";
+  if (latamRegion.includes(cc)) return "LatAm";
   return "Global";
 }
 
@@ -73,6 +79,9 @@ const JURISDICTION_COLORS: Record<string, string> = {
   EU: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300",
   UK: "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
   APAC: "bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-300",
+  MENA: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
+  Africa: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300",
+  LatAm: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300",
   Global: "bg-gray-100 text-gray-800 dark:bg-gray-700/40 dark:text-gray-300",
 };
 
@@ -175,6 +184,9 @@ export default function RegulatoryRadarPage() {
             <option value="EU">EU</option>
             <option value="UK">UK</option>
             <option value="APAC">APAC</option>
+            <option value="MENA">MENA</option>
+            <option value="Africa">Africa</option>
+            <option value="LatAm">LatAm</option>
             <option value="Global">Global</option>
           </select>
           <select
@@ -229,7 +241,7 @@ export default function RegulatoryRadarPage() {
             By Jurisdiction
           </h2>
           <div className="flex flex-wrap gap-3">
-            {["US", "EU", "UK", "APAC", "Global"].map((j) => {
+            {["US", "EU", "UK", "APAC", "MENA", "Africa", "LatAm", "Global"].map((j) => {
               const count = eventsWithJurisdiction.filter((e) => e.jurisdiction === j).length;
               if (count === 0) return null;
               return (

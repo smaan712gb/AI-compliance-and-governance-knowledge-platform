@@ -7,6 +7,7 @@ import { XMLParser } from "fast-xml-parser";
 import { db } from "@/lib/db";
 import { getIntelligenceSources, type RSSSource } from "./rss-sources";
 import type { EventCategory } from "./types";
+import type { EventSeverity } from "@prisma/client";
 import { shouldTriggerTriage, runTriageAgent } from "./triage-agent";
 import {
   trackKeywords,
@@ -124,6 +125,17 @@ const CATEGORY_KEYWORDS: Record<EventCategory, string[]> = {
     "opposition", "parliament", "legislation", "executive order",
     "alliance", "nato", "g7", "g20", "un security council",
     "veto", "resolution", "bilateral", "multilateral",
+    // Regulatory & compliance signals
+    "regulation", "regulatory", "compliance", "directive", "framework",
+    "enacted", "proposed rule", "final rule", "rulemaking",
+    "ai act", "eu ai act", "digital services act", "digital markets act",
+    "gdpr", "data protection", "privacy regulation",
+    "sec rule", "sec enforcement", "cftc", "finra",
+    "basel", "dodd-frank", "solvency", "mifid",
+    "executive order on ai", "ai executive order",
+    "antitrust", "competition authority", "merger review",
+    "government oversight", "congressional hearing", "senate hearing",
+    "royal assent", "gazetted", "promulgated",
   ],
   DISASTER: [
     "earthquake", "tsunami", "hurricane", "cyclone", "flood",
@@ -133,28 +145,105 @@ const CATEGORY_KEYWORDS: Record<EventCategory, string[]> = {
     "food insecurity", "water crisis", "climate disaster",
   ],
   SANCTIONS: [
+    // Sanctions & export controls
     "sanctions", "ofac", "sdn list", "blacklist", "asset freeze",
     "travel ban", "export control", "sanctions evasion",
     "designated", "specially designated",
     "restricted entity", "blocked property", "sanctions regime",
+    "sanctions violation", "sanctions package", "sanctions list",
+    "magnitsky", "itar", "ear", "bis entity list",
+    // Money laundering & terrorist financing
+    "money laundering", "anti-money laundering", "aml",
+    "terrorist financing", "counter-terrorism financing", "cft",
+    "suspicious activity", "suspicious transaction", "sar",
+    "beneficial ownership", "shell company", "front company",
+    "correspondent banking", "de-risking", "wire fraud",
+    // Fraud & financial crime
+    "financial fraud", "securities fraud", "insider trading",
+    "market manipulation", "ponzi scheme", "embezzlement",
+    "bribery", "corruption", "fcpa", "uk bribery act",
+    "kleptocracy", "illicit finance", "proceeds of crime",
+    "tax evasion", "tax fraud", "offshore accounts",
+    "hawala", "trade-based laundering", "smurfing",
+    // Enforcement actions
+    "enforcement action", "cease and desist", "consent order",
+    "deferred prosecution", "guilty plea", "indictment",
+    "regulatory fine", "compliance failure", "compliance violation",
+    "fincen", "fatf", "grey list", "black list",
+    "wolfsberg", "egmont", "financial action task force",
+    // Proliferation finance
+    "proliferation financing", "dual-use", "weapons proliferation",
+    "nuclear program", "missile program",
   ],
   OTHER: [],
 };
 
 const SEVERITY_KEYWORDS = {
   critical: [
+    // Explicit urgency
     "breaking", "urgent", "emergency", "imminent", "catastrophic",
     "mass casualty", "nuclear", "wmd", "invasion", "declaration of war",
+    // Strategic chokepoints & total disruptions
+    "strait of hormuz", "suez canal blocked", "strait of malacca",
+    "total halt", "near total halt", "complete halt", "complete shutdown",
+    "supreme leader", "regime collapse", "currency collapse", "sovereign default",
+    "market crash", "flash crash", "systemic collapse",
+    "assassination", "coup attempt", "martial law",
+    "pandemic declared", "nuclear test", "nuclear launch",
   ],
   high: [
     "escalation", "significant", "major", "serious", "critical infrastructure",
     "large-scale", "unprecedented", "state of emergency",
+    // Impact/disruption language
+    "halt", "shutdown", "blockade", "closure", "collapse",
+    "disruption", "suspended", "freeze", "grind to",
+    "oil spike", "oil surge", "price spike", "price surge",
+    "production cut", "supply disruption", "supply shock",
+    "shipping disruption", "port closure", "airspace closure",
+    "internet blackout", "communications disruption",
+    "bank run", "capital flight", "debt crisis",
+    "regime change", "new supreme leader", "new leader",
+    "troop deployment", "mobilization", "military buildup",
+    "rate cut", "rate hike", "interest rate decision",
+    "sanctions imposed", "sanctions expanded", "asset freeze",
+    "export ban", "import ban", "trade embargo",
   ],
   medium: [
     "tension", "concern", "warning", "incident", "suspected",
     "investigation", "heightened", "alert",
+    "downturn", "slowdown", "contraction", "volatility",
+    "diplomatic crisis", "recalled ambassador", "expelled diplomat",
+    "protest", "demonstration", "unrest", "strike action",
   ],
 };
+
+// ---- Noise Filter: Routine Government Publications ----
+// Skip titles that are clearly routine data releases, not intelligence
+const ROUTINE_NOISE_PATTERNS = [
+  /^bank of japan accounts/i,
+  /^japanese government bonds held/i,
+  /^monetary base and the bank of japan/i,
+  /^market operations by the bank of japan/i,
+  /^average contract interest rates/i,
+  /^bank of japan.s transactions/i,
+  /^flow of funds/i,
+  /^balance of payments/i,
+  /^money stock/i,
+  /^consumer price index \(/i,
+  /^producer price index \(/i,
+  /^minutes of the monetary policy/i,
+  /^summary of opinions/i,
+  /^principal figures of financial/i,
+  // Generic routine patterns
+  /^monthly report/i,
+  /^quarterly report/i,
+  /^weekly statistical/i,
+  /^daily treasury/i,
+];
+
+function isRoutinePublication(title: string): boolean {
+  return ROUTINE_NOISE_PATTERNS.some((pattern) => pattern.test(title));
+}
 
 export function classifyEvent(title: string, description: string): {
   category: EventCategory;
@@ -411,6 +500,12 @@ export async function runIngestionPipeline(
       for (const item of items) {
         if (!item.title || !item.link) continue;
 
+        // Skip routine government publications (BoJ accounts, etc.)
+        if (isRoutinePublication(item.title)) {
+          result.itemsSkipped++;
+          continue;
+        }
+
         // Check for duplicates by URL
         const existing = await db.intelligenceEvent.findFirst({
           where: { sourceUrl: item.link },
@@ -520,8 +615,13 @@ export async function runIngestionPipeline(
           console.error(`[Ingestion] Graph extraction failed:`, err);
         }
 
-        // 4. Auto AI Reasoning — fire-and-forget for CRITICAL/HIGH events
-        if (dbSeverity === "SENTINEL_CRITICAL" || dbSeverity === "SENTINEL_HIGH") {
+        // 4. Auto AI Reasoning — for CRITICAL, HIGH, and strategic MEDIUM events
+        const shouldReason =
+          dbSeverity === "SENTINEL_CRITICAL" ||
+          dbSeverity === "SENTINEL_HIGH" ||
+          (dbSeverity === "SENTINEL_MEDIUM" && riskScore >= 55);
+
+        if (shouldReason) {
           result.automation.reasoningTriggered++;
           analyzeEvent({
             headline: item.title,
@@ -529,8 +629,8 @@ export async function runIngestionPipeline(
             source: source.name,
             countryCode: countryCode || undefined,
           }).then(async (reasoning) => {
-            // Store reasoning result linked to event
             try {
+              // Store reasoning result linked to event
               await db.reasoningHistory.create({
                 data: {
                   userId: "system-auto-reasoning",
@@ -549,8 +649,44 @@ export async function runIngestionPipeline(
                   tokens: reasoning.reasoningTokens,
                 },
               });
+
+              // --- WRITE BACK: Update the event with AI-assessed severity ---
+              // Only upgrade severity (never downgrade — AI may over-correct for low events)
+              const aiSeverityMap: Record<string, string> = {
+                critical: "SENTINEL_CRITICAL",
+                high: "SENTINEL_HIGH",
+                medium: "SENTINEL_MEDIUM",
+                low: "SENTINEL_LOW",
+                info: "INFO",
+              };
+              const severityRank: Record<string, number> = {
+                INFO: 0, SENTINEL_LOW: 1, SENTINEL_MEDIUM: 2,
+                SENTINEL_HIGH: 3, SENTINEL_CRITICAL: 4,
+              };
+
+              const aiDbSeverity = aiSeverityMap[reasoning.severity] || dbSeverity;
+              const currentRank = severityRank[dbSeverity] ?? 0;
+              const aiRank = severityRank[aiDbSeverity] ?? 0;
+
+              // Upgrade if AI says it's more severe, OR if AI risk score is significantly higher
+              if (aiRank > currentRank || reasoning.riskScore > riskScore + 15) {
+                await db.intelligenceEvent.update({
+                  where: { id: newEvent.id },
+                  data: {
+                    severity: aiRank > currentRank ? aiDbSeverity as EventSeverity : undefined,
+                    riskScore: Math.max(riskScore, reasoning.riskScore),
+                    // Also update category if AI disagrees (more specific)
+                    ...(reasoning.category !== category && reasoning.category !== "OTHER"
+                      ? { category: reasoning.category as EventCategory }
+                      : {}),
+                  },
+                });
+                console.log(
+                  `[Ingestion] AI upgraded ${newEvent.id}: ${dbSeverity}/${riskScore} → ${aiDbSeverity}/${reasoning.riskScore}`,
+                );
+              }
             } catch {
-              // Reasoning storage failure is non-fatal
+              // Reasoning/update failure is non-fatal
             }
           }).catch((err) => {
             console.error(`[Ingestion] Auto-reasoning failed for ${newEvent.id}:`, err);
@@ -558,9 +694,16 @@ export async function runIngestionPipeline(
         }
 
         // 5. Triage Agent — fire-and-forget for high-severity events
+        // Also considers AI-upgraded events (riskScore may increase after reasoning)
         if (shouldTriggerTriage({ severity: dbSeverity, riskScore })) {
           result.automation.triageTriggered++;
-          runTriageAgent(newEvent.id).catch((err) => {
+          // Find an active org to assign cases/briefings to
+          db.sentinelOrgMember.findFirst({
+            where: { role: "ADMIN", isActive: true },
+            select: { organizationId: true },
+          }).then((admin) => {
+            return runTriageAgent(newEvent.id, admin?.organizationId || undefined);
+          }).catch((err) => {
             console.error(`[Ingestion] Triage agent failed for ${newEvent.id}:`, err);
           });
         }
