@@ -35,24 +35,19 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy Prisma schema + compiled query engine binaries.
+# Copy Prisma schema + compiled query engine binaries (owned by nextjs).
 # @prisma/client is already bundled inside .next/standalone/node_modules.
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
 
-# Install the Prisma CLI with ALL its transitive deps (effect, empathic, c12…).
-# We must NOT pre-copy @prisma here — npm needs to install @prisma/config
-# and its deps itself, otherwise it skips them (sees @prisma already present).
-# No --ignore-scripts: postinstall must run to download the engine binaries
-# (schema-engine used by db push) during build when we still have root access.
-COPY --from=builder /app/package.json ./package.json
-RUN npm install --no-audit --no-fund prisma && rm package.json
-
-# Fix ownership: the npm install above ran as root, but CMD runs as nextjs.
-# Prisma needs write access to @prisma/engines for binary verification.
-RUN chown -R nextjs:nodejs /app/node_modules
-
+# Switch to non-root user BEFORE npm install so files are created with
+# correct ownership — eliminates the slow `chown -R` on node_modules.
 USER nextjs
+
+# Install the Prisma CLI with ALL its transitive deps.
+# Runs as nextjs so all installed files are already owned correctly.
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+RUN npm install --no-audit --no-fund prisma && rm package.json
 EXPOSE 3000
 
 # Sync DB schema then start server.
