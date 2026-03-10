@@ -40,8 +40,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
 
-# Switch to non-root user BEFORE npm install so files are created with
-# correct ownership — eliminates the slow `chown -R` on node_modules.
+# Give nextjs ownership of /app so it can write during npm install.
+# This is a single-directory chown (not recursive), so it's instant.
+RUN chown nextjs:nodejs /app
+
 USER nextjs
 
 # Install the Prisma CLI with ALL its transitive deps.
