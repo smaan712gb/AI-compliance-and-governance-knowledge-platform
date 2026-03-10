@@ -47,7 +47,7 @@ USER nextjs
 # Install the Prisma CLI with ALL its transitive deps.
 # Runs as nextjs so all installed files are already owned correctly.
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
-RUN npm install --no-audit --no-fund prisma && rm package.json
+RUN npm install --no-audit --no-fund --no-package-lock prisma && rm package.json
 EXPOSE 3000
 
 # Sync DB schema then start server.
