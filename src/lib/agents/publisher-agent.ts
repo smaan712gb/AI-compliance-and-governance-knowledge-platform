@@ -4,6 +4,7 @@ import { PUBLISHER_SYSTEM_PROMPT, buildPublisherUserPrompt } from "./prompts";
 import type { AgentResult, PublishResult, SocialPost } from "./types";
 import type { PipelineConfig } from "./types";
 import { TASK_TYPE_TO_CONTENT_TYPE } from "./types";
+import { generateArticleImage } from "./image-generator";
 
 /**
  * Publisher Agent
@@ -88,7 +89,22 @@ export async function runPublisherAgent(
         // 2c. Resolve a unique slug (handle conflicts)
         const uniqueSlug = await resolveUniqueSlug(task.slug);
 
-        // 2d. Use a Prisma transaction to create ContentPage + update AgentTask atomically
+        // 2d. Generate hero image for the article
+        let featuredImageUrl: string | null = null;
+        try {
+          const imageResult = await generateArticleImage(title, category, tags);
+          featuredImageUrl = imageResult.url;
+          console.log(
+            `[PublisherAgent] Generated hero image via ${imageResult.provider} for "${title.slice(0, 50)}..."`,
+          );
+        } catch (imgError) {
+          console.error(
+            `[PublisherAgent] Image generation failed for task ${task.id} (non-fatal):`,
+            imgError instanceof Error ? imgError.message : String(imgError),
+          );
+        }
+
+        // 2e. Use a Prisma transaction to create ContentPage + update AgentTask atomically
         const contentPage = await db.$transaction(async (tx) => {
           const page = await tx.contentPage.create({
             data: {
@@ -97,6 +113,7 @@ export async function runPublisherAgent(
               type: contentType,
               body: task.generatedBody!,
               excerpt: excerpt || null,
+              featuredImageUrl,
               metaTitle: metaTitle || null,
               metaDescription: metaDescription || null,
               tags,
@@ -124,7 +141,7 @@ export async function runPublisherAgent(
           `[PublisherAgent] Published "${title}" as ContentPage ${contentPage.id} (slug: ${uniqueSlug})`,
         );
 
-        // 2e. Generate social media posts (wrapped in try-catch to not fail the whole publish)
+        // 2f. Generate social media posts (wrapped in try-catch to not fail the whole publish)
         try {
           const socialResult = await callDeepSeek({
             systemPrompt: PUBLISHER_SYSTEM_PROMPT,
@@ -135,13 +152,13 @@ export async function runPublisherAgent(
           totalTokens += socialResult.totalTokens;
           totalCost += socialResult.costUsd;
 
-          // 2f. Parse social posts
+          // 2g. Parse social posts
           const parsed = parseJsonResponse<{ posts: SocialPost[] }>(
             socialResult.content,
           );
 
           if (parsed.posts && Array.isArray(parsed.posts)) {
-            // 2g. Create SocialPostDraft records
+            // 2h. Create SocialPostDraft records
             for (const post of parsed.posts) {
               await db.socialPostDraft.create({
                 data: {
