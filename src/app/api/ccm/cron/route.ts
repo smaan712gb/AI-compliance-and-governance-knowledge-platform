@@ -4,6 +4,8 @@ import { decryptConfig } from "@/lib/ccm/crypto";
 import { createConnector } from "@/lib/connectors/registry";
 import { runMonitoringCycle } from "@/lib/ccm/rule-engine";
 import { analyzeRecentFindings } from "@/lib/ccm/analysis-engine";
+import { runEscalationCheck } from "@/lib/ccm/escalation-engine";
+import { autoCollectEvidenceBatch } from "@/lib/ccm/auto-evidence";
 import type { SyncDomain } from "@prisma/client";
 
 /**
@@ -23,12 +25,29 @@ export async function POST(req: NextRequest) {
 
   const startTime = Date.now();
   const results = {
+    staleJobsRecovered: 0,
     syncs: { started: 0, errors: [] as string[] },
     monitoring: { orgsProcessed: 0, rulesEvaluated: 0, findingsCreated: 0, errors: [] as string[] },
     analysis: { orgsProcessed: 0, analyzed: 0, tokensUsed: 0, errors: [] as string[] },
+    escalation: { findingsProcessed: 0, escalationsTriggered: 0, errors: [] as string[] },
+    evidence: { processed: 0, created: 0, errors: [] as string[] },
   };
 
   try {
+    // Phase 0: Recover stale sync jobs (RUNNING for > 30 min → FAILED)
+    const staleJobs = await db.connectorSyncJob.updateMany({
+      where: {
+        status: "RUNNING",
+        startedAt: { lt: new Date(Date.now() - 30 * 60 * 1000) },
+      },
+      data: {
+        status: "FAILED",
+        completedAt: new Date(),
+        errorLog: { error: "Job timed out after 30 minutes" } as any,
+      },
+    });
+    results.staleJobsRecovered = staleJobs.count;
+
     // 1. Run scheduled syncs
     const connectors = await db.eRPConnector.findMany({
       where: {
@@ -101,6 +120,30 @@ export async function POST(req: NextRequest) {
         results.analysis.orgsProcessed++;
       } catch (err) {
         results.analysis.errors.push(`Org ${org.id}: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
+
+    // 4. Run escalation checks
+    for (const org of organizations) {
+      try {
+        const escalationResult = await runEscalationCheck(org.id);
+        results.escalation.findingsProcessed += escalationResult.findingsProcessed;
+        results.escalation.escalationsTriggered += escalationResult.escalationsTriggered;
+        results.escalation.errors.push(...escalationResult.errors);
+      } catch (err) {
+        results.escalation.errors.push(`Org ${org.id}: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
+
+    // 5. Auto-collect evidence for open findings
+    for (const org of organizations) {
+      try {
+        const evidenceResult = await autoCollectEvidenceBatch(org.id, 10);
+        results.evidence.processed += evidenceResult.processed;
+        results.evidence.created += evidenceResult.evidenceCreated;
+        results.evidence.errors.push(...evidenceResult.errors);
+      } catch (err) {
+        results.evidence.errors.push(`Org ${org.id}: ${err instanceof Error ? err.message : String(err)}`);
       }
     }
   } catch (err) {
