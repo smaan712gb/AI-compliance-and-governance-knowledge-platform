@@ -99,9 +99,18 @@ export default function SupplyChainPage() {
     fetch("/api/sentinel/organizations")
       .then((r) => r.json())
       .then((d) => {
-        if (d.data?.length > 0) setOrgId(d.data[0].id);
+        if (d.data?.length > 0) {
+          setOrgId(d.data[0].id);
+        } else {
+          // No org found — stop loading so the page doesn't spin forever
+          setLoading(false);
+          setError("No Sentinel organization found. Please create one first.");
+        }
       })
-      .catch(() => {});
+      .catch(() => {
+        setLoading(false);
+        setError("Failed to load organizations");
+      });
   }, []);
 
   const fetchData = useCallback(async (manual = false) => {
