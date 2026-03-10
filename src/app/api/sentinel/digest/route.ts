@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { after } from "next/server";
 import { db } from "@/lib/db";
 import { analyzeEvent } from "@/lib/sentinel/reasoning";
 
@@ -11,8 +12,8 @@ export const maxDuration = 120;
  * of the most significant events from the last 24 hours.
  * Triggered by cron-job.org once daily.
  *
- * Uses fire-and-forget pattern: responds 202 immediately, runs
- * DeepSeek R1 analysis in background to avoid cron timeout (~24s).
+ * Uses Next.js `after()` to run DeepSeek R1 analysis after the response
+ * is sent, avoiding cron-job.org's 30s timeout.
  */
 export async function POST(req: NextRequest) {
   const token = req.headers.get("authorization")?.replace("Bearer ", "");
@@ -20,9 +21,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Fire-and-forget: respond immediately, run digest in background
-  runDigestInBackground().catch((err) => {
-    console.error("[sentinel/digest] Background digest failed:", err);
+  // Schedule background work AFTER the response is sent
+  after(async () => {
+    try {
+      await runDigestInBackground();
+    } catch (err) {
+      console.error("[sentinel/digest] Background digest failed:", err);
+    }
   });
 
   return NextResponse.json(

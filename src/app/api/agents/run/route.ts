@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { auth } from "@/lib/auth";
 import { runPipeline } from "@/lib/agents/pipeline";
 import { db } from "@/lib/db";
@@ -44,11 +44,14 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Fire-and-forget: start pipeline in background so we respond within
-    // cron-job.org's 30-second timeout. The pipeline writes its own status
-    // to the agentRun table, so we can check results via GET.
-    runPipeline(triggeredBy).catch((err) => {
-      console.error("Background pipeline error:", err);
+    // Use Next.js after() to run pipeline after the response is sent,
+    // ensuring we respond within cron-job.org's 30-second timeout.
+    after(async () => {
+      try {
+        await runPipeline(triggeredBy);
+      } catch (err) {
+        console.error("Background pipeline error:", err);
+      }
     });
 
     return NextResponse.json({ success: true, message: "Pipeline started" }, { status: 202 });
